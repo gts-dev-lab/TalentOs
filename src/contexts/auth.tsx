@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { User } from '@/lib/types';
 import * as db from '@/lib/db';
-import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
   user: User | null;
@@ -15,24 +15,58 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const NEXTAUTH_SESSION = '/api/nextauth/session';
+const SESSION_CHECK_TIMEOUT_MS = 3500;
+
+function fetchWithTimeout(url: string, ms: number): Promise<Response> {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { credentials: 'same-origin', signal: controller.signal }).finally(() => clearTimeout(t));
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   
-  const publicPages = ['/', '/login', '/register', '/pending-approval', '/forgot-password', '/password-reset', '/features', '/terms', '/privacy-policy', '/request-demo'];
+  const publicPages = ['/', '/login', '/register', '/pending-approval', '/forgot-password', '/password-reset', '/features', '/terms', '/privacy-policy', '/request-demo', '/certificates/verify', '/auth/error'];
   
   const checkUserStatus = useCallback(async () => {
-    // This function must only run on the client side
     if (typeof window === 'undefined') {
-        setIsLoading(false);
-        return;
+      setIsLoading(false);
+      return;
     }
     setIsLoading(true);
-    const loggedInUser = await db.getLoggedInUser();
-    setUser(loggedInUser);
-    setIsLoading(false);
+    try {
+      const [sessionRes, nextRes] = await Promise.all([
+        fetchWithTimeout('/api/auth/session', SESSION_CHECK_TIMEOUT_MS).catch(() => null),
+        fetchWithTimeout(NEXTAUTH_SESSION, SESSION_CHECK_TIMEOUT_MS).catch(() => null),
+      ]);
+      if (sessionRes?.ok) {
+        const data = await sessionRes.json();
+        if (data?.user) {
+          setUser(data.user);
+          setIsLoading(false);
+          return;
+        }
+      }
+      if (nextRes?.ok) {
+        const data = await nextRes.json();
+        if (data?.user && data.user.id) {
+          setUser(data.user as User);
+          setIsLoading(false);
+          return;
+        }
+      }
+      const loggedInUser = await db.getLoggedInUser();
+      setUser(loggedInUser);
+    } catch {
+      const loggedInUser = await db.getLoggedInUser();
+      setUser(loggedInUser);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -51,19 +85,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password?: string) => {
     setIsLoading(true);
+    let apiRefused = false;
     try {
-        const loggedInUser = await db.login(email, password);
-        setUser(loggedInUser);
-        return loggedInUser;
-    } catch(error) {
-        // Propagate error to be caught in the form
-        throw error;
+      if (password) {
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+            credentials: 'same-origin',
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data?.user) {
+            setUser(data.user);
+            return data.user;
+          }
+          if (res.status === 401 || res.status === 403) {
+            apiRefused = true;
+            throw new Error(data?.error ?? 'Credenciales incorrectas.');
+          }
+          if (res.status !== 503) {
+            apiRefused = true;
+            throw new Error(data?.error ?? 'Error de autenticación.');
+          }
+        } catch (inner) {
+          if (apiRefused) throw inner;
+        }
+      }
+      const loggedInUser = await db.login(email, password);
+      setUser(loggedInUser);
+      return loggedInUser;
+    } catch (error) {
+      throw error;
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
   const logout = () => {
+    fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+    signOut({ redirect: false }).catch(() => {});
     db.logout();
     setUser(null);
     router.push('/');

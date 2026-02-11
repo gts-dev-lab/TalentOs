@@ -48,7 +48,7 @@ export const Sidebar = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLEl
         <aside
           ref={ref}
           className={cn(
-            "fixed left-0 top-0 z-50 flex h-screen flex-col border-r bg-background transition-transform duration-300 ease-in-out",
+            "frappe-sidebar fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-[hsl(var(--frappe-sidebar-muted)_/_0.25)] shadow-frappe-md transition-all duration-frappe-slow ease-in-out",
             isMobile ? "w-64" : (isOpen ? "w-64" : "w-[72px]"),
             isMobile && !isOpen && "-translate-x-full",
             className
@@ -58,7 +58,11 @@ export const Sidebar = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLEl
           {children}
         </aside>
         {isMobile && isOpen && (
-          <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setIsOpen(false)} />
+          <div 
+            className="fixed inset-0 z-40 bg-black/50 animate-in fade-in duration-300" 
+            onClick={() => setIsOpen(false)}
+            aria-label="Cerrar menú"
+          />
         )}
       </>
     )
@@ -82,14 +86,14 @@ SidebarHeader.displayName = "SidebarHeader"
 
 export const SidebarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex-1 overflow-y-auto overflow-x-hidden", className)} {...props} />
+    <div ref={ref} className={cn("flex-1 overflow-y-auto overflow-x-hidden px-2 py-3", className)} {...props} />
   )
 )
 SidebarContent.displayName = "SidebarContent"
 
 export const SidebarMenu = React.forwardRef<HTMLUListElement, React.HTMLAttributes<HTMLUListElement>>(
   ({ className, ...props }, ref) => (
-    <ul ref={ref} className={cn("space-y-1 p-2", className)} {...props} />
+    <ul ref={ref} className={cn("space-y-0.5", className)} {...props} />
   )
 )
 SidebarMenu.displayName = "SidebarMenu"
@@ -136,7 +140,7 @@ SidebarMenuButton.displayName = "SidebarMenuButton"
 
 export const SidebarFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("mt-auto border-t", className)} {...props} />
+    <div ref={ref} className={cn("mt-auto border-t border-[hsl(var(--frappe-sidebar-muted)_/_0.25)]", className)} {...props} />
   )
 )
 SidebarFooter.displayName = "SidebarFooter"
@@ -166,11 +170,12 @@ export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>((
       ref={ref}
       variant="ghost"
       size="icon"
-      className={cn("md:hidden", className)}
+      className={cn("hover:bg-accent transition-transform duration-200 hover:scale-110", className)}
       onClick={() => setIsOpen(!isOpen)}
+      aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
       {...props}
     >
-      <Menu />
+      <Menu className="h-5 w-5" />
     </Button>
   )
 })

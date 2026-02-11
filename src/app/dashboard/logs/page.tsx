@@ -11,6 +11,7 @@ import type { SystemLog, LogLevel } from '@/lib/types';
 import { logLevels } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/auth';
+import { isSuperadmin } from '@/lib/superadmin';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -47,7 +48,7 @@ export default function LogsPage() {
     if (!user) {
         return <div className="flex h-screen items-center justify-center"><Loader2 className="h-16 w-16 animate-spin" /></div>;
     }
-    if (user.role !== 'Administrador General') {
+    if (user.role !== 'Administrador General' && !isSuperadmin(user.email)) {
         router.push('/dashboard');
         return null;
     }

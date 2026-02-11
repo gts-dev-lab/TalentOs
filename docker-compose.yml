@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  talentos:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+        - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+        - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-change-me-in-production}
+    image: talentos:latest
+    container_name: talentos-app
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXT_TELEMETRY_DISABLED=1
+    env_file:
+      - .env.production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+    networks:
+      - talentos-network
+    labels:
+      - "com.talentos.service=talentos-app"
+      - "com.talentos.description=TalentOS - Plataforma de Formación"
+
+networks:
+  talentos-network:
+    driver: bridge

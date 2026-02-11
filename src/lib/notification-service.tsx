@@ -6,21 +6,19 @@ import type { User } from './types';
 import * as db from './db';
 import { Resend } from 'resend';
 import twilio from 'twilio';
-import { GoogleAuth } from 'google-auth-library';
 import * as React from 'react';
 import { NotificationEmail } from '@/emails/notification';
 
 function getConfigValue(cookieName: string, envVarName: string): string | undefined {
-    return cookies().get(cookieName)?.value || process.env[envVarName];
-}
-
-async function getFirebaseCredentials(): Promise<{ projectId?: string; clientEmail?: string; privateKey?: string; }> {
-    const cookieStore = cookies();
-    return {
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: cookieStore.get('firebase_client_email')?.value || process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: cookieStore.get('firebase_private_key')?.value || process.env.FIREBASE_PRIVATE_KEY,
-    };
+    // Priorizar env vars sobre cookies (cookies deprecated, solo para compatibilidad temporal)
+    const envValue = process.env[envVarName];
+    if (envValue) return envValue;
+    const cookieValue = cookies().get(cookieName)?.value;
+    if (cookieValue) {
+        // Log warning si se usa cookie (deprecated)
+        console.warn(`[DEPRECATED] Using cookie "${cookieName}" for ${envVarName}. Please migrate to environment variable.`);
+    }
+    return cookieValue;
 }
 
 /**
@@ -112,89 +110,27 @@ export async function sendWhatsAppNotification(user: User, message: string): Pro
 }
 
 
-// --- Firebase Cloud Messaging (FCM) Service ---
-
-async function getFirebaseAccessToken() {
-    const scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
-    const { clientEmail, privateKey } = await getFirebaseCredentials();
-
-    if (!clientEmail || !privateKey) {
-        throw new Error('Firebase server credentials (client email, private key) are not configured.');
-    }
-
-    const auth = new GoogleAuth({
-        credentials: {
-            client_email: clientEmail,
-            private_key: privateKey.replace(/\\n/g, '\n'),
-        },
-        scopes,
-    });
-    return await auth.getAccessToken();
-}
+// --- Push Notifications (Web Notifications API) ---
+// Nota: Las notificaciones push ahora usan la API nativa del navegador
+// No se requiere Firebase. Las notificaciones se envían directamente desde el cliente.
 
 export async function sendPushNotification(userId: string, title: string, body: string, url: string): Promise<void> {
-    const { projectId, clientEmail, privateKey } = await getFirebaseCredentials();
-
-    if (!projectId || !clientEmail || !privateKey) {
-        console.warn('--- [PUSH SIMULATION] ---');
-        console.warn('Firebase server environment variables not set. Simulating push notification.');
-        console.log(`To User ID: ${userId}`);
-        console.log(`Title: ${title}`);
-        console.log(`Body: ${body}`);
-        console.log(`URL: ${url}`);
-        console.log('---------------------------');
-        await db.logSystemEvent('WARN', `Push Notification Simulation: Firebase server credentials not set for user ${userId}`);
-        return;
-    }
-
-    const user = await db.getUserById(userId);
-    if (!user || !user.fcmToken) {
-        console.log(`Skipping push for ${user?.name || userId} - no FCM token.`);
-        return;
-    }
-
-    try {
-        const accessToken = await getFirebaseAccessToken();
-        const fcmEndpoint = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
-
-        const message = {
-            message: {
-                token: user.fcmToken,
-                notification: {
-                    title,
-                    body,
-                },
-                webpush: {
-                    fcm_options: {
-                        link: url,
-                    },
-                    notification: {
-                        icon: '/icon-192x192.png',
-                    }
-                },
-            },
-        };
-
-        const response = await fetch(fcmEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(message),
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.json();
-            throw new Error(`FCM request failed with status ${response.status}: ${JSON.stringify(errorBody)}`);
-        }
-
-       await db.logSystemEvent('INFO', `Push notification sent to ${user.name}`);
-
-    } catch (error) {
-        console.error('Error sending push notification via FCM:', error);
-        await db.logSystemEvent('ERROR', `Failed to send push notification to ${user.name}`, { error: (error as Error).message });
-    }
+    // Las notificaciones push ahora se manejan directamente en el cliente usando la Web Notifications API
+    // Esta función se mantiene para compatibilidad pero no hace nada en el servidor
+    // El cliente debe usar la API nativa del navegador para mostrar notificaciones
+    
+    console.log(`[PUSH NOTIFICATION] Simulated push notification for user ${userId}:`);
+    console.log(`  Title: ${title}`);
+    console.log(`  Body: ${body}`);
+    console.log(`  URL: ${url}`);
+    
+    await db.logSystemEvent('INFO', `Push notification requested for user ${userId}`, { title, body, url });
+    
+    // Nota: Para implementar notificaciones push reales sin Firebase, se necesitaría:
+    // 1. Un service worker con Web Push API
+    // 2. Un servidor de push (ej: VAPID keys con un servidor propio)
+    // 3. Suscripción del usuario a un endpoint de push
+    // Por ahora, las notificaciones se muestran solo cuando la app está abierta usando la Web Notifications API
 }
 
     

@@ -2,6 +2,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/auth';
+import { isSuperadmin } from '@/lib/superadmin';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
@@ -11,6 +12,7 @@ import { PermissionSettings } from '@/components/settings/permission-settings';
 import { AISettings } from '@/components/settings/ai-settings';
 import { GeneralSettings } from '@/components/settings/general-settings';
 import { SyncManager } from '@/components/settings/sync-manager';
+import { BackupManager } from '@/components/settings/backup-manager';
 
 
 export default function SettingsPage() {
@@ -23,7 +25,8 @@ export default function SettingsPage() {
         </div>
     );
     
-    if (user.role !== 'Administrador General') {
+    const canAccessSettings = user.role === 'Administrador General' || isSuperadmin(user.email);
+    if (!canAccessSettings) {
         router.push('/dashboard');
         return null;
     }
@@ -33,6 +36,7 @@ export default function SettingsPage() {
         { value: 'ai', label: 'Inteligencia Artificial' },
         { value: 'certificates', label: 'Certificados' },
         { value: 'sync', label: 'Sincronización' },
+        { value: 'backup', label: 'Backups y Mantenimiento' },
         { value: 'api', label: 'APIs Externas' },
     ];
     
@@ -60,6 +64,9 @@ export default function SettingsPage() {
                     </TabsContent>
                      <TabsContent value="sync" className="mt-4 md:mt-0">
                         <SyncManager />
+                    </TabsContent>
+                    <TabsContent value="backup" className="mt-4 md:mt-0">
+                        <BackupManager />
                     </TabsContent>
                     <TabsContent value="api" className="mt-4 md:mt-0">
                         <ApiSettings />

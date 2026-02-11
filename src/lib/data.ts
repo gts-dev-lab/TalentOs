@@ -1,5 +1,5 @@
 
-import { User, Course, Role, Department, ChatChannel, AIConfig, Badge } from './types';
+import { User, Course, Role, Department, ChatChannel, AIConfig, Badge, CertificateTemplate } from './types';
 
 export const roles: Role[] = [
   'Trabajador',
@@ -22,12 +22,15 @@ export const initialCostCategories: string[] = ['Honorarios Formador', 'Licencia
 
 export const announcementChannels: string[] = ['Todos', ...roles, ...departments];
 
+const seedPasswordHash =
+  '$argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0g1AYoRxTTZLBkd8ko';
+
 export const users: Omit<User, 'isSynced' | 'updatedAt'>[] = [
     {
         id: 'user_1',
         name: 'Elena Vargas',
         email: 'elena.vargas@example.com',
-        password: 'password123',
+        passwordHash: seedPasswordHash,
         avatar: 'https://i.pravatar.cc/150?u=user1',
         role: 'Administrador General',
         department: 'Administración',
@@ -39,7 +42,7 @@ export const users: Omit<User, 'isSynced' | 'updatedAt'>[] = [
         id: 'user_2',
         name: 'Carlos Ruiz',
         email: 'carlos.ruiz@example.com',
-        password: 'password123',
+        passwordHash: seedPasswordHash,
         avatar: 'https://i.pravatar.cc/150?u=user2',
         role: 'Trabajador',
         department: 'Técnicos de Emergencias',
@@ -51,7 +54,7 @@ export const users: Omit<User, 'isSynced' | 'updatedAt'>[] = [
         id: 'user_3',
         name: 'Ana Gómez',
         email: 'ana.gomez@example.com',
-        password: 'password123',
+        passwordHash: seedPasswordHash,
         avatar: 'https://i.pravatar.cc/150?u=user3',
         role: 'Trabajador',
         department: 'Teleoperadores',
@@ -63,7 +66,7 @@ export const users: Omit<User, 'isSynced' | 'updatedAt'>[] = [
         id: 'user_4',
         name: 'Dr. Alejandro Torres',
         email: 'alejandro.torres@example.com',
-        password: 'password123',
+        passwordHash: seedPasswordHash,
         avatar: 'https://i.pravatar.cc/150?u=user4',
         role: 'Formador',
         department: 'Formación',
@@ -75,7 +78,7 @@ export const users: Omit<User, 'isSynced' | 'updatedAt'>[] = [
         id: 'user_5',
         name: 'Lucía Fernández',
         email: 'lucia.fernandez@example.com',
-        password: 'password123',
+        passwordHash: seedPasswordHash,
         avatar: 'https://i.pravatar.cc/150?u=user5',
         role: 'Jefe de Formación',
         department: 'Formación',
@@ -87,7 +90,7 @@ export const users: Omit<User, 'isSynced' | 'updatedAt'>[] = [
         id: 'user_6',
         name: 'Marcos Solís',
         email: 'marcos.solis@example.com',
-        password: 'password123',
+        passwordHash: seedPasswordHash,
         avatar: 'https://i.pravatar.cc/150?u=user6',
         role: 'Gestor de RRHH',
         department: 'Administración',
@@ -341,6 +344,36 @@ export const initialBadges: Badge[] = [
     { id: 'on_time_completion', name: 'Puntualidad Impecable', description: 'Completa un curso antes de su fecha de finalización.', icon: 'CalendarCheck' },
 ];
 
+export const initialCertificateTemplates: CertificateTemplate[] = [
+    {
+        id: 'tpl_clasico',
+        name: 'Certificado Clásico',
+        type: 'Clásico',
+        description: 'Plantilla clásica con diseño formal.',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        isSynced: true,
+    },
+    {
+        id: 'tpl_moderno',
+        name: 'Certificado Moderno',
+        type: 'Moderno',
+        description: 'Diseño moderno con estilos limpios.',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        isSynced: true,
+    },
+    {
+        id: 'tpl_profesional',
+        name: 'Certificado Profesional',
+        type: 'Profesional',
+        description: 'Plantilla profesional con énfasis corporativo.',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        isSynced: true,
+    },
+];
+
 export const defaultAIConfig: AIConfig = {
     id: 'singleton',
     activeModel: 'Gemini',
@@ -356,6 +389,53 @@ export const defaultAIConfig: AIConfig = {
     },
     defaultCertificateTemplate: 'Clásico',
 };
+
+// Enrollments de ejemplo para usuarios demo
+import type { Enrollment, UserProgress } from './types';
+
+export const initialEnrollments: Omit<Enrollment, 'id'>[] = [
+    // Elena Vargas (user_1) - Administrador General
+    { studentId: 'user_1', courseId: 'course_1', requestDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    { studentId: 'user_1', courseId: 'course_3', requestDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    { studentId: 'user_1', courseId: 'course_4', requestDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    { studentId: 'user_1', courseId: 'course_6', requestDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    
+    // Carlos Ruiz (user_2) - Trabajador
+    { studentId: 'user_2', courseId: 'course_1', requestDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    { studentId: 'user_2', courseId: 'course_2', requestDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    
+    // Ana Gómez (user_3) - Trabajador
+    { studentId: 'user_3', courseId: 'course_3', requestDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    { studentId: 'user_3', courseId: 'course_5', requestDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), status: 'active', isSynced: true },
+    
+    // Lucía Fernández (user_5) - Jefe de Formación
+    { studentId: 'user_5', courseId: 'course_1', requestDate: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(), status: 'completed', isSynced: true },
+    { studentId: 'user_5', courseId: 'course_2', requestDate: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString(), status: 'completed', isSynced: true },
+    { studentId: 'user_5', courseId: 'course_3', requestDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), status: 'completed', isSynced: true },
+];
+
+// Progreso de usuario de ejemplo
+export const initialUserProgress: Omit<UserProgress, 'id'>[] = [
+    // Elena Vargas - Progreso en curso 1 (2 de 3 módulos completados)
+    { userId: 'user_1', courseId: 'course_1', completedModules: ['m1_1', 'm1_2'], isSynced: true, updatedAt: new Date().toISOString() },
+    // Elena Vargas - Progreso en curso 3 (1 de 3 módulos completados)
+    { userId: 'user_1', courseId: 'course_3', completedModules: ['m3_1'], isSynced: true, updatedAt: new Date().toISOString() },
+    // Elena Vargas - Progreso en curso 4 (0 de 3 módulos - recién empezado)
+    { userId: 'user_1', courseId: 'course_4', completedModules: [], isSynced: true, updatedAt: new Date().toISOString() },
+    
+    // Carlos Ruiz - Progreso en curso 1 (completado)
+    { userId: 'user_2', courseId: 'course_1', completedModules: ['m1_1', 'm1_2', 'm1_3'], isSynced: true, updatedAt: new Date().toISOString() },
+    // Carlos Ruiz - Progreso en curso 2 (1 de 3 módulos)
+    { userId: 'user_2', courseId: 'course_2', completedModules: ['m2_1'], isSynced: true, updatedAt: new Date().toISOString() },
+    
+    // Ana Gómez - Progreso en curso 3 (2 de 3 módulos)
+    { userId: 'user_3', courseId: 'course_3', completedModules: ['m3_1', 'm3_2'], isSynced: true, updatedAt: new Date().toISOString() },
+    
+    // Lucía Fernández - Todos los cursos completados
+    { userId: 'user_5', courseId: 'course_1', completedModules: ['m1_1', 'm1_2', 'm1_3'], isSynced: true, updatedAt: new Date().toISOString() },
+    { userId: 'user_5', courseId: 'course_2', completedModules: ['m2_1', 'm2_2', 'm2_3'], isSynced: true, updatedAt: new Date().toISOString() },
+    { userId: 'user_5', courseId: 'course_3', completedModules: ['m3_1', 'm3_2', 'm3_3'], isSynced: true, updatedAt: new Date().toISOString() },
+];
 
 
 

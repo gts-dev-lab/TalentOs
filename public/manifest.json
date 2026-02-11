@@ -1,22 +1,57 @@
-
 {
-  "name": "TalentOS",
+  "name": "TalentOS - Plataforma de Formación",
   "short_name": "TalentOS",
   "description": "La plataforma de formación impulsada por IA para tu equipo.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#EBF5FF",
+  "orientation": "any",
+  "background_color": "#ffffff",
   "theme_color": "#2E9AFE",
+  "categories": ["business", "education", "productivity"],
+  "lang": "es",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Acceso rápido al dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Cursos",
+      "short_name": "Cursos",
+      "description": "Ver catálogo de cursos",
+      "url": "/dashboard/courses",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -82,6 +82,7 @@ export default function LandingPage() {
               src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop"
               alt="Un equipo colaborando en una oficina moderna durante una sesión de formación."
               fill
+              priority
               className="rounded-xl shadow-2xl object-cover"
               data-ai-hint="team training"
             />

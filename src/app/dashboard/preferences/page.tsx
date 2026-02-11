@@ -13,7 +13,7 @@ import { PushNotificationSettings } from '@/components/settings/push-notificatio
 
 export default function PreferencesPage() {
     const { toast } = useToast();
-    const { user, login } = useAuth();
+    const { user } = useAuth();
     
     const [preferences, setPreferences] = useState<{
         consent: boolean;
@@ -50,10 +50,6 @@ export default function PreferencesPage() {
 
             await db.updateUser(user.id, updatedData);
             
-            if (user.password) {
-              await login(user.email, user.password);
-            }
-
             toast({
                 title: "Preferencias Guardadas",
                 description: "Tus preferencias de contacto han sido guardadas.",

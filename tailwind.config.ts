@@ -22,6 +22,22 @@ export default {
         headline: ['Inter', 'sans-serif'],
         code: ['monospace'],
       },
+      boxShadow: {
+        'frappe-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'frappe': '0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08)',
+        'frappe-md': '0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08)',
+        'frappe-lg': '0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08)',
+      },
+      borderRadius: {
+        'frappe-sm': '4px',
+        'frappe': '6px',
+        'frappe-lg': '8px',
+      },
+      transitionDuration: {
+        'frappe-fast': '150ms',
+        'frappe': '200ms',
+        'frappe-slow': '300ms',
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

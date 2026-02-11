@@ -1,4 +1,4 @@
-@import "../styles/react-big-calendar.css";
+@import '../styles/design-tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,8 +65,52 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Frappe-style layout utilities (UI only) */
+@layer components {
+  .frappe-sidebar {
+    background: hsl(var(--frappe-sidebar-bg));
+    color: hsl(var(--frappe-sidebar-fg));
+  }
+  .frappe-sidebar a:hover,
+  .frappe-sidebar button:hover {
+    background: hsl(var(--frappe-sidebar-hover));
+  }
+  .frappe-topbar {
+    background: hsl(var(--frappe-topbar-bg));
+    border-color: hsl(var(--frappe-topbar-border));
+  }
+  .frappe-card {
+    box-shadow: var(--frappe-shadow);
+    border-radius: var(--frappe-radius-md);
+  }
+  .frappe-page {
+    @apply min-h-[calc(100vh-3.5rem)] p-4 md:p-6;
+  }
+  
+  /* Responsive improvements */
+  @media (max-width: 768px) {
+    .frappe-page {
+      @apply p-3;
+    }
+  }
+  
+  /* Skeleton improvements */
+  .frappe-skeleton {
+    @apply animate-pulse rounded-frappe-sm bg-muted/60;
+  }
+  
+  /* Smooth transitions for interactive elements */
+  .frappe-interactive {
+    @apply transition-all duration-frappe ease-out;
+  }
+  
+  .frappe-interactive:hover {
+    @apply transition-all duration-frappe-fast;
   }
 }

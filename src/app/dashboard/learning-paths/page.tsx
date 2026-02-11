@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
+import { Pagination } from '@/components/ui/pagination';
 
 export default function LearningPathsPage() {
   const { toast } = useToast();
@@ -53,6 +54,16 @@ export default function LearningPathsPage() {
   if (!learningPaths || !allCourses) {
     return <div className="flex h-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin" /></div>;
   }
+
+  const totalPages = Math.ceil(learningPaths.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedPaths = learningPaths.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="space-y-8">
@@ -123,6 +134,17 @@ export default function LearningPathsPage() {
                 </TableBody>
               </Table>
             </div>
+            {learningPaths.length > 0 && (
+              <div className="mt-4">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={learningPaths.length}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
 

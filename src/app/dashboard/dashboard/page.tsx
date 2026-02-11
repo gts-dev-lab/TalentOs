@@ -20,6 +20,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { LearningPathPanel } from '@/components/dashboard/learning-path-panel';
 import { InstructorDashboardView } from '@/components/dashboard/instructor-view';
+import { QuickActions } from '@/components/dashboard/quick-actions';
+import { RecentActivity } from '@/components/dashboard/recent-activity';
 
 
 function AnnouncementsPanel({ user }: { user: User }) {
@@ -346,6 +348,17 @@ function StudentDashboardView({ user }: { user: User }) {
         <StatCard title="Certificados Obtenidos" value={completedCoursesCount.toString()} icon={GraduationCap} />
         {isManager && <StatCard title="Coste Total" value={`${totalCost.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}`} icon={Wallet} description="Presupuesto: 25,000€" />}
       </div>
+      
+      {/* Nuevos Widgets: Acciones Rápidas y Actividad Reciente */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <QuickActions />
+        </div>
+        <div className="lg:col-span-1">
+          <RecentActivity />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <MandatoryCoursesPanel user={user} />
         <AnnouncementsPanel user={user} />

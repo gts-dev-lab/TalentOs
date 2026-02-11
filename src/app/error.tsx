@@ -4,8 +4,12 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, RefreshCw } from 'lucide-react'
 import * as db from '@/lib/db';
+
+function isChunkLoadError(error: Error): boolean {
+  return error?.name === 'ChunkLoadError' || /ChunkLoadError|Loading chunk \d+ failed/i.test(String(error?.message ?? ''));
+}
 
 export default function Error({
   error,
@@ -15,12 +19,16 @@ export default function Error({
   reset: () => void
 }) {
   const router = useRouter();
+  const chunkError = isChunkLoadError(error);
 
   useEffect(() => {
-    // Log the error to console and to our internal system log
     console.error(error);
     db.logSystemEvent('ERROR', error.message, { stack: error.stack, digest: error.digest });
-  }, [error])
+  }, [error]);
+
+  const handleFullReload = () => {
+    window.location.reload();
+  };
 
   return (
     <div className="flex h-screen items-center justify-center bg-background p-4">
@@ -30,13 +38,27 @@ export default function Error({
                     <AlertTriangle className="h-8 w-8" />
                 </div>
                 <CardTitle className="mt-4 text-3xl font-bold">¡Ups! Algo salió mal</CardTitle>
-                <CardDescription>Hemos encontrado un error inesperado. Por favor, intenta recargar la página.</CardDescription>
+                <CardDescription>
+                  {chunkError
+                    ? 'No se pudieron cargar algunos recursos. Haz una recarga completa de la página (Ctrl+Shift+R o Cmd+Shift+R) o usa el botón de abajo.'
+                    : 'Hemos encontrado un error inesperado. Por favor, intenta recargar la página.'}
+                </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="rounded-md bg-muted p-4 text-left text-xs text-muted-foreground">
-                    <p className="font-mono"><strong>Error:</strong> {error.message}</p>
+                    <p className="font-mono break-all"><strong>Error:</strong> {String(error?.message ?? 'Unknown error')}</p>
                 </div>
-                 <div className="flex w-full gap-4">
+                 <div className="flex w-full gap-4 flex-wrap">
+                   {chunkError && (
+                     <Button
+                       onClick={handleFullReload}
+                       className="w-full"
+                       variant="default"
+                     >
+                       <RefreshCw className="mr-2 h-4 w-4" />
+                       Recargar página por completo
+                     </Button>
+                   )}
                      <Button
                         onClick={() => reset()}
                         className="w-full"
@@ -45,10 +67,11 @@ export default function Error({
                         Intentar de Nuevo
                     </Button>
                     <Button
-                        onClick={() => router.push('/dashboard')}
+                        onClick={() => router.push('/')}
                         className="w-full"
+                        variant="outline"
                     >
-                        Volver al Dashboard
+                        Ir al inicio
                     </Button>
                  </div>
             </CardContent>

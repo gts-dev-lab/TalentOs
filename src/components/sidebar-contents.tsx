@@ -12,6 +12,7 @@ import {
 import { useAuth } from '@/contexts/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getNavItems } from '@/lib/nav';
+import { isSuperadmin } from '@/lib/superadmin';
 import { Skeleton } from './ui/skeleton';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -41,9 +42,9 @@ export function SidebarContents() {
     )
   }
 
-  const visibleNavItems = allNavItems.filter((item) =>
-    userPermissions.includes(item.href)
-  );
+  const visibleNavItems = isSuperadmin(user.email)
+    ? allNavItems
+    : allNavItems.filter((item) => userPermissions.includes(item.href));
 
   const activeItem = visibleNavItems
     .filter((item) => pathname.startsWith(item.href))
@@ -52,9 +53,9 @@ export function SidebarContents() {
   return (
     <>
       <SidebarHeader>
-        <Link href="/dashboard" className="flex items-center gap-2 p-2">
-          <GraduationCap className="h-8 w-8 text-primary" />
-          {isOpen && <span className="text-xl font-semibold">TalentOS</span>}
+        <Link href="/dashboard" className="flex items-center gap-2 rounded-frappe-sm p-2 text-[hsl(var(--frappe-sidebar-fg))] hover:bg-[hsl(var(--frappe-sidebar-hover))]">
+          <GraduationCap className="h-7 w-7 shrink-0 opacity-90" />
+          {isOpen && <span className="text-base font-semibold truncate">TalentOS</span>}
         </Link>
       </SidebarHeader>
       <SidebarContent>
@@ -76,18 +77,16 @@ export function SidebarContents() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex items-center justify-between p-3">
-            <div className="flex items-center gap-3 overflow-hidden">
-                <Avatar className="h-10 w-10">
+        <div className="flex items-center justify-between gap-2 px-2 py-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+                <Avatar className="h-9 w-9 shrink-0 ring-2 ring-[hsl(var(--frappe-sidebar-muted)_/_0.3)]">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="text-[hsl(var(--frappe-sidebar-fg))] bg-[hsl(var(--frappe-sidebar-hover))]">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {isOpen && (
-                    <div className="overflow-hidden">
-                    <p className="font-semibold truncate">{user.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">
-                        {user.role}
-                    </p>
+                    <div className="min-w-0 overflow-hidden">
+                    <p className="truncate text-sm font-medium text-[hsl(var(--frappe-sidebar-fg))]">{user.name}</p>
+                    <p className="truncate text-xs text-[hsl(var(--frappe-sidebar-muted))]">{user.role}</p>
                     </div>
                 )}
             </div>
@@ -95,10 +94,10 @@ export function SidebarContents() {
                 <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 shrink-0 text-[hsl(var(--frappe-sidebar-fg))] hover:bg-[hsl(var(--frappe-sidebar-hover))]"
                 onClick={() => setIsOpen(!isOpen)}
                 >
-                {isOpen ? <ChevronsLeft /> : <ChevronsRight />}
+                {isOpen ? <ChevronsLeft className="h-4 w-4" /> : <ChevronsRight className="h-4 w-4" />}
                 </Button>
             )}
         </div>

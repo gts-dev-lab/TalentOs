@@ -29,8 +29,13 @@ export async function getActiveAIProvider(): Promise<{
 
   switch (activeModel) {
     case 'OpenAI':
-      apiKey = cookieStore.get('openai_api_key')?.value;
-      if (!apiKey) throw new Error("La clave API para OpenAI no está configurada.");
+      apiKey = process.env.OPENAI_API_KEY || cookieStore.get('openai_api_key')?.value;
+      if (!apiKey) {
+        throw new Error("La clave API para OpenAI no está configurada. Configúrala como OPENAI_API_KEY en .env.local");
+      }
+      if (cookieStore.get('openai_api_key')?.value && !process.env.OPENAI_API_KEY) {
+        console.warn('[DEPRECATED] Using cookie "openai_api_key". Please migrate to OPENAI_API_KEY env var.');
+      }
       llm = openAI.model('gpt-4-turbo');
       plugins = [openAI({ apiKey })];
       break;
@@ -42,9 +47,12 @@ export async function getActiveAIProvider(): Promise<{
 
     case 'Gemini':
     default:
-      apiKey = cookieStore.get('gemini_api_key')?.value || process.env.GOOGLE_API_KEY;
+      apiKey = process.env.GOOGLE_API_KEY || cookieStore.get('gemini_api_key')?.value;
       if (!apiKey) {
-        throw new Error('La clave API para Gemini no está configurada. Por favor, configúrala en Ajustes > Inteligencia Artificial.');
+        throw new Error('La clave API para Gemini no está configurada. Configúrala como GOOGLE_API_KEY en .env.local');
+      }
+      if (cookieStore.get('gemini_api_key')?.value && !process.env.GOOGLE_API_KEY) {
+        console.warn('[DEPRECATED] Using cookie "gemini_api_key". Please migrate to GOOGLE_API_KEY env var.');
       }
       llm = googleAI.model('gemini-1.5-flash-latest');
       plugins = [googleAI({ apiKey })];

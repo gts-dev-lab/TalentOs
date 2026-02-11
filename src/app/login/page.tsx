@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,13 +10,16 @@ import { Label } from '@/components/ui/label';
 import { AppLogo } from '@/components/icons';
 import { useAuth } from '@/contexts/auth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Loader2, Gitlab } from 'lucide-react';
+import { Terminal, Loader2, Gitlab, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { users as testUsers } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase-client';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase-client';
+
+const DEMO_PASSWORD = 'password123';
+const authentikEnabled = process.env.NEXT_PUBLIC_AUTHENTIK_ENABLED === 'true';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -62,15 +66,6 @@ export default function LoginPage() {
     }
   };
 
-  async function handleOAuthLogin(provider: 'google' | 'github') {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-  }
-  
   const formIsDisabled = isAuthLoading || isSubmitting;
 
   return (
@@ -143,7 +138,7 @@ export default function LoginPage() {
               key={testUser.id}
               onClick={() => {
                 setEmail(testUser.email);
-                setPassword(testUser.password!);
+                setPassword(DEMO_PASSWORD);
               }}
               className="flex flex-col items-center gap-2 text-center text-xs hover:bg-muted p-2 rounded-lg transition-colors"
               disabled={formIsDisabled}
@@ -159,30 +154,34 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
+      {authentikEnabled && (
       <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 space-y-4">
               <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
                       <span className="bg-background px-2 text-muted-foreground">
-                          O inicia sesión con un proveedor
+                          O inicia sesión con cuenta empresarial
                       </span>
                   </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                  <Button variant="outline" onClick={() => handleOAuthLogin('google')}>
-                      <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4"><path fill="currentColor" d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.3 1.62-3.85 1.62-4.75 0-8.58-3.83-8.58-8.58s3.83-8.58 8.58-8.58c2.6 0 4.5 1.05 5.9 2.4l2.17-2.17C19.33 1.62 16.25 0 12.48 0 5.6 0 0 5.6 0 12.48s5.6 12.48 12.48 12.48c7.34 0 12.04-4.92 12.04-12.04 0-.76-.08-1.5-.2-2.24h-9.84z"></path></svg>
-                      Google
-                  </Button>
-                   <Button variant="outline" onClick={() => handleOAuthLogin('github')}>
-                      <Gitlab className="mr-2 h-4 w-4" />
-                      Gitlab
-                  </Button>
-              </div>
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => signIn('authentik', { callbackUrl: '/dashboard' })}
+                disabled={formIsDisabled}
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                Google / Microsoft (Authentik)
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                Proveedor de identidad autoalojado. Configuración en el servidor.
+              </p>
           </CardContent>
         </Card>
+      )}
     </div>
   );
 }

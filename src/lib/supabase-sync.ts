@@ -21,17 +21,26 @@ async function syncTable<T extends { id?: number | string; isSynced?: boolean }>
   transform: (item: T) => object,
   idColumn: string = 'id'
 ): Promise<{ upserted: number; errors: number }> {
-  const unsyncedItems = await dexieTable.where('isSynced').equals('false').toArray();
+  const unsyncedItems = await dexieTable.where('isSynced').equals(false).toArray();
   if (unsyncedItems.length === 0) return { upserted: 0, errors: 0 };
 
   const itemsToUpsert = unsyncedItems.map(transform);
 
-  const { error } = await supabase.from(supabaseTable).upsert(itemsToUpsert, {
-    onConflict: idColumn,
-  });
-
-  if (error) {
-    db.logSystemEvent('ERROR', `Supabase error syncing table ${supabaseTable}`, { error });
+  const maxRetries = 3;
+  let lastError: unknown = null;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const { error } = await supabase.from(supabaseTable).upsert(itemsToUpsert, {
+      onConflict: idColumn,
+    });
+    if (!error) break;
+    lastError = error;
+    db.logSystemEvent('WARN', `Supabase sync ${supabaseTable} attempt ${attempt}/${maxRetries} failed`, { error });
+    if (attempt < maxRetries) {
+      await new Promise((r) => setTimeout(r, 1000 * attempt));
+    }
+  }
+  if (lastError) {
+    db.logSystemEvent('ERROR', `Supabase error syncing table ${supabaseTable} after ${maxRetries} attempts`, { error: lastError });
     return { upserted: 0, errors: unsyncedItems.length };
   }
 
@@ -58,7 +67,7 @@ export async function syncToSupabase(dbInstance: Dexie & { [key: string]: Dexie.
             dexieTable: dbInstance.users,
             supabaseTable: 'Users',
             transform: (item: any) => {
-                const { isSynced, password, ...rest } = item;
+                const { isSynced, password, passwordHash, ...rest } = item;
                 return rest;
             }
         },
@@ -100,6 +109,54 @@ export async function syncToSupabase(dbInstance: Dexie & { [key: string]: Dexie.
                 return rest;
             },
             idColumn: 'id'
+        },
+        {
+            dexieTable: dbInstance.certificateTemplates,
+            supabaseTable: 'CertificateTemplates',
+            transform: (item: any) => {
+                const { isSynced, ...rest } = item;
+                return rest;
+            }
+        },
+        {
+            dexieTable: dbInstance.certificates,
+            supabaseTable: 'Certificates',
+            transform: (item: any) => {
+                const { isSynced, ...rest } = item;
+                return rest;
+            }
+        },
+        {
+            dexieTable: dbInstance.individualDevelopmentPlans,
+            supabaseTable: 'IndividualDevelopmentPlans',
+            transform: (item: any) => {
+                const { isSynced, ...rest } = item;
+                return rest;
+            }
+        },
+        {
+            dexieTable: dbInstance.regulations,
+            supabaseTable: 'Regulations',
+            transform: (item: any) => {
+                const { isSynced, ...rest } = item;
+                return rest;
+            }
+        },
+        {
+            dexieTable: dbInstance.regulationCompliance,
+            supabaseTable: 'RegulationCompliance',
+            transform: (item: any) => {
+                const { isSynced, ...rest } = item;
+                return rest;
+            }
+        },
+        {
+            dexieTable: dbInstance.complianceAudits,
+            supabaseTable: 'ComplianceAudits',
+            transform: (item: any) => {
+                const { isSynced, ...rest } = item;
+                return rest;
+            }
         },
     ];
 

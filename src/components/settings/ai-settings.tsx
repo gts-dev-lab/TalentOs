@@ -106,19 +106,15 @@ export function AISettings() {
                     
                     <div className="space-y-2">
                         <Label>Claves API de los Proveedores</Label>
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg border p-4">
-                            <div className="space-y-1">
-                                <Label htmlFor="gemini_api_key">Google (Gemini)</Label>
-                                <Input id="gemini_api_key" name="gemini_api_key" type="password" placeholder="Clave no establecida" />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="openai_api_key">OpenAI (GPT)</Label>
-                                <Input id="openai_api_key" name="openai_api_key" type="password" placeholder="Clave no establecida" />
+                        <div className="rounded-lg border p-4 bg-muted/50">
+                            <p className="text-sm text-muted-foreground mb-3">
+                                Las claves API deben configurarse como variables de entorno en <code className="text-xs bg-background px-1 py-0.5 rounded">.env.local</code>:
+                            </p>
+                            <div className="space-y-2 font-mono text-sm">
+                                <div><code>GOOGLE_API_KEY=tu_clave_gemini</code> <span className="text-muted-foreground">(para Gemini)</span></div>
+                                <div><code>OPENAI_API_KEY=tu_clave_openai</code> <span className="text-muted-foreground">(para GPT)</span></div>
                             </div>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            Las claves se guardan de forma segura y no son visibles. Deja un campo en blanco y guarda para eliminar la clave actual.
-                        </p>
                     </div>
                 </CardContent>
             </Card>

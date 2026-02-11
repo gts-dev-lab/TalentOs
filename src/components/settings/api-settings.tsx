@@ -1,95 +1,55 @@
 
 'use client';
 
-import { useEffect, useRef, useActionState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { saveApiKeysAction } from '@/app/dashboard/settings/actions';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Server, HelpCircle, Mail, MessageSquare, Bell, Database } from 'lucide-react';
+import { Server, Database, MessageSquare, Code } from 'lucide-react';
 
 export function ApiSettings() {
-    const { toast } = useToast();
-    const formRef = useRef<HTMLFormElement>(null);
-    const [state, formAction] = useActionState(saveApiKeysAction, { success: false, message: '' });
-
-    useEffect(() => {
-        if (state.message) {
-            toast({
-                title: state.success ? 'Éxito' : 'Error',
-                description: state.message,
-                variant: state.success ? 'default' : 'destructive',
-            });
-        }
-    }, [state, toast]);
-
     return (
          <Card>
             <CardHeader>
                 <CardTitle>Configuración de APIs Externas</CardTitle>
-                <CardDescription>Gestiona las claves para servicios externos como email, WhatsApp y notificaciones push.</CardDescription>
+                <CardDescription>Las claves de API deben configurarse como variables de entorno en <code className="text-xs bg-muted px-1 py-0.5 rounded">.env.local</code> para mayor seguridad.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <form ref={formRef} action={formAction} className="space-y-6">
-                    <div className="space-y-4 rounded-lg border p-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2"><Database />Supabase (Sincronización)</h3>
-                        <p className="text-sm text-muted-foreground">Necesario para la sincronización de datos. Esta clave permite al servidor escribir en la base de datos de Supabase. Obténla en `Project Settings > API`.</p>
-                         <div className="space-y-2">
-                            <Label htmlFor="supabase_service_role_key">Clave de Rol de Servicio de Supabase</Label>
-                            <Input id="supabase_service_role_key" name="supabase_service_role_key" type="password" placeholder="Introduce la clave 'service_role'" />
-                        </div>
-                    </div>
+                <Alert variant="default" className="border-blue-200 bg-blue-50">
+                    <Server className="h-4 w-4 text-blue-600" />
+                    <AlertTitle className="text-blue-900">Configuración mediante Variables de Entorno</AlertTitle>
+                    <AlertDescription className="text-blue-800">
+                        Por seguridad, las API keys ahora deben configurarse en <code className="text-xs bg-white px-1 py-0.5 rounded">.env.local</code> (desarrollo) o en las variables de entorno de tu plataforma de hosting (producción). Consulta <code className="text-xs bg-white px-1 py-0.5 rounded">docs/SETUP_GUIDE.md</code> para más detalles.
+                    </AlertDescription>
+                </Alert>
 
-                    <div className="space-y-4 rounded-lg border p-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2"><Bell />Firebase (Notificaciones Push)</h3>
-                        <p className="text-sm text-muted-foreground">Necesario para enviar notificaciones push. Consulta la guía de despliegue para obtener estas credenciales de tu cuenta de servicio de Firebase.</p>
-                         <div className="space-y-4">
-                             <div className="space-y-2">
-                                <Label htmlFor="firebase_client_email">Email del Cliente de Firebase</Label>
-                                <Input id="firebase_client_email" name="firebase_client_email" type="email" placeholder="firebase-adminsdk-...@...iam.gserviceaccount.com" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="firebase_private_key">Clave Privada de Firebase</Label>
-                                <Input id="firebase_private_key" name="firebase_private_key" type="password" placeholder="Introduce la clave privada (comienza con -----BEGIN PRIVATE KEY-----)" />
-                            </div>
-                        </div>
+                <div className="space-y-4 rounded-lg border p-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2"><Database />Supabase (Sincronización)</h3>
+                    <p className="text-sm text-muted-foreground mb-3">Necesario para la sincronización de datos. Obtén la clave en Project Settings &gt; API de tu proyecto Supabase.</p>
+                    <div className="bg-muted p-3 rounded font-mono text-sm">
+                        <div><code>SUPABASE_SERVICE_ROLE_KEY=tu_clave_service_role_secreta</code></div>
                     </div>
+                </div>
 
-                     <div className="space-y-4 rounded-lg border p-4">
-                        <h3 className="text-lg font-semibold flex items-center gap-2"><MessageSquare/>Twilio (WhatsApp)</h3>
-                         <div className="space-y-4">
-                             <div className="space-y-2">
-                                <Label htmlFor="twilio_account_sid">Account SID de Twilio</Label>
-                                <Input id="twilio_account_sid" name="twilio_account_sid" type="text" placeholder="AC..." />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="twilio_auth_token">Auth Token de Twilio</Label>
-                                <Input id="twilio_auth_token" name="twilio_auth_token" type="password" placeholder="Introduce tu Auth Token" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="twilio_whatsapp_from">Número de WhatsApp Remitente</Label>
-                                <Input id="twilio_whatsapp_from" name="twilio_whatsapp_from" type="text" placeholder="+14155238886" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="twilio_whatsapp_to_test">Número de WhatsApp para Pruebas</Label>
-                                <Input id="twilio_whatsapp_to_test" name="twilio_whatsapp_to_test" type="text" placeholder="+34123456789" />
-                            </div>
-                        </div>
+                <div className="space-y-4 rounded-lg border p-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2"><MessageSquare/>Twilio (WhatsApp)</h3>
+                    <p className="text-sm text-muted-foreground mb-3">Opcional. Para enviar notificaciones por WhatsApp.</p>
+                    <div className="bg-muted p-3 rounded font-mono text-sm space-y-1">
+                        <div><code>TWILIO_ACCOUNT_SID=AC...</code></div>
+                        <div><code>TWILIO_AUTH_TOKEN=tu_auth_token</code></div>
+                        <div><code>TWILIO_WHATSAPP_FROM=+14155238886</code></div>
+                        <div><code>TWILIO_WHATSAPP_TO_TEST=+34123456789</code></div>
                     </div>
-                    
-                    <div className="flex justify-end">
-                        <Button type="submit">Guardar Configuraciones de APIs</Button>
-                    </div>
-                </form>
-                 
-                 <Alert className="mt-6">
-                    <Server className="h-4 w-4" />
-                    <AlertTitle>Nota sobre Despliegue en Producción</AlertTitle>
-                    <AlertDescription>
-                        Para un entorno de producción, se recomienda encarecidamente configurar estas claves como **variables de entorno** en tu plataforma de hosting (Vercel, Netlify, etc.) en lugar de guardarlas aquí. La aplicación buscará primero las variables de entorno. Consulta la documentación de despliegue para más detalles.
+                </div>
+
+                <Alert className="mt-6">
+                    <Code className="h-4 w-4" />
+                    <AlertTitle>Ejemplo de .env.local</AlertTitle>
+                    <AlertDescription className="font-mono text-xs">
+                        <pre className="whitespace-pre-wrap">{`# Supabase
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
+
+# Twilio (opcional)
+TWILIO_ACCOUNT_SID=AC...
+TWILIO_AUTH_TOKEN=xxx`}</pre>
                     </AlertDescription>
                 </Alert>
             </CardContent>

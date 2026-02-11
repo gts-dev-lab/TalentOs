@@ -16,90 +16,55 @@ const cookieOptions = {
 };
 
 export async function saveApiKeysAction(prevState: any, formData: FormData) {
-  try {
-    const fieldsToSet = [
-      'twilio_account_sid', 'twilio_auth_token', 'twilio_whatsapp_from', 'twilio_whatsapp_to_test',
-      'firebase_client_email', 'firebase_private_key',
-      'supabase_service_role_key',
-    ];
-
-    for (const field of fieldsToSet) {
-        const value = formData.get(field) as string;
-        if (value) {
-            cookies().set(field, value, cookieOptions);
-        }
-    }
-    
-    revalidatePath('/dashboard/settings');
-    return { success: true, message: 'La configuración de APIs ha sido guardada.' };
-  } catch (error) {
-    await db.logSystemEvent('ERROR', 'Failed to save API keys', { error: (error as Error).message });
-    return { success: false, message: 'Error al guardar la configuración de APIs.' };
-  }
+  await db.logSystemEvent('WARN', 'API keys save attempted via UI - deprecated. Use environment variables instead.');
+  revalidatePath('/dashboard/settings');
+  return { 
+    success: false, 
+    message: 'Las API keys ahora deben configurarse como variables de entorno en .env.local. Consulta la documentación de despliegue.' 
+  };
 }
 
 export async function saveAIConfigAction(prevState: any, formData: FormData) {
   try {
-    if (formData.has('openai_api_key')) {
-        const openaiApiKey = formData.get('openai_api_key') as string;
-        if (openaiApiKey) {
-            cookies().set('openai_api_key', openaiApiKey, cookieOptions);
-        } else {
-            cookies().delete('openai_api_key');
-        }
-    }
-
-    if (formData.has('gemini_api_key')) {
-        const geminiApiKey = formData.get('gemini_api_key') as string;
-        if (geminiApiKey) {
-            cookies().set('gemini_api_key', geminiApiKey, cookieOptions);
-        } else {
-            cookies().delete('gemini_api_key');
-        }
-    }
-    
+    // API keys ahora se leen solo de env vars, no se guardan en cookies
+    // Solo guardamos el modelo activo y features en Dexie
     if (formData.has('activeModel')) {
         const activeModel = formData.get('activeModel') as AIModel;
         if (activeModel) {
-            cookies().set('ai_active_model', activeModel, cookieOptions);
+            const config = await db.getAIConfig();
+            await db.saveAIConfig({ ...config, activeModel });
         }
     }
 
     revalidatePath('/dashboard/settings');
-    return { success: true, message: 'La configuración de IA ha sido actualizada.' };
+    return { 
+      success: true, 
+      message: 'Configuración de modelo guardada. Las API keys deben configurarse en .env.local (OPENAI_API_KEY, GOOGLE_API_KEY).' 
+    };
   } catch (error) {
     await db.logSystemEvent('ERROR', 'Failed to save AI config', { error: (error as Error).message });
     return { success: false, message: 'Error al guardar la configuración de IA.' };
   }
 }
 
-export async function saveFcmTokenAction(token: string) {
+// Nota: saveFcmTokenAction eliminado - ya no se usa Firebase
+// Las notificaciones ahora usan la API nativa del navegador
+
+export async function sendTestPushNotificationAction() {
     const user = await db.getLoggedInUser();
     if (!user) {
         return { success: false, message: 'Usuario no autenticado.' };
     }
     try {
-        await db.saveFcmToken(user.id!, token);
-        return { success: true, message: 'Token guardado correctamente.' };
-    } catch (error) {
-        await db.logSystemEvent('ERROR', 'Failed to save FCM token', { error: (error as Error).message });
-        return { success: false, message: 'No se pudo guardar el token.' };
-    }
-}
-
-export async function sendTestPushNotificationAction() {
-    const user = await db.getLoggedInUser();
-    if (!user || !user.fcmToken) {
-        return { success: false, message: 'Usuario no autenticado o sin token.' };
-    }
-    try {
+        // Las notificaciones ahora se manejan en el cliente usando la Web Notifications API
+        // Esta función solo registra el evento en el log
         await sendPushNotification(
             user.id!,
             'Notificación de Prueba',
             '¡La configuración funciona correctamente!',
             '/dashboard'
         );
-        return { success: true, message: 'Notificación de prueba enviada.' };
+        return { success: true, message: 'Notificación de prueba solicitada. Revisa tu navegador.' };
     } catch (error) {
         await db.logSystemEvent('ERROR', 'Failed to send test push notification', { error: (error as Error).message });
         return { success: false, message: 'No se pudo enviar la notificación.' };

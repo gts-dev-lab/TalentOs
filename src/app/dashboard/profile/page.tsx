@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
@@ -11,11 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ProfileSettings } from '@/components/settings/profile-settings';
 import { TrainingHistory } from '@/components/settings/training-history';
+import { CertificateList } from '@/components/certificates/CertificateList';
+import { PrivacyAndDataSettings } from '@/components/settings/privacy-and-data';
+import type { Course } from '@/lib/types';
 import { AchievementsSettings } from '@/components/settings/achievements-settings';
 
 export default function ProfilePage() {
     const { toast } = useToast();
-    const { user, login } = useAuth();
+    const { user } = useAuth();
     
     const [profile, setProfile] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -33,7 +37,13 @@ export default function ProfilePage() {
         }
     }, [user]);
 
-    if (!user || !profile) {
+    const certificates = useLiveQuery(() => (user ? db.getCertificatesForUser(user.id) : []), [user?.id]);
+    const courses = useLiveQuery<Course[]>(() => db.getAllCourses(), []);
+
+    const usersById = useMemo(() => new Map(user ? [[user.id, user]] : []), [user]);
+    const coursesById = useMemo(() => new Map((courses || []).map(c => [c.id, c])), [courses]);
+
+    if (!user || !profile || certificates === undefined || courses === undefined) {
         return (
             <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-16 w-16 animate-spin text-primary" />
@@ -56,10 +66,7 @@ export default function ProfilePage() {
 
             await db.updateUser(user.id, updatedData);
             
-            // Re-login to update the user object in the auth context
-            if (user.password) {
-              await login(profile.email, user.password);
-            }
+            // The auth context will refresh on next load.
 
             toast({
                 title: "Perfil Guardado",
@@ -87,8 +94,10 @@ export default function ProfilePage() {
     
     const userTabs = [
         { value: 'profile', label: 'Información Personal' },
+        { value: 'certificates', label: 'Certificados' },
         { value: 'achievements', label: 'Logros' },
         { value: 'training-history', label: 'Historial Formativo' },
+        { value: 'privacy', label: 'Datos y privacidad' },
     ];
     
     return (
@@ -99,7 +108,7 @@ export default function ProfilePage() {
             </div>
             <div className="grid grid-cols-1 gap-8">
                  <Tabs defaultValue="profile" className="w-full">
-                    <TabsList className="grid w-full max-w-2xl grid-cols-1 md:grid-cols-3">
+                    <TabsList className="grid w-full max-w-2xl grid-cols-1 md:grid-cols-4 lg:grid-cols-5">
                         {userTabs.map(tab => (
                              <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
                         ))}
@@ -113,11 +122,21 @@ export default function ProfilePage() {
                             </Button>
                         </div>
                     </TabsContent>
+                    <TabsContent value="certificates" className="mt-4">
+                        <CertificateList
+                            certificates={certificates || []}
+                            usersById={usersById}
+                            coursesById={coursesById}
+                        />
+                    </TabsContent>
                     <TabsContent value="achievements" className="mt-4">
                         <AchievementsSettings user={user} />
                     </TabsContent>
                     <TabsContent value="training-history" className="mt-4">
                         <TrainingHistory />
+                    </TabsContent>
+                    <TabsContent value="privacy" className="mt-4">
+                        <PrivacyAndDataSettings />
                     </TabsContent>
                 </Tabs>
             </div>

@@ -67,6 +67,11 @@ La aplicación necesita claves secretas para conectarse a servicios externos. Es
     NEXT_PUBLIC_SUPABASE_ANON_KEY="TU_CLAVE_ANON_PUBLICA"
     SUPABASE_SERVICE_ROLE_KEY="TU_CLAVE_SERVICE_ROLE_SECRETA"
 
+    # --- Sesiones JWT (Opcional, recomendado en producción) ---
+    # Secreto para firmar y verificar JWTs. Mínimo 32 caracteres.
+    # Si no se define, el login usa solo Dexie (local). Con JWT_SECRET, se usan cookies httpOnly.
+    JWT_SECRET="TU_SECRETO_DE_AL_MENOS_32_CARACTERES"
+
     # --- Configuración de IA (Opcional pero Recomendado) ---
     # Clave de API para Google Gemini (para las funciones de IA)
     # Obtenla desde Google AI Studio

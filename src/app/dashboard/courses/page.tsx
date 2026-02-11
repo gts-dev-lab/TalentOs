@@ -9,6 +9,7 @@ import * as db from '@/lib/db';
 import { useAuth } from '@/contexts/auth';
 import { CourseCard } from '@/components/course-card';
 import { Button } from '@/components/ui/button';
+import { Pagination } from '@/components/ui/pagination';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -47,6 +48,9 @@ function CoursesPageContent() {
     Presencial: true,
     Mixta: true,
   });
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   const progressMap = useMemo(() => {
     if (!userProgressData || !courses) return new Map<string, number>();
@@ -88,6 +92,26 @@ function CoursesPageContent() {
     );
   }, [courses, filters, searchQuery, canCreateCourse]);
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters or search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, searchQuery]);
+
+  const handleFilterChange = (modality: keyof typeof filters, checked: boolean) => {
+    setFilters(prev => ({ ...prev, [modality]: checked }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Handle loading state while client mounts and dexie initializes
   if (!isClient || !user) {
     return (
@@ -100,9 +124,6 @@ function CoursesPageContent() {
     );
   }
 
-  const handleFilterChange = (modality: keyof typeof filters, checked: boolean) => {
-    setFilters(prev => ({ ...prev, [modality]: checked }));
-  };
 
   const allModalities: (keyof typeof filters)[] = ['Online', 'Presencial', 'Mixta'];
 
@@ -153,8 +174,8 @@ function CoursesPageContent() {
       )}
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredCourses.length > 0 ? (
-          filteredCourses.map((course) => (
+        {paginatedCourses.length > 0 ? (
+          paginatedCourses.map((course) => (
             <CourseCard 
                 key={course.id} 
                 course={course}
@@ -169,6 +190,18 @@ function CoursesPageContent() {
           </p>
         )}
       </div>
+      
+      {filteredCourses.length > 0 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredCourses.length}
+          />
+        </div>
+      )}
     </div>
   );
 }

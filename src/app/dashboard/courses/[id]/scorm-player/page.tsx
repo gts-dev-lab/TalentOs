@@ -9,6 +9,8 @@ import { Loader2, ArrowLeft, Tv, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
 import type { Course } from '@/lib/types';
+import { createScormApi, installScormApi, uninstallScormApi } from '@/lib/scorm-api';
+import { scormCmiStateToCmi, cmiToScormCmiState } from '@/lib/scorm-cmi';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
@@ -59,34 +61,31 @@ export default function ScormPlayerPage() {
   }, [courseId]);
 
   useEffect(() => {
-    if (!course) return;
+    if (!course || !user) return;
     if (!course.isScorm || !course.scormPackage) {
       setError("Este curso no es un paquete SCORM válido.");
       setIsLoading(false);
       return;
     }
 
+    const urlRef = { current: null as string | null };
     const setupScormPlayer = async () => {
       try {
         const zip = await JSZip.loadAsync(course.scormPackage!);
         const manifestFile = zip.file("imsmanifest.xml");
         if (!manifestFile) throw new Error("Manifest (imsmanifest.xml) no encontrado en el paquete.");
-        
         const manifestText = await manifestFile.async("text");
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(manifestText, "application/xml");
-        
         const resourceNode = xmlDoc.querySelector("resource[scormtype='sco']");
         const launchFileHref = resourceNode?.getAttribute("href");
         if (!launchFileHref) throw new Error("No se encontró el archivo de lanzamiento en el manifiesto.");
-        
         const launchFile = zip.file(launchFileHref);
         if (!launchFile) throw new Error(`El archivo de lanzamiento '${launchFileHref}' no existe en el paquete.`);
-
         const launchBlob = await launchFile.async("blob");
         const url = URL.createObjectURL(launchBlob);
+        urlRef.current = url;
         setLaunchUrl(url);
-
       } catch (err) {
         setError((err as Error).message);
         console.error("Error setting up SCORM player:", err);
@@ -95,56 +94,35 @@ export default function ScormPlayerPage() {
       }
     };
 
-    setupScormPlayer();
-
-    // SCORM API Implementation
-    const scormApi = {
-      _completionStatus: "incomplete",
-      _isInitialized: false,
-
-      Initialize: function(param: string) {
-        console.log("SCORM: Initialize", param);
-        this._isInitialized = true;
-        return "true";
-      },
-      Terminate: function(param: string) {
-        console.log("SCORM: Terminate", param, "Status:", this._completionStatus);
-        if (!this._isInitialized) return "false";
-        this._isInitialized = false;
-        if (this._completionStatus === 'completed' || this._completionStatus === 'passed') {
-          handleCompleteCourse();
-        }
-        return "true";
-      },
-      GetValue: function(name: string) {
-        console.log("SCORM: GetValue", name);
-        if (name === "cmi.completion_status") return this._completionStatus;
-        if (name === "cmi.core.student_name") return user?.name || "Student";
-        return "";
-      },
-      SetValue: function(name: string, value: any) {
-        console.log("SCORM: SetValue", name, value);
-        if (name === "cmi.completion_status") this._completionStatus = value;
-        return "true";
-      },
-      Commit: function(param: string) {
-        console.log("SCORM: Commit", param);
-        return "true";
-      },
-      GetLastError: () => "0",
-      GetErrorString: () => "No error",
-      GetDiagnostic: () => "No diagnostic",
-    };
-
-    (window as any).API = scormApi;
-    (window as any).API_1484_11 = scormApi;
+    let cancelled = false;
+    (async () => {
+      const state = await db.getScormCmiState(user.id, course.id);
+      if (cancelled) return;
+      const initialCmi = state ? scormCmiStateToCmi(state) : undefined;
+      const scormApi = createScormApi({
+        initialCmi,
+        studentName: user.name || 'Student',
+        onTerminate: (cmi) => {
+          const status = (cmi['cmi.completion_status'] ?? cmi['cmi.core.lesson_status']) as string;
+          if (status === 'completed' || status === 'passed') {
+            handleCompleteCourse();
+          }
+        },
+        onCommit: (cmi) => {
+          const data = cmiToScormCmiState(user.id, course.id, cmi);
+          db.saveScormCmiState(user.id, course.id, data).catch(() => {});
+        },
+      });
+      installScormApi(typeof window !== 'undefined' ? window : ({} as Window), scormApi);
+      await setupScormPlayer();
+    })();
 
     return () => {
-      if (launchUrl) URL.revokeObjectURL(launchUrl);
-      delete (window as any).API;
-      delete (window as any).API_1484_11;
+      cancelled = true;
+      if (typeof window !== 'undefined') uninstallScormApi(window);
+      if (urlRef.current) URL.revokeObjectURL(urlRef.current);
     };
-  }, [course, handleCompleteCourse, user?.name]);
+  }, [course, handleCompleteCourse, user]);
 
 
   if (isLoading) {

@@ -8,10 +8,13 @@
  */
 
 import Dexie, { type Table } from 'dexie';
-import type { Course, User, Enrollment, UserProgress, PendingEnrollmentDetails, ForumMessage, ForumMessageWithReplies, Notification, Resource, CourseResource, Announcement, ChatChannel, ChatMessage, Role, ComplianceReportData, DirectMessageThread, CalendarEvent, ExternalTraining, EnrollmentStatus, EnrollmentWithDetails, Cost, StudentForManagement, AIConfig, AIUsageLog, Badge, UserBadge, UserStatus, CustomCostCategory, LearningPath, UserLearningPathProgress, CourseRating, RolePermission, SystemLog, LogLevel } from '@/lib/types';
-import { courses as initialCourses, users as initialUsers, initialChatChannels, initialCosts, defaultAIConfig, roles, departments, initialBadges, initialCostCategories } from '@/lib/data';
-import { sendEmailNotification, sendPushNotification, sendWhatsAppNotification } from '@/lib/notification-service.tsx';
+import type { Course, User, Enrollment, UserProgress, PendingEnrollmentDetails, ForumMessage, ForumMessageWithReplies, Notification, Resource, CourseResource, Announcement, ChatChannel, ChatMessage, Role, ComplianceReportData, DirectMessageThread, CalendarEvent, ExternalTraining, EnrollmentStatus, EnrollmentWithDetails, Cost, StudentForManagement, AIConfig, AIUsageLog, Badge, UserBadge, UserStatus, CustomCostCategory, LearningPath, UserLearningPathProgress, CourseRating, RolePermission, SystemLog, LogLevel, Certificate, CertificateTemplate, CertificateStatus, IndividualDevelopmentPlan, PDIStatus, Regulation, RegulationCompliance, ComplianceAudit, ScormCmiState } from '@/lib/types';
+import { courses as initialCourses, users as initialUsers, initialChatChannels, initialCosts, defaultAIConfig, roles, departments, initialBadges, initialCostCategories, initialCertificateTemplates, initialEnrollments, initialUserProgress } from '@/lib/data';
+// Nota: Las notificaciones ahora se envían a través de server actions
+// import { sendEmailNotification, sendPushNotification, sendWhatsAppNotification } from '@/lib/notification-service.tsx';
+import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { getNavItems } from '@/lib/nav';
+import { uuid } from '@/lib/uuid';
 import { differenceInDays, isAfter } from 'date-fns';
 import type { DBProvider } from './types';
 import { syncToSupabase } from '@/lib/supabase-sync';
@@ -45,11 +48,17 @@ class TalentOSDB extends Dexie {
   courseRatings!: Table<CourseRating, number>;
   rolePermissions!: Table<RolePermission, string>;
   systemLogs!: Table<SystemLog, number>;
-
+  certificates!: Table<Certificate, string>;
+  certificateTemplates!: Table<CertificateTemplate, string>;
+  individualDevelopmentPlans!: Table<IndividualDevelopmentPlan, string>;
+  regulations!: Table<Regulation, string>;
+  regulationCompliance!: Table<RegulationCompliance, string>;
+  complianceAudits!: Table<ComplianceAudit, string>;
+  scormCmiState!: Table<ScormCmiState, number>;
 
   constructor() {
     super('TalentOSDB');
-    this.version(40).stores({
+    this.version(41).stores({
       courses: 'id, instructor, status, isScorm, isSynced, *mandatoryForRoles',
       users: 'id, &email, status, points, isSynced',
       enrollments: '++id, studentId, courseId, status, [studentId+status]',
@@ -74,6 +83,41 @@ class TalentOSDB extends Dexie {
       courseRatings: '++id, [courseId+userId], courseId, instructorName',
       rolePermissions: '&role',
       systemLogs: '++id, timestamp, level',
+      certificates: 'id, userId, courseId, status, issuedAt, expiresAt, verificationCode, [userId+courseId]',
+      certificateTemplates: 'id, type, isActive',
+    });
+    this.version(42).stores({
+      enrollments: '++id, studentId, courseId, status, isSynced, [studentId+status]',
+      userProgress: '++id, [userId+courseId], userId, courseId, isSynced',
+      costs: '++id, category, courseId, date, isSynced',
+      certificates: 'id, userId, courseId, status, issuedAt, expiresAt, verificationCode, isSynced, [userId+courseId]',
+      certificateTemplates: 'id, type, isActive, isSynced',
+    });
+    this.version(43).stores({
+      individualDevelopmentPlans: 'id, userId, managerId, status, startDate, endDate, [userId+status], [managerId+status], isSynced',
+    });
+    this.version(44).stores({
+      regulations: 'id, code, type, isActive, *applicableRoles, isSynced',
+      regulationCompliance: 'id, userId, regulationId, complianceDate, expirationDate, [userId+regulationId], [regulationId+expirationDate], isSynced',
+      complianceAudits: 'id, regulationId, auditDate, auditorId, status, isSynced',
+    });
+    // Version 45: Additional indexes for query optimization
+    this.version(45).stores({
+      courses: 'id, instructor, status, isScorm, isSynced, *mandatoryForRoles, [instructor+status]',
+      users: 'id, &email, status, points, isSynced, [status+role], [department+status]',
+      enrollments: '++id, studentId, courseId, status, isSynced, [studentId+status], [courseId+status], [studentId+courseId]',
+      userProgress: '++id, [userId+courseId], userId, courseId, isSynced, [courseId+userId]',
+      forumMessages: '++id, courseId, parentId, timestamp, [courseId+timestamp]',
+      notifications: '++id, userId, isRead, timestamp, [userId+timestamp], [userId+type+relatedUrl], [userId+isRead]',
+      chatMessages: '++id, channelId, timestamp, [channelId+timestamp], [channelId+timestamp+id]',
+      calendarEvents: '++id, courseId, start, end, isSynced, [courseId+start]',
+      costs: '++id, category, courseId, date, isSynced, [category+date], [courseId+date]',
+      systemLogs: '++id, timestamp, level, [level+timestamp]',
+      certificates: 'id, userId, courseId, status, issuedAt, expiresAt, verificationCode, isSynced, [userId+courseId], [status+expiresAt], [expiresAt+status]',
+      courseRatings: '++id, [courseId+userId], courseId, instructorName, [instructorName+timestamp]',
+    });
+    this.version(46).stores({
+      scormCmiState: '++id, [userId+courseId], userId, courseId, updatedAt',
     });
   }
 }
@@ -103,6 +147,10 @@ async function populateDatabase() {
         await dbInstance.badges.bulkAdd(initialBadges);
         await dbInstance.costCategories.bulkAdd(initialCostCategories.map(name => ({ name })));
         await dbInstance.rolePermissions.bulkAdd(initialPermissions);
+        await dbInstance.certificateTemplates.bulkAdd(initialCertificateTemplates);
+        // Agregar enrollments y progreso de usuario para datos demo
+        await dbInstance.enrollments.bulkAdd(initialEnrollments.map(e => ({...e, updatedAt: e.requestDate})));
+        await dbInstance.userProgress.bulkAdd(initialUserProgress);
     });
 }
 
@@ -117,12 +165,28 @@ export const dexieProvider: DBProvider = {
   },
 
   async login(email: string, password?: string): Promise<User | null> {
+    if (!password) {
+        throw new Error('La contraseña es obligatoria.');
+    }
     const user = await dbInstance.users.where('email').equalsIgnoreCase(email).first();
     if (!user) {
         throw new Error('El usuario no existe.');
     }
-    if (user.password !== password) {
-        throw new Error('La contraseña es incorrecta.');
+    if (user.deletedAt) {
+        throw new Error('Esta cuenta ha sido eliminada.');
+    }
+    const legacyPassword = (user as { password?: string }).password;
+    if (user.passwordHash) {
+        const isValid = await verifyPassword(password, user.passwordHash);
+        if (!isValid) throw new Error('La contraseña es incorrecta.');
+    } else if (legacyPassword) {
+        if (legacyPassword !== password) {
+            throw new Error('La contraseña es incorrecta.');
+        }
+        const migratedHash = await hashPassword(password);
+        await dbInstance.users.update(user.id, { passwordHash: migratedHash, updatedAt: new Date().toISOString(), isSynced: false });
+    } else {
+        throw new Error('Este usuario no tiene contraseña configurada.');
     }
     if (user.status === 'suspended') {
         throw new Error('Esta cuenta ha sido desactivada. Contacta con un administrador.');
@@ -149,25 +213,31 @@ export const dexieProvider: DBProvider = {
     }
     const userId = localStorage.getItem(LOGGED_IN_USER_KEY);
     if (!userId) return null;
-    const user = await dbInstance.users.get({ id: userId as any });
-    return user || null;
+    const user = await dbInstance.users.get(userId);
+    return user && !user.deletedAt ? user : null;
   },
 
-  async addUser(user: Omit<User, 'id' | 'isSynced' | 'updatedAt' | 'notificationSettings' | 'points' | 'status' | 'fcmToken'>): Promise<User> {
+  async addUser(user: Omit<User, 'id' | 'isSynced' | 'updatedAt' | 'notificationSettings' | 'points' | 'status' | 'fcmToken' | 'passwordHash'> & { password?: string }): Promise<User> {
     const existingUser = await dbInstance.users.where('email').equalsIgnoreCase(user.email).first();
     if (existingUser) {
         throw new Error('Este correo electrónico ya está en uso.');
     }
+    if (!user.password) {
+        throw new Error('La contraseña es obligatoria.');
+    }
     const requiresApproval = ['Formador', 'Jefe de Formación', 'Gestor de RRHH', 'Administrador General'].includes(user.role);
+    const { password, ...userData } = user;
+    const passwordHash = await hashPassword(password);
     const newUser: User = {
-        ...user,
-        id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        avatar: `https://i.pravatar.cc/150?u=user${Date.now()}`,
+        ...userData,
+        id: uuid(),
+        avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(userData.email)}`,
         status: requiresApproval ? 'pending_approval' : 'approved',
         isSynced: false,
         points: 0,
         updatedAt: new Date().toISOString(),
         notificationSettings: { consent: false, channels: [] },
+        passwordHash,
     };
     await dbInstance.transaction('rw', dbInstance.users, dbInstance.learningPaths, dbInstance.userLearningPathProgress, async () => {
         const newId = await dbInstance.users.add(newUser);
@@ -189,17 +259,24 @@ export const dexieProvider: DBProvider = {
     return newUser;
   },
 
-  async bulkAddUsers(users: Omit<User, 'id' | 'isSynced' | 'updatedAt' | 'notificationSettings' | 'points' | 'status' | 'fcmToken'>[]): Promise<string[]> {
-    const newUsers: User[] = users.map(user => ({
-        ...user,
-        id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        avatar: `https://i.pravatar.cc/150?u=user${Date.now()}${Math.random()}`,
-        status: 'approved',
-        isSynced: false,
-        points: 0,
-        updatedAt: new Date().toISOString(),
-        notificationSettings: { consent: false, channels: [] },
-    }));
+  async bulkAddUsers(users: Omit<User, 'id' | 'isSynced' | 'updatedAt' | 'notificationSettings' | 'points' | 'status' | 'fcmToken' | 'passwordHash'> & { password?: string }[]): Promise<string[]> {
+    const newUsers: User[] = [];
+    for (const user of users) {
+        const { password, ...userData } = user;
+        const passwordHash = password ? await hashPassword(password) : undefined;
+        const id = uuid();
+        newUsers.push({
+            ...userData,
+            id,
+            avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(userData.email)}`,
+            status: 'approved',
+            isSynced: false,
+            points: 0,
+            updatedAt: new Date().toISOString(),
+            notificationSettings: { consent: false, channels: [] },
+            passwordHash,
+        });
+    }
     return dbInstance.transaction('rw', dbInstance.users, dbInstance.learningPaths, dbInstance.userLearningPathProgress, async () => {
         const userIds = await dbInstance.users.bulkAdd(newUsers, { allKeys: true }) as string[];
         const allPaths = await dbInstance.learningPaths.toArray();
@@ -226,11 +303,13 @@ export const dexieProvider: DBProvider = {
   },
 
   async getAllUsers(): Promise<User[]> {
-    return await dbInstance.users.toArray();
+    const all = await dbInstance.users.toArray();
+    return all.filter((u) => !u.deletedAt);
   },
 
   async getUserById(id: string): Promise<User | undefined> {
-    return await dbInstance.users.get(id);
+    const user = await dbInstance.users.get(id);
+    return user?.deletedAt ? undefined : user;
   },
 
   async updateUser(id: string, data: Partial<Omit<User, 'id' | 'isSynced' | 'password'>>): Promise<number> {
@@ -298,9 +377,65 @@ export const dexieProvider: DBProvider = {
     await dbInstance.users.delete(id);
   },
 
+  async softDeleteUser(id: string): Promise<number> {
+    const user = await dbInstance.users.get(id);
+    if (!user) return 0;
+    return dbInstance.users.update(id, { deletedAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isSynced: false });
+  },
+
+  async addCertificate(certificate: Omit<Certificate, 'id' | 'isSynced' | 'updatedAt'>): Promise<string> {
+    const newCertificate: Certificate = {
+        ...certificate,
+        id: uuid(),
+        isSynced: false,
+        updatedAt: new Date().toISOString(),
+    };
+    return await dbInstance.certificates.add(newCertificate) as string;
+  },
+
+  async getCertificateById(id: string): Promise<Certificate | undefined> {
+    return await dbInstance.certificates.get(id);
+  },
+
+  async getCertificatesForUser(userId: string): Promise<Certificate[]> {
+    return await dbInstance.certificates.where('userId').equals(userId).reverse().sortBy('issuedAt');
+  },
+
+  async getCertificatesForCourse(courseId: string): Promise<Certificate[]> {
+    return await dbInstance.certificates.where('courseId').equals(courseId).reverse().sortBy('issuedAt');
+  },
+
+  async getAllCertificates(): Promise<Certificate[]> {
+    return await dbInstance.certificates.reverse().sortBy('issuedAt');
+  },
+
+  async getCertificateByVerificationCode(code: string): Promise<Certificate | undefined> {
+    return await dbInstance.certificates.where('verificationCode').equals(code).first();
+  },
+
+  async updateCertificateStatus(id: string, status: CertificateStatus): Promise<number> {
+    return await dbInstance.certificates.update(id, { status, updatedAt: new Date().toISOString(), isSynced: false });
+  },
+
+  async getCertificateForUserCourse(userId: string, courseId: string): Promise<Certificate | undefined> {
+    return await dbInstance.certificates.where({ userId, courseId }).first();
+  },
+
+  async getCertificateTemplates(): Promise<CertificateTemplate[]> {
+    return await dbInstance.certificateTemplates.toArray();
+  },
+
+  async getCertificateTemplateById(id: string): Promise<CertificateTemplate | undefined> {
+    return await dbInstance.certificateTemplates.get(id);
+  },
+
+  async updateCertificateTemplate(id: string, data: Partial<Omit<CertificateTemplate, 'id' | 'createdAt'>>): Promise<number> {
+    return await dbInstance.certificateTemplates.update(id, { ...data, updatedAt: new Date().toISOString() });
+  },
+
   async addCourse(course: Partial<Omit<Course, 'id' | 'isSynced' | 'updatedAt'>>): Promise<string> {
     const newCourse: Course = {
-        id: `course_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        id: uuid(),
         title: course.title || 'Sin Título',
         description: course.description || '',
         longDescription: course.longDescription || '',
@@ -494,6 +629,21 @@ export const dexieProvider: DBProvider = {
     });
   },
 
+  async getScormCmiState(userId: string, courseId: string): Promise<ScormCmiState | undefined> {
+    return dbInstance.scormCmiState.where('[userId+courseId]').equals([userId, courseId]).first();
+  },
+
+  async saveScormCmiState(userId: string, courseId: string, data: Omit<ScormCmiState, 'id' | 'userId' | 'courseId' | 'updatedAt'>): Promise<void> {
+    const updatedAt = new Date().toISOString();
+    const existing = await dbInstance.scormCmiState.where('[userId+courseId]').equals([userId, courseId]).first();
+    const record: ScormCmiState = { ...data, userId, courseId, updatedAt };
+    if (existing?.id !== undefined) {
+      await dbInstance.scormCmiState.update(existing.id, record);
+    } else {
+      await dbInstance.scormCmiState.add(record);
+    }
+  },
+
   async addForumMessage(message: Omit<ForumMessage, 'id' | 'isSynced' | 'updatedAt'>): Promise<number> {
     const newMessage: ForumMessage = { ...message, isSynced: false, updatedAt: new Date().toISOString() };
     const newId = await dbInstance.forumMessages.add(newMessage);
@@ -551,15 +701,12 @@ export const dexieProvider: DBProvider = {
     const newId = await dbInstance.notifications.add(newNotification) as number;
     const user = await dbInstance.users.get(notification.userId);
     if (user && user.notificationSettings?.consent) {
-        const settings = user.notificationSettings;
-        const subject = `Notificación de TalentOS: ${notification.type.replace(/_/g, ' ')}`;
-        const body = notification.message;
-        if (settings.channels.includes('email')) sendEmailNotification(user, subject, body, notification.relatedUrl).catch(e => this.logSystemEvent('ERROR', 'Failed to send email notification', { error: (e as Error).message, userId: user.id }));
-        if (settings.channels.includes('whatsapp') && user.phone) sendWhatsAppNotification(user, body).catch(e => this.logSystemEvent('ERROR', 'Failed to send WhatsApp notification', { error: (e as Error).message, userId: user.id }));
-        if (settings.channels.includes('app') && user.fcmToken) {
-            const title = 'Nueva Notificación de TalentOS';
-            sendPushNotification(user.id!, title, body, notification.relatedUrl || '/dashboard').catch(e => this.logSystemEvent('ERROR', 'Failed to send Push notification', { error: (e as Error).message, userId: user.id }));
-        }
+        // Nota: El envío automático de notificaciones está deshabilitado aquí
+        // Las notificaciones se envían a través de server actions cuando sea necesario
+        // para evitar importar paquetes de servidor (twilio, resend, etc.) en el cliente
+        
+        // TODO: Implementar un sistema de cola de notificaciones que se procese en el servidor
+        console.log(`[NOTIFICATION] Created notification for user ${user.id}: ${notification.message}`);
     }
     return newId;
   },
@@ -901,6 +1048,79 @@ export const dexieProvider: DBProvider = {
     return paths.map(path => ({ ...path, progress: progressMap.get(path.id!) }));
   },
 
+  async addPDI(pdi: Omit<IndividualDevelopmentPlan, 'id' | 'isSynced' | 'updatedAt' | 'createdAt'>): Promise<string> {
+    const id = uuid();
+    const newPDI: IndividualDevelopmentPlan = {
+      ...pdi,
+      id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    };
+    await dbInstance.individualDevelopmentPlans.add(newPDI);
+    return id;
+  },
+
+  async getPDIById(id: string): Promise<IndividualDevelopmentPlan | undefined> {
+    return await dbInstance.individualDevelopmentPlans.get(id);
+  },
+
+  async getPDIsForUser(userId: string): Promise<IndividualDevelopmentPlan[]> {
+    return await dbInstance.individualDevelopmentPlans.where('userId').equals(userId).reverse().sortBy('createdAt');
+  },
+
+  async getPDIsForManager(managerId: string): Promise<IndividualDevelopmentPlan[]> {
+    return await dbInstance.individualDevelopmentPlans.where('managerId').equals(managerId).reverse().sortBy('createdAt');
+  },
+
+  async getAllPDIs(): Promise<IndividualDevelopmentPlan[]> {
+    return await dbInstance.individualDevelopmentPlans.reverse().sortBy('createdAt');
+  },
+
+  async updatePDI(id: string, data: Partial<Omit<IndividualDevelopmentPlan, 'id' | 'createdAt'>>): Promise<number> {
+    return await dbInstance.individualDevelopmentPlans.update(id, {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    });
+  },
+
+  async deletePDI(id: string): Promise<void> {
+    await dbInstance.individualDevelopmentPlans.delete(id);
+  },
+
+  async addPDIReview(pdiId: string, review: Omit<IndividualDevelopmentPlan['reviews'][0], 'id' | 'createdAt'>): Promise<number> {
+    const pdi = await dbInstance.individualDevelopmentPlans.get(pdiId);
+    if (!pdi) throw new Error('PDI not found');
+    const reviewId = `review_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const newReview: IndividualDevelopmentPlan['reviews'][0] = {
+      ...review,
+      id: reviewId,
+      createdAt: new Date().toISOString(),
+    };
+    const updatedReviews = [...pdi.reviews, newReview];
+    await dbInstance.individualDevelopmentPlans.update(pdiId, {
+      reviews: updatedReviews,
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    });
+    return updatedReviews.length;
+  },
+
+  async updatePDIMilestone(pdiId: string, milestoneId: string, updates: Partial<IndividualDevelopmentPlan['milestones'][0]>): Promise<number> {
+    const pdi = await dbInstance.individualDevelopmentPlans.get(pdiId);
+    if (!pdi) throw new Error('PDI not found');
+    const updatedMilestones = pdi.milestones.map(m =>
+      m.id === milestoneId ? { ...m, ...updates } : m
+    );
+    await dbInstance.individualDevelopmentPlans.update(pdiId, {
+      milestones: updatedMilestones,
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    });
+    return updatedMilestones.length;
+  },
+
   async addCourseRating(rating: Omit<CourseRating, 'id' | 'isPublic' | 'isSynced' | 'updatedAt'>): Promise<number> {
     const newRating: CourseRating = { ...rating, isPublic: false, isSynced: false, updatedAt: new Date().toISOString() };
     const newId = await dbInstance.courseRatings.add(newRating);
@@ -951,13 +1171,14 @@ export const dexieProvider: DBProvider = {
   },
 
   async getUnsyncedItemsCount(): Promise<number> {
+    const tablesWithIsSynced: (keyof typeof dbInstance.tables)[] = [
+      'users', 'courses', 'enrollments', 'userProgress', 'costs',
+      'certificateTemplates', 'certificates',
+    ];
     const unsyncedCounts = await Promise.all(
-        Object.values(dbInstance.tables).map(async table => {
-            if ('isSynced' in table.schema.primKey.keyPath) { // A bit of a hack to check if the table has isSynced
-                return table.where('isSynced').equals('false').count();
-            }
-            return 0;
-        })
+      tablesWithIsSynced.map((name) =>
+        dbInstance.tables[name].where('isSynced').equals(false).count()
+      )
     );
     return unsyncedCounts.reduce((acc, count) => acc + count, 0);
   },
@@ -976,7 +1197,7 @@ export const dexieProvider: DBProvider = {
   },
 
   async _handleCourseCompletion(userId: string, courseId: string) {
-    return dbInstance.transaction('rw', dbInstance.users, dbInstance.enrollments, dbInstance.userLearningPathProgress, dbInstance.courses, dbInstance.badges, dbInstance.userBadges, dbInstance.notifications, async () => {
+    return dbInstance.transaction('rw', dbInstance.users, dbInstance.enrollments, dbInstance.userLearningPathProgress, dbInstance.courses, dbInstance.badges, dbInstance.userBadges, dbInstance.notifications, dbInstance.certificates, dbInstance.certificateTemplates, dbInstance.aiConfig, async () => {
         const course = await dbInstance.courses.get(courseId);
         if (!course) return;
         const enrollment = await dbInstance.enrollments.where({ studentId: userId, courseId }).first();
@@ -1005,13 +1226,200 @@ export const dexieProvider: DBProvider = {
                 await dbInstance.userLearningPathProgress.add({ userId, learningPathId: path.id!, completedCourseIds: [courseId], isSynced: false, updatedAt: new Date().toISOString() });
             }
         }
+
+        const existingCertificate = await dbInstance.certificates.where({ userId, courseId }).first();
+        if (!existingCertificate) {
+            const config = await dbInstance.aiConfig.get('singleton');
+            const templateType = config?.defaultCertificateTemplate || 'Clásico';
+            const template = await dbInstance.certificateTemplates.where('type').equals(templateType).first();
+            const templateId = template?.id || 'tpl_clasico';
+            const verificationCode = `CERT-${crypto.randomUUID?.() ?? Math.random().toString(36).substring(2, 10)}`;
+
+            await dbInstance.certificates.add({
+                id: uuid(),
+                userId,
+                courseId,
+                templateId,
+                verificationCode,
+                issuedAt: new Date().toISOString(),
+                status: 'active',
+                isSynced: false,
+                updatedAt: new Date().toISOString(),
+            });
+        }
     });
+  },
+
+  // Regulations and Compliance
+  async addRegulation(regulation: Omit<Regulation, 'id' | 'createdAt' | 'updatedAt' | 'isSynced'>): Promise<string> {
+    const id = `reg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const newRegulation: Regulation = {
+      ...regulation,
+      id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    };
+    await dbInstance.regulations.add(newRegulation);
+    return id;
+  },
+
+  async getRegulationById(id: string): Promise<Regulation | undefined> {
+    return await dbInstance.regulations.get(id);
+  },
+
+  async getAllRegulations(): Promise<Regulation[]> {
+    return await dbInstance.regulations.reverse().sortBy('createdAt');
+  },
+
+  async getActiveRegulations(): Promise<Regulation[]> {
+    return await dbInstance.regulations.where('isActive').equals(true).reverse().sortBy('createdAt');
+  },
+
+  async updateRegulation(id: string, data: Partial<Omit<Regulation, 'id' | 'createdAt'>>): Promise<number> {
+    return await dbInstance.regulations.update(id, {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    });
+  },
+
+  async deleteRegulation(id: string): Promise<void> {
+    await dbInstance.transaction('rw', dbInstance.regulations, dbInstance.regulationCompliance, dbInstance.complianceAudits, async () => {
+      await dbInstance.regulationCompliance.where('regulationId').equals(id).delete();
+      await dbInstance.complianceAudits.where('regulationId').equals(id).delete();
+      await dbInstance.regulations.delete(id);
+    });
+  },
+
+  async getRegulationsForRole(role: Role): Promise<Regulation[]> {
+    return await dbInstance.regulations
+      .where('isActive')
+      .equals(true)
+      .filter(r => r.applicableRoles.includes(role))
+      .toArray();
+  },
+
+  async getRegulationsForUser(userId: string): Promise<Regulation[]> {
+    const user = await dbInstance.users.get(userId);
+    if (!user) return [];
+    return await this.getRegulationsForRole(user.role);
+  },
+
+  async addRegulationCompliance(compliance: Omit<RegulationCompliance, 'id' | 'createdAt' | 'updatedAt' | 'isSynced'>): Promise<string> {
+    const id = uuid();
+    const newCompliance: RegulationCompliance = {
+      ...compliance,
+      id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    };
+    await dbInstance.regulationCompliance.add(newCompliance);
+    return id;
+  },
+
+  async getRegulationComplianceById(id: string): Promise<RegulationCompliance | undefined> {
+    return await dbInstance.regulationCompliance.get(id);
+  },
+
+  async getComplianceForUser(userId: string): Promise<RegulationCompliance[]> {
+    return await dbInstance.regulationCompliance.where('userId').equals(userId).reverse().sortBy('complianceDate');
+  },
+
+  async getComplianceForRegulation(regulationId: string): Promise<RegulationCompliance[]> {
+    return await dbInstance.regulationCompliance.where('regulationId').equals(regulationId).reverse().sortBy('complianceDate');
+  },
+
+  async updateRegulationCompliance(id: string, data: Partial<Omit<RegulationCompliance, 'id' | 'createdAt'>>): Promise<number> {
+    return await dbInstance.regulationCompliance.update(id, {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    });
+  },
+
+  async deleteRegulationCompliance(id: string): Promise<void> {
+    await dbInstance.regulationCompliance.delete(id);
+  },
+
+  async getExpiringCompliance(daysAhead: number): Promise<RegulationCompliance[]> {
+    const today = new Date();
+    const futureDate = new Date();
+    futureDate.setDate(today.getDate() + daysAhead);
+    const allCompliance = await dbInstance.regulationCompliance.toArray();
+    return allCompliance.filter(comp => {
+      if (!comp.expirationDate) return false;
+      const expDate = new Date(comp.expirationDate);
+      return expDate >= today && expDate <= futureDate;
+    });
+  },
+
+  async checkUserCompliance(userId: string, regulationId: string): Promise<RegulationCompliance | undefined> {
+    return await dbInstance.regulationCompliance
+      .where('[userId+regulationId]')
+      .equals([userId, regulationId])
+      .first();
+  },
+
+  async addComplianceAudit(audit: Omit<ComplianceAudit, 'id' | 'createdAt' | 'updatedAt' | 'isSynced'>): Promise<string> {
+    const id = uuid();
+    const newAudit: ComplianceAudit = {
+      ...audit,
+      id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    };
+    await dbInstance.complianceAudits.add(newAudit);
+    return id;
+  },
+
+  async getComplianceAuditById(id: string): Promise<ComplianceAudit | undefined> {
+    return await dbInstance.complianceAudits.get(id);
+  },
+
+  async getAllComplianceAudits(): Promise<ComplianceAudit[]> {
+    return await dbInstance.complianceAudits.reverse().sortBy('auditDate');
+  },
+
+  async getAuditsForRegulation(regulationId: string): Promise<ComplianceAudit[]> {
+    return await dbInstance.complianceAudits.where('regulationId').equals(regulationId).reverse().sortBy('auditDate');
+  },
+
+  async updateComplianceAudit(id: string, data: Partial<Omit<ComplianceAudit, 'id' | 'createdAt'>>): Promise<number> {
+    return await dbInstance.complianceAudits.update(id, {
+      ...data,
+      updatedAt: new Date().toISOString(),
+      isSynced: false,
+    });
+  },
+
+  async deleteComplianceAudit(id: string): Promise<void> {
+    await dbInstance.complianceAudits.delete(id);
   },
 };
 
 // Open the database. This will also trigger the 'populate' event if it's the first time.
 if (typeof window !== 'undefined') {
-  dbInstance.open().catch(function (err) {
+  dbInstance.open().then(async () => {
+    // Verificar si faltan enrollments y agregarlos si es necesario
+    try {
+      const enrollmentsCount = await dbInstance.enrollments.count();
+      const userProgressCount = await dbInstance.userProgress.count();
+      const hasAdminUser = await dbInstance.users.get('user_1');
+      
+      // Si hay usuario admin pero no hay enrollments, agregar datos demo
+      if (hasAdminUser && enrollmentsCount === 0) {
+        await dbInstance.enrollments.bulkAdd(initialEnrollments.map(e => ({...e, updatedAt: e.requestDate})));
+      }
+      if (hasAdminUser && userProgressCount === 0) {
+        await dbInstance.userProgress.bulkAdd(initialUserProgress);
+      }
+    } catch (err) {
+      // Silenciar errores de verificación
+    }
+  }).catch(function (err) {
     dbInstance.logSystemEvent('ERROR', 'Failed to open Dexie DB', { error: (err as Error).message, stack: (err as Error).stack });
   });
 }

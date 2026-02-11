@@ -148,6 +148,11 @@ export default function CourseDetailPage() {
     () => (user ? db.getUserProgress(user.id, courseId) : undefined),
     [user?.id, courseId]
   );
+
+  const certificate = useLiveQuery(
+    () => (user ? db.getCertificateForUserCourse(user.id, courseId) : undefined),
+    [user?.id, courseId]
+  );
   
   const completedModules = useMemo(() => new Set(userProgress?.completedModules || []), [userProgress]);
   const progressPercentage = useMemo(() => {
@@ -169,7 +174,9 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     if (user && course) {
-        const verificationUrl = `${window.location.origin}/dashboard/courses/${course.id}?userId=${user.id}`;
+        const verificationUrl = certificate
+            ? `${window.location.origin}/certificates/verify?code=${certificate.verificationCode}`
+            : `${window.location.origin}/dashboard/courses/${course.id}?userId=${user.id}`;
         QRCode.toDataURL(verificationUrl, { errorCorrectionLevel: 'H' })
             .then(url => {
                 setQrCodeDataUrl(url);
@@ -178,7 +185,7 @@ export default function CourseDetailPage() {
                 console.error('Failed to generate QR code', err);
             });
     }
-  }, [user, course]);
+  }, [user, course, certificate]);
 
 
   if (loadingCourse) {
@@ -421,7 +428,7 @@ export default function CourseDetailPage() {
                  <ScrollBar orientation="horizontal" />
               </ScrollArea>
               <TabsContent value="overview" className="mt-4">
-                <Card className="shadow-lg">
+      <Card className="shadow-lg">
                   <CardHeader>
                     <CardTitle>Sobre este curso</CardTitle>
                   </CardHeader>
@@ -614,6 +621,18 @@ export default function CourseDetailPage() {
               </DropdownMenu>
             </CardFooter>
           </Card>
+          {certificate && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Certificado Emitido</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Link href={`/dashboard/certificates/${certificate.id}`} className="text-sm text-primary hover:underline">
+                  Ver certificado y descargar PDF
+                </Link>
+              </CardContent>
+            </Card>
+          )}
           {canManageCourse && (
               <Card>
                 <CardHeader>

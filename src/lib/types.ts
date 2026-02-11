@@ -20,14 +20,14 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  password?: string;
+  passwordHash?: string;
   phone?: string; // Added phone number
   avatar: string;
   role: Role;
   department: Department;
   points: number;
   status: UserStatus;
-  fcmToken?: string; // For Firebase Cloud Messaging
+  fcmToken?: string; // Deprecated: Ya no se usa Firebase. Mantenido para compatibilidad.
 
   notificationSettings: {
     consent: boolean;
@@ -36,6 +36,10 @@ export type User = {
 
   isSynced?: boolean;
   updatedAt?: string; // ISO date string
+  /** UUID v4 del inquilino (multi-tenant; TT-102) */
+  tenantId?: string;
+  /** RGPD derecho al olvido: marca de tiempo UTC (ISO 8601). Si está definido, el usuario está borrado lógicamente (TT-110). */
+  deletedAt?: string;
 };
 
 export type Course = {
@@ -125,6 +129,99 @@ export type UserLearningPathProgress = {
   completedCourseIds: string[]; // Unordered list of completed course IDs from the path
   isSynced?: boolean;
   updatedAt?: string;
+};
+
+export type PDIStatus = 'draft' | 'active' | 'completed' | 'archived';
+
+export type PDIMilestone = {
+  id: string;
+  title: string;
+  description?: string;
+  targetDate?: string; // ISO date string
+  completed: boolean;
+  completedAt?: string; // ISO date string
+  notes?: string;
+};
+
+export type PDIReview = {
+  id: string;
+  reviewDate: string; // ISO date string
+  reviewerId: string; // Manager/supervisor who reviewed
+  reviewerName: string;
+  progress: number; // 0-100
+  feedback: string;
+  nextSteps?: string;
+  createdAt: string; // ISO date string
+};
+
+export type IndividualDevelopmentPlan = {
+  id: string;
+  userId: string; // Employee this PDI belongs to
+  managerId: string; // Manager/supervisor who created/manages this PDI
+  title: string;
+  description?: string;
+  objectives: string[]; // Development objectives
+  courseIds: string[]; // Courses assigned for this PDI
+  milestones: PDIMilestone[];
+  reviews: PDIReview[];
+  startDate: string; // ISO date string
+  endDate?: string; // ISO date string (optional, can be ongoing)
+  status: PDIStatus;
+  createdAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
+  isSynced?: boolean;
+};
+
+export type RegulationType = 'ISO' | 'PRL' | 'GDPR' | 'LOPD' | 'Ley' | 'Normativa' | 'Certificación' | 'Otro';
+
+export type Regulation = {
+  id: string;
+  code: string; // e.g., "ISO 9001:2015", "RD 39/1997"
+  name: string;
+  description?: string;
+  type: RegulationType;
+  applicableRoles: Role[]; // Roles that must comply with this regulation
+  applicableDepartments?: Department[]; // Optional: specific departments
+  courseIds: string[]; // Courses that fulfill this regulation
+  validityPeriod?: number; // Validity period in months (e.g., 24 for 2 years)
+  requiresRenewal: boolean; // Whether this regulation requires periodic renewal
+  renewalPeriod?: number; // Renewal period in months
+  createdAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
+  isActive: boolean;
+  isSynced?: boolean;
+};
+
+export type RegulationCompliance = {
+  id: string;
+  userId: string;
+  regulationId: string;
+  complianceDate: string; // ISO date string - when user became compliant
+  expirationDate?: string; // ISO date string - when compliance expires (if applicable)
+  certificateId?: string; // Optional: link to certificate
+  verifiedBy?: string; // User ID who verified the compliance
+  verifiedAt?: string; // ISO date string
+  notes?: string;
+  createdAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
+  isSynced?: boolean;
+};
+
+export type ComplianceAudit = {
+  id: string;
+  regulationId: string;
+  auditDate: string; // ISO date string
+  auditorId: string; // User ID of the auditor
+  auditorName: string;
+  scope: string; // What was audited (e.g., "All employees in Técnicos de Emergencias")
+  findings: string; // Audit findings
+  complianceRate: number; // 0-100
+  nonCompliantUserIds: string[]; // Users who are not compliant
+  recommendations?: string;
+  status: 'draft' | 'completed' | 'archived';
+  createdAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
+  isSynced?: boolean;
 };
 
 
@@ -330,6 +427,35 @@ export type AIFeature = typeof aiFeatures[number]['id'];
 export const certificateTemplates = ['Clásico', 'Moderno', 'Profesional'] as const;
 export type CertificateTemplateType = typeof certificateTemplates[number];
 
+// --- Certificate Types ---
+export type CertificateStatus = 'active' | 'expired' | 'revoked';
+
+export type CertificateTemplate = {
+    id: string;
+    name: string;
+    type: CertificateTemplateType;
+    description?: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt?: string;
+    isSynced?: boolean;
+};
+
+export type Certificate = {
+    id: string;
+    userId: string;
+    courseId: string;
+    templateId: string;
+    verificationCode: string;
+    issuedAt: string;
+    expiresAt?: string;
+    renewedFromId?: string;
+    status: CertificateStatus;
+    pdfDataUrl?: string;
+    isSynced?: boolean;
+    updatedAt?: string;
+};
+
 
 export type AIConfig = {
     id: 'singleton'; // Primary key for the single config object
@@ -382,6 +508,23 @@ export type SystemLog = {
   level: LogLevel;
   message: string;
   details?: Record<string, any>;
+};
+
+/** TT-108: Estado CMI SCORM 2004 por usuario/curso (persistencia RTE). */
+export type ScormCmiState = {
+  id?: number;
+  userId: string;
+  courseId: string;
+  /** SCORM 2004: incomplete | completed */
+  completionStatus: string;
+  /** SCORM 2004: passed | failed | unknown */
+  successStatus: string;
+  /** 0–1, precisión según RTE */
+  scoreScaled: number;
+  /** String max 1000 (SCORM RTE) */
+  location: string;
+  suspendData: string;
+  updatedAt: string; // ISO 8601 UTC
 };
 
 

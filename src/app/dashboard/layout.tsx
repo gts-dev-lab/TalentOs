@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth';
 import {
   SidebarProvider,
@@ -9,7 +8,9 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { DashboardHeader } from '@/components/dashboard-header';
+import { PageTransition } from '@/components/page-transition';
 import { SidebarContents } from '@/components/sidebar-contents';
+import { DashboardLoadingSkeleton } from '@/components/dashboard-loading-skeleton';
 import { usePathname, useRouter } from 'next/navigation';
 import { getNavItems } from '@/lib/nav';
 
@@ -31,11 +32,7 @@ export default function DashboardLayout({
   }, [user, isLoading, router]);
 
   if (isLoading || !user) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-16 w-16 animate-spin text-primary" />
-      </div>
-    );
+    return <DashboardLoadingSkeleton />;
   }
   
   const pageTitle =
@@ -52,7 +49,9 @@ export default function DashboardLayout({
         </Sidebar>
         <SidebarInset>
           <DashboardHeader title={pageTitle} />
-          <main className="flex-1 p-4 md:p-6 lg:p-8">{children}</main>
+          <main className="frappe-page flex-1 bg-background">
+            <PageTransition>{children}</PageTransition>
+          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>

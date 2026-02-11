@@ -1,0 +1,26 @@
+# PostgreSQL para desarrollo local (TT-101). Opcional.
+# Uso: docker compose -f docker-compose.postgres.yml up -d
+# Migraciones: ejecutar como superusuario (postgres) — ver migrations/README.md.
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: talentos_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-postgres}
+      POSTGRES_DB: talentos
+    ports:
+      - "${PG_PORT:-5433}:5432"
+    volumes:
+      - talentos_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d talentos"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  talentos_pgdata:

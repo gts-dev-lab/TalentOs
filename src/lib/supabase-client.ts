@@ -4,22 +4,16 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-let supabaseClientInstance: ReturnType<typeof createClient>;
+let supabaseClientInstance: ReturnType<typeof createClient> | undefined;
 
 if (supabaseUrl && supabaseAnonKey) {
   supabaseClientInstance = createClient(supabaseUrl, supabaseAnonKey);
-} else {
-    // In a server environment during build, these might be undefined.
-    // We handle this gracefully to allow the build to succeed.
-    // The actual functionality will fail at runtime if the env vars are missing,
-    // which is the expected behavior.
-    if (typeof window !== 'undefined') {
-        console.error('Supabase URL or anonymous key is not set in environment variables.');
-    }
 }
 
 // This is the client-side instance (uses the public anon key)
 const supabaseClient = supabaseClientInstance;
+
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 /**
  * Gets a Supabase client instance.

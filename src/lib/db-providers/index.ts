@@ -8,6 +8,16 @@ const providers: Record<string, DBProvider> = {
   dexie: dexieProvider,
 };
 
+// PostgreSQL provider solo disponible en servidor (Next.js API Routes)
+if (typeof window === 'undefined' && process.env.DB_PROVIDER === 'postgres') {
+  try {
+    const { postgresProvider } = require('./postgres');
+    providers.postgres = postgresProvider;
+  } catch (error) {
+    console.warn('PostgreSQL provider not available:', error);
+  }
+}
+
 const key = process.env.DB_PROVIDER || 'dexie';
 
 if (!providers[key]) {

@@ -17,7 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
@@ -25,6 +24,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from './theme-toggle';
+import { GlobalSearch } from './global-search';
 
 interface DashboardHeaderProps {
     title: string;
@@ -60,34 +60,17 @@ export function DashboardHeader({ title }: DashboardHeaderProps) {
       }
   }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchQuery.trim()) {
-      params.set('q', searchQuery.trim());
-    }
-    router.push(`/dashboard/courses?${params.toString()}`);
-  };
   
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
+    <header className="frappe-topbar sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-[hsl(var(--frappe-topbar-bg))] px-4 shadow-frappe-sm md:px-6 dark:bg-[hsl(var(--frappe-topbar-bg))] dark:border-[hsl(var(--frappe-topbar-border))]">
       <div className="flex items-center gap-2">
-        <SidebarTrigger className="md:hidden" />
-        <h1 className="text-xl font-semibold md:text-2xl">{title}</h1>
+        <SidebarTrigger />
+        <h1 className="text-lg font-semibold text-foreground md:text-xl">{title}</h1>
       </div>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial" onSubmit={handleSearch}>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar cursos..."
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </form>
+        <div className="ml-auto">
+          <GlobalSearch />
+        </div>
         <ThemeToggle />
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

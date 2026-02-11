@@ -19,6 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { StatusBadge } from './status-badge';
+import { Pagination } from '@/components/ui/pagination';
 
 const statusUpdateSchema = z.object({
   status: z.enum(enrollmentStatuses),
@@ -138,6 +139,8 @@ export function AdminEnrollmentsView() {
     );
 
     const [enrollmentToUpdate, setEnrollmentToUpdate] = useState<EnrollmentWithDetails | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
 
     const filteredEnrollments = useMemo(() => {
         if (!allEnrollments) return [];
@@ -148,6 +151,21 @@ export function AdminEnrollmentsView() {
              e.courseTitle.toLowerCase().includes(searchTerm.toLowerCase()))
         );
     }, [allEnrollments, filters, searchTerm]);
+    
+    const totalPages = useMemo(() => Math.ceil(filteredEnrollments.length / itemsPerPage), [filteredEnrollments.length]);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedEnrollments = useMemo(() => filteredEnrollments.slice(startIndex, endIndex), [filteredEnrollments, startIndex, endIndex]);
+    
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    // Reset to page 1 when filters or search change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters, searchTerm]);
     
     if (!allEnrollments) {
         return <div className="flex h-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin" /></div>;
@@ -227,6 +245,17 @@ export function AdminEnrollmentsView() {
                             </TableBody>
                         </Table>
                     </div>
+                    {filteredEnrollments.length > 0 && (
+                        <div className="mt-4">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                itemsPerPage={itemsPerPage}
+                                totalItems={filteredEnrollments.length}
+                            />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 
