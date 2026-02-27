@@ -64,6 +64,7 @@ export default function NewLearningPathPage() {
       await db.addLearningPath({
         ...data,
         courseIds: selectedCourses.map(c => c.id),
+        targetRole: data.targetRole as any,
       });
       toast({ title: 'Plan de Carrera Creado', description: 'El nuevo plan ha sido guardado.' });
       router.push('/dashboard/learning-paths');

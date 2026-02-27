@@ -26,12 +26,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Pagination } from '@/components/ui/pagination';
 
 export default function LearningPathsPage() {
   const { toast } = useToast();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
   const learningPaths = useLiveQuery(() => db.getAllLearningPaths(), []);
   const allCourses = useLiveQuery(() => db.getAllCourses(), []);
   const [pathToDelete, setPathToDelete] = useState<LearningPath | null>(null);

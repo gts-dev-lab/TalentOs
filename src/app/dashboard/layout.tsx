@@ -14,6 +14,8 @@ import { DashboardLoadingSkeleton } from '@/components/dashboard-loading-skeleto
 import { usePathname, useRouter } from 'next/navigation';
 import { getNavItems } from '@/lib/nav';
 
+const FRONTEND_ONLY = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true';
+
 export default function DashboardLayout({
   children,
 }: {
@@ -26,12 +28,13 @@ export default function DashboardLayout({
   const navItems = getNavItems();
 
   useEffect(() => {
+    if (FRONTEND_ONLY) return;
     if (!isLoading && !user) {
       router.push('/login');
     }
   }, [user, isLoading, router]);
 
-  if (isLoading || !user) {
+  if (!FRONTEND_ONLY && (isLoading || !user)) {
     return <DashboardLoadingSkeleton />;
   }
   

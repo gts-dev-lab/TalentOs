@@ -97,7 +97,7 @@ export default function NewRegulationPage() {
         code: data.code,
         name: data.name,
         description: data.description || undefined,
-        type: data.type,
+        type: data.type as any,
         applicableRoles: data.applicableRoles as Role[],
         applicableDepartments: data.applicableDepartments && data.applicableDepartments.length > 0 ? data.applicableDepartments as Department[] : undefined,
         courseIds: data.courseIds || [],

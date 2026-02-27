@@ -47,7 +47,8 @@ function ChatPageContent() {
         if (initialChannelId && initialChannelId !== selectedChannelId) {
           setSelectedChannelId(initialChannelId);
         } else if (!isMobile && !selectedChannelId && publicChannels && publicChannels.length > 0) {
-            setSelectedChannelId(publicChannels.find(c => c.name === 'general')?.id || publicChannels[0].id);
+            const generalChannel = publicChannels.find(c => c.name === 'general');
+            setSelectedChannelId(generalChannel ? String(generalChannel.id) : String(publicChannels[0].id));
         }
     }, [initialChannelId, selectedChannelId, publicChannels, isMobile]);
 
@@ -64,7 +65,8 @@ function ChatPageContent() {
     // When switching from mobile to desktop and no channel is selected, select one.
     useEffect(() => {
         if (!isMobile && !selectedChannelId && publicChannels && publicChannels.length > 0) {
-            setSelectedChannelId(publicChannels.find(c => c.name === 'general')?.id || publicChannels[0].id);
+            const generalChannel = publicChannels.find(c => c.name === 'general');
+            setSelectedChannelId(generalChannel ? String(generalChannel.id) : String(publicChannels[0].id));
         }
     }, [isMobile, selectedChannelId, publicChannels]);
 
@@ -135,9 +137,9 @@ function ChatPageContent() {
                                 {publicChannels?.map(channel => (
                                     <Button
                                         key={channel.id}
-                                        variant={selectedChannelId === channel.id ? 'secondary' : 'ghost'}
+                                        variant={selectedChannelId === String(channel.id) ? 'secondary' : 'ghost'}
                                         className="justify-start gap-2"
-                                        onClick={() => setSelectedChannelId(channel.id)}
+                                        onClick={() => setSelectedChannelId(String(channel.id))}
                                     >
                                         <Hash className="h-4 w-4" />
                                         {channel.name}
@@ -151,9 +153,9 @@ function ChatPageContent() {
                                 {dmThreads?.map(thread => (
                                     <Button
                                         key={thread.id}
-                                        variant={selectedChannelId === thread.id ? 'secondary' : 'ghost'}
+                                        variant={selectedChannelId === String(thread.id) ? 'secondary' : 'ghost'}
                                         className="justify-start gap-2 h-12"
-                                        onClick={() => setSelectedChannelId(thread.id)}
+                                        onClick={() => setSelectedChannelId(String(thread.id))}
                                     >
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage src={thread.otherParticipant.avatar} />

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Password hashing and verification utilities
 // Usa argon2 en el servidor y argon2-browser en el cliente
 

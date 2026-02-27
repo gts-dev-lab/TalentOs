@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getLtiPlatformConfig } from '@/lib/lti/config';
 import { verifyState, verifyLtiIdToken } from '@/lib/lti/oidc';
+import { getCourseIdByResourceLinkId, getLaunchRedirectUrl } from '@/lib/lti';
 import { signSessionToken, isJwtConfigured } from '@/lib/auth/jwt';
 import { logAuthSuccess } from '@/lib/audit';
 

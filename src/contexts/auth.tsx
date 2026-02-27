@@ -6,6 +6,21 @@ import { signOut } from 'next-auth/react';
 import { User } from '@/lib/types';
 import * as db from '@/lib/db';
 
+const FRONTEND_ONLY = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true';
+
+/** Usuario mock para modo solo-frontend (sin auth ni base de datos). */
+const MOCK_USER: User = {
+  id: 'frontend-only-mock',
+  name: 'Usuario demo',
+  email: 'demo@talentos.local',
+  avatar: '',
+  role: 'Administrador General',
+  department: 'Formación',
+  points: 0,
+  status: 'approved',
+  notificationSettings: { consent: false, channels: [] },
+};
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -34,6 +49,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const checkUserStatus = useCallback(async () => {
     if (typeof window === 'undefined') {
+      setIsLoading(false);
+      return;
+    }
+    if (FRONTEND_ONLY) {
+      setUser(MOCK_USER);
       setIsLoading(false);
       return;
     }
@@ -74,9 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [checkUserStatus]);
   
   useEffect(() => {
-    // This effect should also only run on the client side
     if (typeof window === 'undefined') return;
-
+    if (FRONTEND_ONLY) return; // No redirigir a login en modo solo frontend
     const isPublicPage = publicPages.includes(pathname);
     if (!isLoading && !user && !isPublicPage) {
         router.push('/login');

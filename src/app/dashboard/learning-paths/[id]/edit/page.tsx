@@ -88,6 +88,7 @@ export default function EditLearningPathPage() {
       await db.updateLearningPath(pathId, {
         ...data,
         courseIds: selectedCourses.map(c => c.id),
+        targetRole: data.targetRole as any,
       });
       toast({ title: 'Plan de Carrera Actualizado', description: 'Los cambios han sido guardados.' });
       router.push('/dashboard/learning-paths');

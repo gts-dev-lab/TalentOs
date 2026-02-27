@@ -6,7 +6,8 @@ import { Activity, BookCheck, BotMessageSquare, GraduationCap, Lightbulb, Loader
 import { useLiveQuery } from 'dexie-react-hooks';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { personalizedCourseRecommendations, type PersonalizedCourseRecommendationsOutput } from '@/ai/flows/course-suggestion';
+import { personalizedCourseRecommendations } from '@/ai/flows/course-suggestion';
+import type { PersonalizedCourseRecommendationsOutput } from '@/lib/types';
 import { StatCard } from '@/components/stat-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

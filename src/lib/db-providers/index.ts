@@ -3,6 +3,9 @@
 
 import type { DBProvider } from './types';
 import { dexieProvider } from './dexie';
+import { mockFrontendProvider } from './mock-frontend';
+
+const FRONTEND_ONLY = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true';
 
 const providers: Record<string, DBProvider> = {
   dexie: dexieProvider,
@@ -24,4 +27,5 @@ if (!providers[key]) {
   console.warn(`DB provider "${key}" is not fully implemented. Falling back to 'dexie'.`);
 }
 
-export const dbProvider: DBProvider = providers[key] || providers['dexie'];
+// Modo solo diseño: sin IndexedDB ni APIs, solo UI con datos vacíos
+export const dbProvider: DBProvider = FRONTEND_ONLY ? mockFrontendProvider : (providers[key] || providers['dexie']);

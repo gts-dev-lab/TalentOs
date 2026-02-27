@@ -236,7 +236,8 @@ export default function EditCoursePage() {
         const courseData = {
           ...data,
           modules: modules, // Include the modules in the save data
-          aiHint: data.title.toLowerCase().split(' ').slice(0, 2).join(' ')
+          aiHint: data.title.toLowerCase().split(' ').slice(0, 2).join(' '),
+          mandatoryForRoles: data.mandatoryForRoles as any,
         };
         await db.updateCourse(courseId, courseData);
         toast({

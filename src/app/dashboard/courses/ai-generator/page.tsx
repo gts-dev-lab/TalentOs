@@ -10,7 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from "@/hooks/use-toast";
 import * as db from '@/lib/db';
-import { generateCourseFromTopic, type GenerateCourseFromTopicOutput } from '@/ai/flows/generate-course-from-topic';
+import { generateCourseFromTopic } from '@/ai/flows/generate-course-from-topic';
+import type { GenerateCourseFromTopicOutput } from '@/lib/types';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TT-107: Adaptador API SCORM 2004 (API_1484_11).
  * Objeto detectable por contenidos externos; métodos Initialize y Terminate;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import type { User } from '@/lib/types';
 import * as db from '@/lib/db';

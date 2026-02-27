@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import type { AIConfig, AIModel } from '@/lib/types';
 import * as db from '@/lib/db';
-import { sendPushNotification } from '@/lib/notification-service.tsx';
+import { sendPushNotification } from '@/lib/notification-service';
 
 const cookieOptions = {
   httpOnly: true,

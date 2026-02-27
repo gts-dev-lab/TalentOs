@@ -8,17 +8,42 @@ import type {
     StudentForManagement, AIConfig, AIUsageLog, Badge, UserBadge, UserStatus,
     CustomCostCategory, LearningPath, UserLearningPathProgress,     CourseRating, RolePermission, SystemLog, LogLevel, Certificate, CertificateTemplate, CertificateStatus,     IndividualDevelopmentPlan, PDIStatus, Regulation, RegulationCompliance, ComplianceAudit, ScormCmiState
 } from '@/lib/types';
-import Dexie from 'dexie';
+import Dexie, { type Table } from 'dexie';
 
-/**
- * Defines the common interface for any database provider.
- * This ensures that different data storage engines (Dexie, a REST API, etc.)
- * can be swapped seamlessly. This interface mirrors the high-level functions
- * needed by the application.
- */
 export interface DBProvider {
-  // Direct DB access (for complex queries in components)
-  db: Dexie;
+  db: Dexie & {
+    enrollments: Table<Enrollment, number>;
+    userProgress: Table<UserProgress, number>;
+    courses: Table<Course, string>;
+    users: Table<User, string>;
+    notifications: Table<Notification, number>;
+    systemLogs: Table<SystemLog, number>;
+    aiUsageLog: Table<AIUsageLog, number>;
+    chatChannels: Table<ChatChannel, string>;
+    chatMessages: Table<ChatMessage, number>;
+    calendarEvents: Table<CalendarEvent, number>;
+    costs: Table<Cost, number>;
+    certificates: Table<Certificate, string>;
+    certificateTemplates: Table<CertificateTemplate, string>;
+    learningPaths: Table<LearningPath, number>;
+    badges: Table<Badge, string>;
+    userBadges: Table<UserBadge, number>;
+    individualDevelopmentPlans: Table<IndividualDevelopmentPlan, string>;
+    regulations: Table<Regulation, string>;
+    regulationCompliance: Table<RegulationCompliance, string>;
+    complianceAudits: Table<ComplianceAudit, string>;
+    courseRatings: Table<CourseRating, number>;
+    externalTrainings: Table<ExternalTraining, number>;
+    rolePermissions: Table<RolePermission, string>;
+    scormCmiState: Table<ScormCmiState, number>;
+    forumMessages: Table<ForumMessage, number>;
+    resources: Table<Resource, number>;
+    courseResources: Table<CourseResource, number>;
+    announcements: Table<Announcement, number>;
+    costCategories: Table<CustomCostCategory, number>;
+    userLearningPathProgress: Table<UserLearningPathProgress, number>;
+    aiConfig: Table<AIConfig, string>;
+  };
 
   // Initialization
   populateDatabase(): Promise<void>;

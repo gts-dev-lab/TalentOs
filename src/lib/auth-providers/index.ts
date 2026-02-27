@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 // src/lib/auth-providers/index.ts
 

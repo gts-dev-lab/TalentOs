@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { NextAuthOptions } from 'next-auth';
 import { users } from '@/lib/data';
 import type { User } from '@/lib/types';

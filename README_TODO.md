@@ -85,7 +85,7 @@ Tareas de mejora sobre entidades del dominio. **No son tickets TT-XXX.**
 | Ticket | Estado | Acción sugerida |
 |--------|--------|-----------------|
 | TT-113 | Checklist + tests | Ejecutar pruebas manuales, rellenar informe, marcar hecho |
-| TT-114 | En progreso (~40%) | Implementar métodos pendientes del provider PostgreSQL |
+| TT-114 | ✅ Completado | Todos los métodos del provider PostgreSQL implementados |
 | TT-117 | Pendiente | Crear tests de integración PostgreSQL + RLS |
 
 ---

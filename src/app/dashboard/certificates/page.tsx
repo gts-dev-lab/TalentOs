@@ -12,6 +12,8 @@ import type { Course, User } from '@/lib/types';
 
 export default function CertificatesPage() {
   const { user } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const certificates = useLiveQuery(() => {
     if (!user) return [];
@@ -24,6 +26,17 @@ export default function CertificatesPage() {
 
   const usersById = useMemo(() => new Map((users || []).map(u => [u.id, u])), [users]);
   const coursesById = useMemo(() => new Map((courses || []).map(c => [c.id, c])), [courses]);
+
+  const totalPages = Math.ceil((certificates?.length || 0) / itemsPerPage);
+  const paginatedCertificates = useMemo(() => {
+    if (!certificates) return [];
+    const start = (currentPage - 1) * itemsPerPage;
+    return certificates.slice(start, start + itemsPerPage);
+  }, [certificates, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   if (!user || certificates === undefined || users === undefined || courses === undefined) {
     return (

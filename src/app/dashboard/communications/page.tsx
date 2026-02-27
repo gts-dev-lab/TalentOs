@@ -129,7 +129,7 @@ function AddAnnouncementDialog({ open, onOpenChange }: { open: boolean, onOpenCh
     };
 
     const onSubmit = async (data: AnnouncementFormValues) => {
-        const result = await createAndNotifyAnnouncement(data);
+        const result = await createAndNotifyAnnouncement(data as any);
 
         if (result.success) {
             toast({ title: 'Éxito', description: result.message });

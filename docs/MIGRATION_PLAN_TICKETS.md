@@ -113,10 +113,10 @@ Este documento recoge el plan de migración para transformar el LMS actual en un
 
 | Ticket | Estado | Notas |
 |--------|--------|--------|
-| **TT-114** | 🚧 En progreso (~40%) | Provider PostgreSQL: estructura base (`src/lib/db-providers/postgres.ts`), pool de conexiones, helpers `queryWithTenant`/`queryOne`/`queryScalar` que establecen `SET app.current_tenant_id`. Métodos implementados: Auth (login, logout, getLoggedInUser), User (CRUD completo), Course (CRUD completo), Enrollment (request, get, update, getEnrolledCourses, getIncompleteMandatory), UserProgress (get, getAll, markModuleAsCompleted), SCORM CMI (getScormCmiState, saveScormCmiState). Tabla `scorm_cmi_state` añadida a migración 002 y políticas RLS en 003. Integrado en `db-providers/index.ts` con carga condicional (solo servidor). Dependencias: `pg` y `@types/pg`. Pendiente: implementar métodos restantes (~60%): Certificates, Forum, Notifications, Resources, Announcements, Chat, Calendar, ExternalTraining, Costs, Badges, AI, LearningPaths, PDI, Ratings, Permissions, Logs, Regulations/Compliance. |
+| **TT-114** | ✅ Completado | Provider PostgreSQL: todos los métodos implementados (2852 líneas). Módulos: Certificates, Forum, Notifications, Resources, Announcements, Chat, Calendar, ExternalTraining, Costs, Badges, AI, LearningPaths, PDI, Ratings, Permissions, Logs, Regulations. |
 | **TT-115** | ✅ Hecho | Wrapper `withTenant(handler)` en `src/lib/api-with-tenant.ts`: envuelve handlers de API para ejecutarlos dentro de `runWithTenant()`, de modo que `getCurrentTenantId()` esté disponible y el provider PostgreSQL establezca `SET app.current_tenant_id` en cada conexión. Uso: `export const GET = withTenant(async (req) => { ... });`. Helper `isPostgresProvider()` para comprobar si es obligatorio. Documentar en rutas que usen BD con DB_PROVIDER=postgres. |
 | **TT-116** | ✅ Hecho | Tabla `audit_logs` en `002_schema_talentos.sql` con índices; RLS en `003_rls_policies.sql`. Módulo `src/lib/audit/`: tipos, `memory-store`, `postgres-store` (pg con SET app.current_tenant_id), `logAudit()` y `getAuditLogsByTenant()` según DB_PROVIDER/DATABASE_URL. |
-| **TT-117** | ⏳ Pendiente | Tests de Integración PostgreSQL + RLS |
+| **TT-117** | 🚧 En progreso | Tests creados en `src/__tests__/postgres-rls.test.ts`. Requiere PostgreSQL con migraciones y variable TEST_DATABASE_URL. |
 
 ---
 

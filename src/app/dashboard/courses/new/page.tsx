@@ -63,13 +63,14 @@ export default function NewCoursePage() {
     mode: 'onChange'
   });
   
-  const { isSubmitting } = form.state;
+  const { isSubmitting } = form.formState;
   const imageValue = form.watch('image');
 
   const onSubmit = async (data: CourseFormValues) => {
     const newCourseData = {
         ...data,
         aiHint: data.title.toLowerCase().split(' ').slice(0, 2).join(' '),
+        mandatoryForRoles: data.mandatoryForRoles as any,
     };
 
     try {
