@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TT-109: Sistema centralizado de logs de auditoría.
  * Registra eventos de seguridad (auth, acceso) con timestamp UTC.

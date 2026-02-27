@@ -56,6 +56,23 @@ export async function getAuditLogsByTenant(
   return memoryStore.getByTenant(tenantId, options);
 }
 
+// Convenience functions for auth events (used by routes)
+export async function logAuthSuccess(tenantId: string, userId: string, method?: string) {
+  await logAudit(tenantId, 'auth.login.success', { userId, details: { method } });
+}
+
+export async function logAuthFailure(options: { reason: string; code: string; email: string }, ip?: string) {
+  await logAudit('unknown', 'auth.login.failure', { details: { ...options, ip } });
+}
+
+export async function logAuthLogout(tenantId: string, userId: string) {
+  await logAudit(tenantId, 'auth.logout', { userId });
+}
+
+export async function logAction(userId: string, action: string, details?: any) {
+  console.log(`[AUDIT] Action: user=${userId} action=${action}`, details);
+}
+
 export type { AuditLogEntry, AuditEventKind };
 export { memoryStore } from './memory-store';
 export { isPostgresAuditEnabled } from './postgres-store';
