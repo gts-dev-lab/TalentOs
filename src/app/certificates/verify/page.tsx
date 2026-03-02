@@ -26,21 +26,6 @@ export default function CertificateVerificationPage() {
     return `${window.location.origin}/certificates/verify?code=${certificate.verificationCode}`;
   }, [certificate]);
 
-  useEffect(() => {
-    const initialCode = searchParams.get('code');
-    if (initialCode) {
-      setCode(initialCode);
-      void handleVerify(initialCode);
-    }
-  }, [searchParams, handleVerify]);
-
-  useEffect(() => {
-    if (!verificationUrl) return;
-    QRCode.toDataURL(verificationUrl, { errorCorrectionLevel: 'H' })
-      .then(url => setQrCodeDataUrl(url))
-      .catch(() => setQrCodeDataUrl(''));
-  }, [verificationUrl]);
-
   const handleVerify = useCallback(
     async (verificationCode?: string) => {
       const codeToCheck = (verificationCode || code).trim();
@@ -69,6 +54,21 @@ export default function CertificateVerificationPage() {
     },
     [code]
   );
+
+  useEffect(() => {
+    const initialCode = searchParams.get('code');
+    if (initialCode) {
+      setCode(initialCode);
+      void handleVerify(initialCode);
+    }
+  }, [searchParams, handleVerify]);
+
+  useEffect(() => {
+    if (!verificationUrl) return;
+    QRCode.toDataURL(verificationUrl, { errorCorrectionLevel: 'H' })
+      .then(url => setQrCodeDataUrl(url))
+      .catch(() => setQrCodeDataUrl(''));
+  }, [verificationUrl]);
 
   const isValid = Boolean(
     certificate && user && course && template && certificate.status === 'active'
@@ -115,10 +115,7 @@ export default function CertificateVerificationPage() {
               </div>
               {user && course && template && (
                 <div className="border rounded-lg overflow-hidden">
-                  <div
-                    className="bg-muted p-4 scale-[0.6] origin-top-left"
-                    style={{ width: '166.66%', height: 'calc(794px * 0.6)' }}
-                  >
+                  <div className="bg-muted p-4 scale-[0.6] origin-top-left certificate-scale-container">
                     <CertificateViewer
                       certificate={certificate}
                       templateType={template.type}

@@ -69,7 +69,8 @@ export async function logAuthLogout(tenantId: string, userId: string) {
 }
 
 export async function logAction(userId: string, action: string, details?: any) {
-  console.log(`[AUDIT] Action: user=${userId} action=${action}`, details);
+  // TODO: Implement proper audit logging for actions
+  // Currently a no-op placeholder
 }
 
 export type { AuditLogEntry, AuditEventKind };

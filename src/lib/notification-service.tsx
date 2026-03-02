@@ -47,13 +47,6 @@ export async function sendEmail({
   const fromEmail = 'onboarding@resend.dev';
 
   if (!apiKey) {
-    console.warn(`--- [EMAIL SIMULATION] ---`);
-    console.warn('Resend API Key not set. Simulating email send.');
-    console.log(`To: ${to}`);
-    console.log(`From: ${fromEmail}`);
-    console.log(`Reply-To: ${replyTo || 'N/A'}`);
-    console.log(`Subject: ${subject}`);
-    console.log('---------------------------');
     await db.logSystemEvent('WARN', 'Email Simulation: Resend API Key not set.');
     return;
   }
@@ -107,12 +100,6 @@ export async function sendWhatsAppNotification(user: User, message: string): Pro
   const toPhone = user.phone;
 
   if (!accountSid || !authToken || !fromPhone || !toPhone) {
-    console.warn(`--- [WHATSAPP SIMULATION to ${toPhone || 'N/A'}] ---`);
-    console.warn(
-      'Twilio credentials, From Phone, or User Phone not set. Simulating WhatsApp send.'
-    );
-    console.log(`Message: ${message}`);
-    console.log('------------------------------------');
     await db.logSystemEvent(
       'WARN',
       `WhatsApp Simulation: Twilio credentials not fully set for user ${user.id}`
@@ -150,11 +137,6 @@ export async function sendPushNotification(
   // Las notificaciones push ahora se manejan directamente en el cliente usando la Web Notifications API
   // Esta función se mantiene para compatibilidad pero no hace nada en el servidor
   // El cliente debe usar la API nativa del navegador para mostrar notificaciones
-
-  console.log(`[PUSH NOTIFICATION] Simulated push notification for user ${userId}:`);
-  console.log(`  Title: ${title}`);
-  console.log(`  Body: ${body}`);
-  console.log(`  URL: ${url}`);
 
   await db.logSystemEvent('INFO', `Push notification requested for user ${userId}`, {
     title,
