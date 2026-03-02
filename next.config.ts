@@ -1,5 +1,4 @@
-
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -27,7 +26,7 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-       {
+      {
         protocol: 'https',
         hostname: 'i.pravatar.cc',
         port: '',
@@ -52,18 +51,24 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
   // Prevent bundling server-only packages
-  serverExternalPackages: ['argon2-browser', 'argon2', 'twilio', '@sendgrid/mail', 'google-auth-library'],
+  serverExternalPackages: [
+    'argon2-browser',
+    'argon2',
+    'twilio',
+    '@sendgrid/mail',
+    'google-auth-library',
+  ],
   webpack: (config, { isServer }) => {
     config.experiments = {
       ...(config.experiments || {}),
       asyncWebAssembly: true,
     };
-    
+
     // This is to prevent a build error for a missing optional dependency in genkit
     config.externals.push({
       '@opentelemetry/exporter-jaeger': 'commonjs @opentelemetry/exporter-jaeger',
     });
-    
+
     // Fix for argon2-browser trying to use Node.js 'fs' module in the browser
     if (!isServer) {
       config.resolve.fallback = {
@@ -72,7 +77,7 @@ const nextConfig: NextConfig = {
         path: false,
         crypto: false,
       };
-      
+
       // Handle .wasm files for argon2-browser - use asset/resource
       config.module.rules.push({
         test: /\.wasm$/,
@@ -84,7 +89,7 @@ const nextConfig: NextConfig = {
       // Also externalize argon2 from client bundle
       config.externals.push('argon2');
     }
-    
+
     // Prevent argon2 from being bundled in the client
     if (!isServer) {
       config.externals = config.externals || [];
@@ -92,9 +97,9 @@ const nextConfig: NextConfig = {
         config.externals.push('argon2');
       }
     }
-    
+
     return config;
-  }
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,5 @@
-
 import { Inter } from 'next/font/google';
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/auth';
 import { AuthSessionProvider } from '@/components/auth-session-provider';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -25,21 +24,14 @@ export const metadata: Metadata = {
       { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [
-      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-    ],
+    apple: [{ url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' }],
   },
 };
- 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
- 
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning className={inter.className}>
-       <head>
+      <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -66,19 +58,17 @@ export default function RootLayout({
       </head>
       <body className="font-body bg-background">
         <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-            <AuthSessionProvider>
-                <AuthProvider>
-                    {children}
-                </AuthProvider>
-            </AuthSessionProvider>
-            <Toaster />
-            <PWARegister />
-            <ChunkLoadRecovery />
+          <AuthSessionProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </AuthSessionProvider>
+          <Toaster />
+          <PWARegister />
+          <ChunkLoadRecovery />
         </ThemeProvider>
       </body>
     </html>

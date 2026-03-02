@@ -22,7 +22,7 @@ export function mapSessionToUser(profile: {
   picture?: string | null;
 }): User {
   const email = profile.email ?? '';
-  const existing = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
   if (existing) {
     return {
       id: existing.id,
@@ -65,7 +65,12 @@ export const nextAuthOptions: NextAuthOptions = {
             clientId: AUTHENTIK_ID!,
             clientSecret: AUTHENTIK_SECRET!,
             idToken: true,
-            profile(profile: { sub?: string; email?: string | null; name?: string | null; picture?: string | null }) {
+            profile(profile: {
+              sub?: string;
+              email?: string | null;
+              name?: string | null;
+              picture?: string | null;
+            }) {
               const u = mapSessionToUser(profile);
               return { ...u, image: u.avatar };
             },

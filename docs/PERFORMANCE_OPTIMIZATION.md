@@ -29,11 +29,13 @@
 ## 📊 Tiempos Esperados
 
 ### Desarrollo (npm run dev)
+
 - **Primera carga:** ~2-3 segundos (compilación inicial)
 - **Hot reload:** ~1-2 segundos
 - **Navegación:** <500ms
 
 ### Producción (npm run build && npm start)
+
 - **Primera carga:** ~1-2 segundos
 - **Navegación:** <300ms
 - **API responses:** <200ms

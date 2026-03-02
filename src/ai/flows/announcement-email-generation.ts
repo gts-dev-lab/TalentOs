@@ -22,12 +22,11 @@ export async function generateAnnouncementEmail(
   return generateAnnouncementEmailFlow(input);
 }
 
-const prompt = ai.definePrompt(
-  {
-    name: 'announcementEmailPrompt',
-    inputSchema: GenerateAnnouncementEmailInputSchema,
-    outputSchema: GenerateAnnouncementEmailOutputSchema,
-    prompt: `You are an AI assistant for a corporate training platform called TalentOS. Your task is to generate a professional email based on an internal announcement.
+const prompt = ai.definePrompt({
+  name: 'announcementEmailPrompt',
+  inputSchema: GenerateAnnouncementEmailInputSchema,
+  outputSchema: GenerateAnnouncementEmailOutputSchema,
+  prompt: `You are an AI assistant for a corporate training platform called TalentOS. Your task is to generate a professional email based on an internal announcement.
 
       Recipient Name: {{{recipientName}}}
       Announcement Title: {{{announcementTitle}}}
@@ -36,9 +35,7 @@ const prompt = ai.definePrompt(
       Based on this, generate an appropriate subject and body for an email notification. Address the recipient by their name. Keep the tone friendly but professional.
       The body should be formatted nicely for an email.
       `,
-  },
-);
-
+});
 
 const generateAnnouncementEmailFlow = ai.defineFlow(
   {
@@ -47,7 +44,7 @@ const generateAnnouncementEmailFlow = ai.defineFlow(
     outputSchema: GenerateAnnouncementEmailOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

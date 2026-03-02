@@ -166,13 +166,11 @@ export function findScormApi(win: Window | null): ScormApiInstance | null {
  * Instala el objeto API en la ventana dada (típicamente window del padre del iframe del SCO).
  * También expone API (alias 1.2) y opcionalmente define findAPI en la ventana para que el contenido lo use.
  */
-export function installScormApi(
-  targetWindow: Window,
-  api: ScormApiInstance
-): void {
+export function installScormApi(targetWindow: Window, api: ScormApiInstance): void {
   (targetWindow as Window & { API_1484_11: ScormApiInstance }).API_1484_11 = api;
   (targetWindow as Window & { API: ScormApiInstance }).API = api;
-  (targetWindow as Window & { findAPI: (w: Window) => ScormApiInstance | null }).findAPI = findScormApi;
+  (targetWindow as Window & { findAPI: (w: Window) => ScormApiInstance | null }).findAPI =
+    findScormApi;
 }
 
 /**

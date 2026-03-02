@@ -31,7 +31,7 @@
     --chart-5: 43 74% 66%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -92,24 +92,24 @@
   .frappe-page {
     @apply min-h-[calc(100vh-3.5rem)] p-4 md:p-6;
   }
-  
+
   /* Responsive improvements */
   @media (max-width: 768px) {
     .frappe-page {
       @apply p-3;
     }
   }
-  
+
   /* Skeleton improvements */
   .frappe-skeleton {
     @apply animate-pulse rounded-frappe-sm bg-muted/60;
   }
-  
+
   /* Smooth transitions for interactive elements */
   .frappe-interactive {
     @apply transition-all duration-frappe ease-out;
   }
-  
+
   .frappe-interactive:hover {
     @apply transition-all duration-frappe-fast;
   }

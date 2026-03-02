@@ -56,11 +56,7 @@ export function logAuthSuccess(tenantId: string, userId: string): void {
 }
 
 /** Login fallido. No incluir contraseña. */
-export function logAuthFailure(options: {
-  reason: string;
-  code?: string;
-  email?: string;
-}): void {
+export function logAuthFailure(options: { reason: string; code?: string; email?: string }): void {
   auditLog('auth.login.failure', {
     details: {
       reason: options.reason,
@@ -93,7 +89,7 @@ export function getRecentAuditLogs(limit = 500): AuditLogEntry[] {
  */
 export function getAuditLogsByTenant(tenantId: string, limit = 500): AuditLogEntry[] {
   return inMemoryStore
-    .filter((e) => e.tenantId === tenantId)
+    .filter(e => e.tenantId === tenantId)
     .slice(-limit)
     .reverse();
 }

@@ -80,7 +80,10 @@ export function CertificateGenerator({
           />
         </div>
         <div className="border rounded-lg overflow-hidden">
-          <div className="bg-muted p-4 scale-[0.6] origin-top-left" style={{ width: '166.66%', height: 'calc(794px * 0.6)' }}>
+          <div
+            className="bg-muted p-4 scale-[0.6] origin-top-left"
+            style={{ width: '166.66%', height: 'calc(794px * 0.6)' }}
+          >
             <CertificateViewer
               certificate={certificate}
               templateType={template.type}
@@ -91,7 +94,11 @@ export function CertificateGenerator({
           </div>
         </div>
         <Button onClick={handleDownload} disabled={isDownloading}>
-          {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+          {isDownloading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="mr-2 h-4 w-4" />
+          )}
           Descargar PDF
         </Button>
       </CardContent>

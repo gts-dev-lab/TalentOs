@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -44,10 +43,14 @@ export function Forum({ courseId, user, canManage }: ForumProps) {
         parentId: null,
       });
       setNewMessage('');
-      toast({ title: "Mensaje publicado" });
+      toast({ title: 'Mensaje publicado' });
     } catch (error) {
-      console.error("Failed to post message", error);
-      toast({ title: "Error", description: "No se pudo publicar el mensaje.", variant: "destructive" });
+      console.error('Failed to post message', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo publicar el mensaje.',
+        variant: 'destructive',
+      });
     } finally {
       setIsPosting(false);
     }
@@ -57,7 +60,9 @@ export function Forum({ courseId, user, canManage }: ForumProps) {
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle>Foro de Discusión</CardTitle>
-        <CardDescription>Haz preguntas, comparte ideas y colabora con otros participantes del curso.</CardDescription>
+        <CardDescription>
+          Haz preguntas, comparte ideas y colabora con otros participantes del curso.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Post new message form */}
@@ -65,7 +70,7 @@ export function Forum({ courseId, user, canManage }: ForumProps) {
           <Textarea
             placeholder="Inicia una nueva discusión..."
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={e => setNewMessage(e.target.value)}
             rows={3}
             disabled={isPosting}
           />
@@ -79,7 +84,11 @@ export function Forum({ courseId, user, canManage }: ForumProps) {
 
         {/* Messages List */}
         <div className="space-y-6">
-          {messages === undefined && <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>}
+          {messages === undefined && (
+            <div className="flex justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          )}
           {messages && messages.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               <MessageSquare className="mx-auto h-12 w-12" />
@@ -87,16 +96,17 @@ export function Forum({ courseId, user, canManage }: ForumProps) {
               <p className="text-sm">¡Sé el primero en iniciar una!</p>
             </div>
           )}
-          {messages && messages.map(msg => (
-            <ForumMessageCard
-              key={msg.id}
-              message={msg}
-              courseId={courseId}
-              user={user}
-              canManage={canManage}
-              isTopLevel
-            />
-          ))}
+          {messages &&
+            messages.map(msg => (
+              <ForumMessageCard
+                key={msg.id}
+                message={msg}
+                courseId={courseId}
+                user={user}
+                canManage={canManage}
+                isTopLevel
+              />
+            ))}
         </div>
       </CardContent>
     </Card>

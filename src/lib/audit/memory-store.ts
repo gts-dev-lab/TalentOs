@@ -31,9 +31,9 @@ export const memoryStore = {
     tenantId: string,
     options?: { limit?: number; from?: string; to?: string }
   ): Promise<AuditLogEntry[]> {
-    let list = entries.filter((e) => e.tenantId === tenantId);
-    if (options?.from) list = list.filter((e) => e.createdAt >= options.from!);
-    if (options?.to) list = list.filter((e) => e.createdAt <= options.to!);
+    let list = entries.filter(e => e.tenantId === tenantId);
+    if (options?.from) list = list.filter(e => e.createdAt >= options.from!);
+    if (options?.to) list = list.filter(e => e.createdAt <= options.to!);
     list.sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
     const limit = options?.limit ?? 500;
     return list.slice(0, limit);

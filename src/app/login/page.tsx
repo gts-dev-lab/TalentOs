@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -44,25 +43,24 @@ export default function LoginPage() {
       const loggedInUser = await login(email, password);
       if (loggedInUser) {
         toast({
-            title: `Bienvenido, ${loggedInUser.name.split(' ')[0]}`,
-            description: "Has iniciado sesión correctamente.",
+          title: `Bienvenido, ${loggedInUser.name.split(' ')[0]}`,
+          description: 'Has iniciado sesión correctamente.',
         });
         router.push('/dashboard');
       } else {
-        setError("Credenciales incorrectas.");
+        setError('Credenciales incorrectas.');
       }
     } catch (err: any) {
       if (err.message.includes('desactivada')) {
-        setError("Esta cuenta ha sido desactivada. Contacta con un administrador.");
+        setError('Esta cuenta ha sido desactivada. Contacta con un administrador.');
       } else if (err.message.includes('pendiente de aprobación')) {
-        setError("Esta cuenta está pendiente de aprobación por un administrador.");
-      }
-      else {
-        setError("Credenciales incorrectas o usuario no encontrado.");
+        setError('Esta cuenta está pendiente de aprobación por un administrador.');
+      } else {
+        setError('Credenciales incorrectas o usuario no encontrado.');
       }
       console.error(err);
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -76,53 +74,68 @@ export default function LoginPage() {
             <AppLogo className="h-10 w-10 text-primary" />
             <CardTitle className="text-3xl font-bold">TalentOS</CardTitle>
           </Link>
-          <CardDescription>La plataforma de formación impulsada por IA para tu equipo.</CardDescription>
+          <CardDescription>
+            La plataforma de formación impulsada por IA para tu equipo.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-             {error && (
-                <Alert variant="destructive">
-                    <Terminal className="h-4 w-4" />
-                    <AlertTitle>Error de Autenticación</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
+            {error && (
+              <Alert variant="destructive">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Error de Autenticación</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="nombre@empresa.com" 
+              <Input
+                id="email"
+                type="email"
+                placeholder="nombre@empresa.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 required
                 disabled={formIsDisabled}
               />
             </div>
             <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Contraseña</Label>
-                    <Link href="/forgot-password" className={`text-sm text-primary hover:underline ${formIsDisabled ? 'pointer-events-none opacity-50' : ''}`}>
-                        ¿Has olvidado tu contraseña?
-                    </Link>
-                </div>
-              <Input 
-                id="password" 
-                type="password" 
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Contraseña</Label>
+                <Link
+                  href="/forgot-password"
+                  className={`text-sm text-primary hover:underline ${formIsDisabled ? 'pointer-events-none opacity-50' : ''}`}
+                >
+                  ¿Has olvidado tu contraseña?
+                </Link>
+              </div>
+              <Input
+                id="password"
+                type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
                 disabled={formIsDisabled}
-                />
+              />
             </div>
             <Button type="submit" className="w-full text-lg h-12" disabled={formIsDisabled}>
-              {formIsDisabled ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> {isAuthLoading ? "Iniciando..." : "Iniciando..."}</> : "Iniciar Sesión"}
+              {formIsDisabled ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{' '}
+                  {isAuthLoading ? 'Iniciando...' : 'Iniciando...'}
+                </>
+              ) : (
+                'Iniciar Sesión'
+              )}
             </Button>
             <div className="text-center text-sm space-x-1">
-                <span>¿No tienes cuenta?</span>
-                <Link href="/register" className={`text-primary hover:underline font-semibold ${formIsDisabled ? 'pointer-events-none opacity-50' : ''}`}>
-                    Regístrate
-                </Link>
+              <span>¿No tienes cuenta?</span>
+              <Link
+                href="/register"
+                className={`text-primary hover:underline font-semibold ${formIsDisabled ? 'pointer-events-none opacity-50' : ''}`}
+              >
+                Regístrate
+              </Link>
             </div>
           </form>
         </CardContent>
@@ -130,7 +143,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Cuentas de Prueba</CardTitle>
-          <CardDescription>Haz clic en un usuario para rellenar automáticamente sus credenciales.</CardDescription>
+          <CardDescription>
+            Haz clic en un usuario para rellenar automáticamente sus credenciales.
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center justify-center gap-4">
           {testUsers.map(testUser => (
@@ -155,30 +170,30 @@ export default function LoginPage() {
       </Card>
 
       {authentikEnabled && (
-      <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md">
           <CardContent className="pt-6 space-y-4">
-              <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">
-                          O inicia sesión con cuenta empresarial
-                      </span>
-                  </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
               </div>
-              <Button
-                variant="default"
-                className="w-full"
-                onClick={() => signIn('authentik', { callbackUrl: '/dashboard' })}
-                disabled={formIsDisabled}
-              >
-                <Shield className="mr-2 h-4 w-4" />
-                Google / Microsoft (Authentik)
-              </Button>
-              <p className="text-xs text-muted-foreground text-center">
-                Proveedor de identidad autoalojado. Configuración en el servidor.
-              </p>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  O inicia sesión con cuenta empresarial
+                </span>
+              </div>
+            </div>
+            <Button
+              variant="default"
+              className="w-full"
+              onClick={() => signIn('authentik', { callbackUrl: '/dashboard' })}
+              disabled={formIsDisabled}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Google / Microsoft (Authentik)
+            </Button>
+            <p className="text-xs text-muted-foreground text-center">
+              Proveedor de identidad autoalojado. Configuración en el servidor.
+            </p>
           </CardContent>
         </Card>
       )}

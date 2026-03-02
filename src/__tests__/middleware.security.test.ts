@@ -33,7 +33,13 @@ describe('Middleware TT-102 / TT-113', () => {
   });
 
   it('permite acceso a rutas públicas sin token (login, session, logout, nextauth, lti)', async () => {
-    const paths = ['/api/auth/login', '/api/auth/session', '/api/auth/logout', '/api/nextauth', '/api/lti/oidc/login'];
+    const paths = [
+      '/api/auth/login',
+      '/api/auth/session',
+      '/api/auth/logout',
+      '/api/nextauth',
+      '/api/lti/oidc/login',
+    ];
     for (const path of paths) {
       const req = createRequest(path);
       const res = await middleware(req);

@@ -13,10 +13,7 @@ function sanitizeUser(u: User & { passwordHash?: string }): User {
 
 export async function GET() {
   if (!isJwtConfigured()) {
-    return NextResponse.json(
-      { error: 'API auth not configured.' },
-      { status: 503 }
-    );
+    return NextResponse.json({ error: 'API auth not configured.' }, { status: 503 });
   }
   const store = await cookies();
   const token = store.get(AUTH_COOKIE)?.value;
@@ -29,7 +26,7 @@ export async function GET() {
     return NextResponse.json({ user: null });
   }
 
-  const user = users.find((u) => u.id === payload.sub) as (typeof users)[0] | undefined;
+  const user = users.find(u => u.id === payload.sub) as (typeof users)[0] | undefined;
   if (!user) {
     return NextResponse.json({ user: null });
   }

@@ -7,6 +7,7 @@
 ## 📍 Estado Actual
 
 ### Verificación Local
+
 - **Puerto 3000:** No está activo actualmente
 - **Proceso Node.js:** No se detecta servidor Next.js corriendo
 - **Estado:** La aplicación **NO está desplegada localmente** en este momento
@@ -36,6 +37,7 @@ npm run dev
 ### 2. **Despliegue en Vercel (Recomendado para Producción)**
 
 **Ventajas:**
+
 - ✅ Despliegue automático desde Git
 - ✅ HTTPS incluido
 - ✅ CDN global
@@ -45,6 +47,7 @@ npm run dev
 **Pasos:**
 
 1. **Push a Git:**
+
 ```bash
 git add .
 git commit -m "Ready for deployment"
@@ -58,6 +61,7 @@ git push origin main
    - Click **Deploy**
 
 **Variables de entorno requeridas:**
+
 ```
 JWT_SECRET=tu-secret-generado
 NEXTAUTH_URL=https://tu-proyecto.vercel.app
@@ -156,6 +160,7 @@ Después de desplegar, verifica:
 ## 📝 Variables de Entorno Requeridas
 
 ### Mínimas (para funcionamiento básico):
+
 ```env
 JWT_SECRET=tu-secret-generado
 NEXTAUTH_URL=https://tu-dominio.com
@@ -163,6 +168,7 @@ NEXTAUTH_SECRET=tu-secret-generado
 ```
 
 ### Opcionales (para funcionalidades avanzadas):
+
 ```env
 # Supabase (sincronización en la nube)
 NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
@@ -193,16 +199,19 @@ NEXT_PUBLIC_AUTHENTIK_ENABLED=true
 ### La aplicación no inicia
 
 1. **Verificar Node.js:**
+
 ```bash
 node --version  # Debe ser >= 18
 ```
 
 2. **Verificar dependencias:**
+
 ```bash
 npm install --legacy-peer-deps
 ```
 
 3. **Verificar build:**
+
 ```bash
 npm run build
 ```
@@ -237,6 +246,7 @@ PORT=3001 npm run dev
 ## 🔄 Próximos Pasos
 
 1. **Si quieres desplegar localmente:**
+
    ```bash
    npm run dev
    ```

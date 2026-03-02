@@ -22,7 +22,9 @@ function getSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-export async function signSessionToken(payload: Omit<SessionPayload, 'iat' | 'exp'>): Promise<string> {
+export async function signSessionToken(
+  payload: Omit<SessionPayload, 'iat' | 'exp'>
+): Promise<string> {
   const secret = getSecret();
   return new jose.SignJWT({
     email: payload.email,

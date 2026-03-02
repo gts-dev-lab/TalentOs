@@ -60,7 +60,7 @@ export const mockFrontendProvider: DBProvider = {
   logout: () => {},
   getLoggedInUser: empty,
 
-  addUser: async () => ({} as any),
+  addUser: async () => ({}) as any,
   bulkAddUsers: async () => [],
   getAllUsers: emptyArr,
   getUserById: empty,
@@ -132,7 +132,7 @@ export const mockFrontendProvider: DBProvider = {
   getPublicChatChannels: emptyArr,
   addPublicChatChannel: emptyStr,
   getDirectMessageThreadsForUserWithDetails: emptyArr,
-  getOrCreateDirectMessageThread: async () => ({} as any),
+  getOrCreateDirectMessageThread: async () => ({}) as any,
 
   getComplianceReportData: emptyArr,
 

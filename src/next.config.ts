@@ -1,5 +1,4 @@
-
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -12,7 +11,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: false,
     remotePatterns: [
-       {
+      {
         protocol: 'https',
         hostname: 'i.pravatar.cc',
         port: '',
@@ -29,7 +28,7 @@ const nextConfig: NextConfig = {
         hostname: 'placehold.co',
         port: '',
         pathname: '/**',
-      }
+      },
     ],
   },
 };

@@ -44,6 +44,7 @@ npm run dev
 **Qué hemos hecho:** El registro del Service Worker de la PWA se retrasa 1 segundo para no coincidir con el arranque de las extensiones.
 
 **Si siguen saliendo:** Son de las extensiones, no de TalentOS. Puedes:
+
 - Probar en ventana de incógnito (menos extensiones)
 - Desactivar extensiones una a una para localizar cuál lo provoca
 - Ignorarlas; no afectan al funcionamiento de la app

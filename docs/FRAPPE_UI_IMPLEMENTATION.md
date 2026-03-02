@@ -26,6 +26,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Archivo: `src/styles/design-tokens.css`
 
 **Colores Frappe**:
+
 - Sidebar: `--frappe-sidebar-bg` (oscuro), `--frappe-sidebar-fg` (texto claro)
 - Topbar: `--frappe-topbar-bg` (claro), `--frappe-topbar-border`
 - Primary: `--frappe-primary` (azul #2490ef)
@@ -33,25 +34,30 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Escala de grises: `--frappe-gray-50` a `--frappe-gray-900`
 
 **Tipografía**:
+
 - Fuente: Inter (ya configurada)
 - Tamaños: `--frappe-text-xs` a `--frappe-text-2xl`
 - Pesos: medium (500), semibold (600), bold (700)
 
 **Spacing** (grid 8px):
+
 - `--frappe-space-1` (4px) a `--frappe-space-16` (64px)
 
 **Radii**:
+
 - `--frappe-radius-sm`: 4px
 - `--frappe-radius-md`: 6px (default)
 - `--frappe-radius-lg`: 8px
 
 **Shadows**:
+
 - `--frappe-shadow-sm`: sombra sutil
 - `--frappe-shadow`: sombra estándar
 - `--frappe-shadow-md`: sombra media
 - `--frappe-shadow-lg`: sombra grande
 
 **Transiciones**:
+
 - `--frappe-transition-fast`: 150ms
 - `--frappe-transition`: 200ms
 - `--frappe-transition-slow`: 300ms
@@ -65,6 +71,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `src/components/ui/sidebar.tsx`
 
 **Características**:
+
 - Fondo oscuro (`frappe-sidebar`)
 - Texto claro
 - Hover con fondo `--frappe-sidebar-hover`
@@ -75,6 +82,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Transiciones suaves: `duration-frappe-slow`
 
 **Componentes**:
+
 - `SidebarHeader`: Logo + título (h-14, border-b)
 - `SidebarContent`: Menú principal (px-2 py-3)
 - `SidebarMenu`: Lista de items (space-y-0.5)
@@ -86,6 +94,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `src/components/dashboard-header.tsx`
 
 **Características**:
+
 - Fondo claro (`frappe-topbar`)
 - Altura: `h-14` (56px)
 - Border bottom sutil
@@ -93,6 +102,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Padding: `px-4 md:px-6`
 
 **Elementos**:
+
 - SidebarTrigger (hamburger menu)
 - Título de página (text-lg md:text-xl)
 - GlobalSearch
@@ -107,6 +117,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Button (`src/components/ui/button.tsx`)
 
 **Mejoras Frappe**:
+
 - Border radius: `rounded-frappe-sm` (4px)
 - Transiciones: `duration-frappe`
 - Shadow en variant `default`: `shadow-frappe-sm` → `shadow-frappe` en hover
@@ -114,6 +125,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Hover mejorado en `outline` y `ghost`
 
 **Variants**:
+
 - `default`: Primary con shadow
 - `destructive`: Rojo con shadow
 - `outline`: Border con hover muted
@@ -124,6 +136,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Input (`src/components/ui/input.tsx`)
 
 **Mejoras Frappe**:
+
 - Border radius: `rounded-frappe-sm` (4px)
 - Transiciones: `duration-frappe`
 - Tamaño de texto: `text-sm` (14px)
@@ -132,6 +145,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Card (`src/components/ui/card.tsx`)
 
 **Mejoras Frappe**:
+
 - Clase `frappe-card` aplicada (shadow + radius)
 - `CardHeader`: Fondo `bg-muted/30`, border-b, padding `px-5 py-4`
 - `CardTitle`: Tamaño `text-lg` (18px), font-semibold
@@ -141,6 +155,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Table (`src/components/ui/table.tsx`)
 
 **Mejoras Frappe**:
+
 - Wrapper con `rounded-frappe`, `border`, `shadow-frappe-sm`
 - `TableHeader`: Fondo `bg-muted/50`, border `border-border/60`
 - `TableHead`: Altura `h-11`, texto `text-xs`, `uppercase`, `tracking-wider`
@@ -150,6 +165,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Dialog/Modal (`src/components/ui/dialog.tsx`)
 
 **Mejoras Frappe**:
+
 - Overlay: `bg-black/60`, `backdrop-blur-sm`
 - Content: `rounded-frappe`, `shadow-frappe-lg`
 - Transiciones: `duration-frappe-slow`
@@ -157,6 +173,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Skeleton (`src/components/ui/skeleton.tsx`)
 
 **Mejoras Frappe**:
+
 - Border radius: `rounded-frappe-sm`
 - Fondo: `bg-muted/80` (más sutil)
 
@@ -167,12 +184,14 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Dashboard (`src/app/dashboard/dashboard/page.tsx`)
 
 **Características**:
+
 - Grid de StatCards (4 columnas en desktop)
 - Cards con `shadow-frappe` y hover `shadow-frappe-md`
 - Transiciones suaves
 - Layout responsive
 
 **StatCard** (`src/components/stat-card.tsx`):
+
 - Shadow: `shadow-frappe` → `shadow-frappe-md` en hover
 - Transiciones: `duration-frappe`
 - Tamaño de valor: `text-2xl` (24px)
@@ -180,6 +199,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Empleados (`src/app/dashboard/users/page.tsx`)
 
 **Características**:
+
 - Tabla con estilo Frappe (bordes sutiles, header con fondo)
 - Filtros con dropdowns
 - Paginación
@@ -190,6 +210,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Nómina (`src/app/dashboard/nomina/page.tsx`) ✨ NUEVO
 
 **Características**:
+
 - Página ejemplo completa estilo Frappe
 - Grid de StatCards (total bruto, neto, pagadas, pendientes)
 - Tabla con datos de ejemplo (mock)
@@ -207,6 +228,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `src/components/page-transition.tsx`
 
 **Características**:
+
 - Transición fade entre páginas
 - Duración: `duration-frappe-slow` (300ms)
 - Opacity: 0 → 100
@@ -217,6 +239,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Responsive
 
 **Mejoras**:
+
 - Sidebar: Colapsa en móvil (drawer)
 - Topbar: Padding adaptativo (`px-4 md:px-6`)
 - Cards: Grid responsive (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`)
@@ -228,6 +251,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Skeletons
 
 **Mejoras**:
+
 - Border radius Frappe
 - Fondo más sutil (`bg-muted/80`)
 - Animación pulse mejorada
@@ -235,6 +259,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Toasts y Confirmaciones
 
 **Ya implementados**:
+
 - `Toaster` de shadcn/ui
 - `AlertDialog` para confirmaciones
 - Estilos consistentes con Frappe
@@ -246,6 +271,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Manifest (`public/manifest.json`)
 
 **Actualizado con**:
+
 - `name` y `short_name` completos
 - `categories`: business, education, productivity
 - `lang`: es
@@ -255,6 +281,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Service Worker (`public/sw.js`)
 
 **Características**:
+
 - ✅ Cachea recursos estáticos (HTML, JS, CSS, imágenes)
 - ✅ Estrategia network-first para HTML
 - ✅ Estrategia cache-first para assets estáticos
@@ -264,6 +291,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - ✅ Manejo de errores robusto
 
 **Registro**: `src/components/pwa-register.tsx`
+
 - Registra SW después de `load`
 - Logs informativos
 - Manejo de errores
@@ -271,6 +299,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Meta Tags (`src/app/layout.tsx`)
 
 **Añadidos**:
+
 - `theme-color`: #2E9AFE
 - `apple-mobile-web-app-capable`: yes
 - `apple-mobile-web-app-status-bar-style`: default
@@ -283,23 +312,29 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Clases Frappe (`src/app/globals.css`)
 
 **`.frappe-sidebar`**:
+
 - Fondo y color del sidebar
 - Hover automático en links/buttons
 
 **`.frappe-topbar`**:
+
 - Fondo y border del topbar
 
 **`.frappe-card`**:
+
 - Shadow y border radius estándar
 
 **`.frappe-page`**:
+
 - Padding adaptativo
 - Min-height calculado
 
 **`.frappe-skeleton`**:
+
 - Estilo mejorado para skeletons
 
 **`.frappe-interactive`**:
+
 - Transiciones suaves
 - Hover más rápido
 
@@ -310,6 +345,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `tailwind.config.ts`
 
 **Añadido**:
+
 - `boxShadow`: `frappe-sm`, `frappe`, `frappe-md`, `frappe-lg`
 - `borderRadius`: `frappe-sm`, `frappe`, `frappe-lg`
 - `transitionDuration`: `frappe-fast`, `frappe`, `frappe-slow`
@@ -390,6 +426,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Sin Cambios en Lógica
 
 ✅ **No modificado**:
+
 - Lógica de autenticación
 - Lógica de base de datos (Dexie)
 - Lógica de sincronización
@@ -398,6 +435,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Contextos y hooks de negocio
 
 ✅ **Solo modificado**:
+
 - Estilos CSS/Tailwind
 - Estructura visual (HTML/JSX)
 - Clases de componentes
@@ -415,6 +453,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ## 🎉 Resultado Final
 
 **TalentOS ahora tiene**:
+
 - ✅ Look & feel idéntico a Frappe HRMS
 - ✅ Sidebar oscuro profesional
 - ✅ Topbar claro y limpio

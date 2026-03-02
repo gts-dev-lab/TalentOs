@@ -41,44 +41,55 @@ export default function CertificateVerificationPage() {
       .catch(() => setQrCodeDataUrl(''));
   }, [verificationUrl]);
 
-  const handleVerify = useCallback(async (verificationCode?: string) => {
-    const codeToCheck = (verificationCode || code).trim();
-    if (!codeToCheck) return;
-    setIsChecking(true);
-    setCertificate(null);
-    setUser(null);
-    setCourse(null);
-    setTemplate(null);
+  const handleVerify = useCallback(
+    async (verificationCode?: string) => {
+      const codeToCheck = (verificationCode || code).trim();
+      if (!codeToCheck) return;
+      setIsChecking(true);
+      setCertificate(null);
+      setUser(null);
+      setCourse(null);
+      setTemplate(null);
 
-    try {
-      const found = await db.getCertificateByVerificationCode(codeToCheck);
-      if (!found) return;
-      const [foundUser, foundCourse, foundTemplate] = await Promise.all([
-        db.getUserById(found.userId),
-        db.getCourseById(found.courseId),
-        db.getCertificateTemplateById(found.templateId),
-      ]);
-      setCertificate(found);
-      setUser(foundUser || null);
-      setCourse(foundCourse || null);
-      setTemplate(foundTemplate || null);
-    } finally {
-      setIsChecking(false);
-    }
-  }, [code]);
+      try {
+        const found = await db.getCertificateByVerificationCode(codeToCheck);
+        if (!found) return;
+        const [foundUser, foundCourse, foundTemplate] = await Promise.all([
+          db.getUserById(found.userId),
+          db.getCourseById(found.courseId),
+          db.getCertificateTemplateById(found.templateId),
+        ]);
+        setCertificate(found);
+        setUser(foundUser || null);
+        setCourse(foundCourse || null);
+        setTemplate(foundTemplate || null);
+      } finally {
+        setIsChecking(false);
+      }
+    },
+    [code]
+  );
 
-  const isValid = Boolean(certificate && user && course && template && certificate.status === 'active');
+  const isValid = Boolean(
+    certificate && user && course && template && certificate.status === 'active'
+  );
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <Card className="w-full max-w-3xl">
         <CardHeader>
           <CardTitle>Verificación de Certificados</CardTitle>
-          <CardDescription>Introduce el código para verificar la validez del certificado.</CardDescription>
+          <CardDescription>
+            Introduce el código para verificar la validez del certificado.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex gap-2">
-            <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Ej: CERT-ABC123" />
+            <Input
+              value={code}
+              onChange={e => setCode(e.target.value)}
+              placeholder="Ej: CERT-ABC123"
+            />
             <Button onClick={() => handleVerify()} disabled={isChecking}>
               {isChecking ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Verificar
@@ -93,14 +104,21 @@ export default function CertificateVerificationPage() {
           ) : certificate ? (
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                {isValid ? <ShieldCheck className="h-5 w-5 text-green-600" /> : <ShieldX className="h-5 w-5 text-red-600" />}
+                {isValid ? (
+                  <ShieldCheck className="h-5 w-5 text-green-600" />
+                ) : (
+                  <ShieldX className="h-5 w-5 text-red-600" />
+                )}
                 <span className={isValid ? 'text-green-700' : 'text-red-700'}>
                   {isValid ? 'Certificado válido' : 'Certificado inválido o revocado'}
                 </span>
               </div>
               {user && course && template && (
                 <div className="border rounded-lg overflow-hidden">
-                  <div className="bg-muted p-4 scale-[0.6] origin-top-left" style={{ width: '166.66%', height: 'calc(794px * 0.6)' }}>
+                  <div
+                    className="bg-muted p-4 scale-[0.6] origin-top-left"
+                    style={{ width: '166.66%', height: 'calc(794px * 0.6)' }}
+                  >
                     <CertificateViewer
                       certificate={certificate}
                       templateType={template.type}

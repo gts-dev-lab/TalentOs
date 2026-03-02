@@ -127,4 +127,3 @@ Este documento resume las funcionalidades y requisitos técnicos necesarios para
 - Cubre todos los módulos funcionales descritos.
 - Soporta configuración por rol y por organización.
 - Soporta escalado de contenidos y usuarios.
-

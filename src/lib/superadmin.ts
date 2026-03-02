@@ -13,7 +13,10 @@ function parseSuperadminEmails(): string[] {
   if (typeof process === 'undefined' || !process.env) return [];
   const raw = process.env[ENV_KEY];
   if (!raw || typeof raw !== 'string') return [];
-  return raw.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+  return raw
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(Boolean);
 }
 
 /**

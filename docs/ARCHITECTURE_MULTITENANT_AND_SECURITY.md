@@ -3,6 +3,7 @@
 Esta guía documenta la estructura de capas, fronteras de confianza y flujos de datos de TalentOS en su evolución hacia SaaS multi-inquilino, alineada con **OWASP ASVS v4.0.3** y el plan de migración (ver [MIGRATION_PLAN_TICKETS.md](./MIGRATION_PLAN_TICKETS.md)).
 
 **Relación con otros documentos:**
+
 - [DATABASE_AUDIT_AND_STANDARDS.md](./DATABASE_AUDIT_AND_STANDARDS.md) — auditoría del modelo de datos y estándares.
 - [DATABASE_STRUCTURE_AND_TECH.md](./DATABASE_STRUCTURE_AND_TECH.md) — estructura técnica actual de la BD.
 
@@ -50,7 +51,7 @@ Esta guía documenta la estructura de capas, fronteras de confianza y flujos de 
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Flujo de una petición protegida (/api/*)
+### 1.2 Flujo de una petición protegida (/api/\*)
 
 ```mermaid
 sequenceDiagram
@@ -76,12 +77,12 @@ sequenceDiagram
 
 ### 1.3 Fronteras de confianza
 
-| Frontera | Qué confía | Qué no confía |
-|----------|------------|----------------|
-| **Cliente → Servidor** | El servidor solo acepta identidad/tenant desde el JWT verificado (firmado con JWT_SECRET). No se confía en headers (p. ej. `X-Tenant-Id`) para el tenant. | Cuerpo de petición, query params y headers son entradas no confiables; validar con Zod u otro esquema. |
-| **Middleware → API** | El middleware ya validó JWT y tenantId; la ruta puede usar getSessionFromRequest() y confiar en el resultado. | No reutilizar el token en logs ni en respuestas. |
-| **API → Base de datos** | Con PostgreSQL+RLS, la BD aplica políticas por `app.current_tenant_id()`; la app debe fijar ese valor por request. | Sin RLS, la capa de aplicación es responsable de filtrar siempre por tenantId. |
-| **Auditoría / GDPR** | Los logs de auditoría (TT-109) no incluyen contraseñas ni tokens. La exportación ARCO (TT-110) excluye passwordHash. | No registrar PII innecesaria en logs; sanitizar detalles. |
+| Frontera                | Qué confía                                                                                                                                                | Qué no confía                                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Cliente → Servidor**  | El servidor solo acepta identidad/tenant desde el JWT verificado (firmado con JWT_SECRET). No se confía en headers (p. ej. `X-Tenant-Id`) para el tenant. | Cuerpo de petición, query params y headers son entradas no confiables; validar con Zod u otro esquema. |
+| **Middleware → API**    | El middleware ya validó JWT y tenantId; la ruta puede usar getSessionFromRequest() y confiar en el resultado.                                             | No reutilizar el token en logs ni en respuestas.                                                       |
+| **API → Base de datos** | Con PostgreSQL+RLS, la BD aplica políticas por `app.current_tenant_id()`; la app debe fijar ese valor por request.                                        | Sin RLS, la capa de aplicación es responsable de filtrar siempre por tenantId.                         |
+| **Auditoría / GDPR**    | Los logs de auditoría (TT-109) no incluyen contraseñas ni tokens. La exportación ARCO (TT-110) excluye passwordHash.                                      | No registrar PII innecesaria en logs; sanitizar detalles.                                              |
 
 ---
 
@@ -162,17 +163,17 @@ Aplicar estas prácticas al diseñar o modificar código, según OWASP ASVS y es
 
 ## 4. Referencia rápida de código
 
-| Necesidad | Ubicación |
-|-----------|-----------|
-| Verificar sesión y obtener tenantId en una API route | `getSessionFromRequest(request)` o `requireTenant(request, handler)` en `src/lib/tenant-context.ts` |
-| Obtener tenantId dentro de un handler ya protegido | `getCurrentTenantId()` (dentro de `runWithTenant` / `requireTenant`) |
-| Registrar evento de auditoría | `logAuthSuccess`, `logAuthFailure`, `logAuthLogout`, `logAccessDenied` en `src/lib/audit` |
-| Exportar datos de un usuario (ARCO) | `exportUserData(userId)` en `src/lib/gdpr.ts` |
-| Solicitar borrado lógico (derecho al olvido) | `requestErasure(userId, { notify: true })` en `src/lib/gdpr.ts` |
-| Políticas RLS y esquema multi-tenant en PostgreSQL | `migrations/001_extensions_and_tenants.sql`, `002_schema_talentos.sql`, `003_rls_policies.sql` |
-| Cifrado/descifrado de PII (TT-104) | `encryptPii()`, `decryptPii()`, `isPiiEncryptionAvailable()`, catálogo `PII_FIELD_KEYS` en `src/lib/pii-encryption.ts` |
-| Validación de seguridad y aislamiento (TT-113) | Checklist ejecutable: `docs/TT113_SECURITY_QA_CHECKLIST.md` (ZAP, Snyk, pruebas multi-tenant, ASVS L1, plantilla de informe). |
+| Necesidad                                            | Ubicación                                                                                                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Verificar sesión y obtener tenantId en una API route | `getSessionFromRequest(request)` o `requireTenant(request, handler)` en `src/lib/tenant-context.ts`                           |
+| Obtener tenantId dentro de un handler ya protegido   | `getCurrentTenantId()` (dentro de `runWithTenant` / `requireTenant`)                                                          |
+| Registrar evento de auditoría                        | `logAuthSuccess`, `logAuthFailure`, `logAuthLogout`, `logAccessDenied` en `src/lib/audit`                                     |
+| Exportar datos de un usuario (ARCO)                  | `exportUserData(userId)` en `src/lib/gdpr.ts`                                                                                 |
+| Solicitar borrado lógico (derecho al olvido)         | `requestErasure(userId, { notify: true })` en `src/lib/gdpr.ts`                                                               |
+| Políticas RLS y esquema multi-tenant en PostgreSQL   | `migrations/001_extensions_and_tenants.sql`, `002_schema_talentos.sql`, `003_rls_policies.sql`                                |
+| Cifrado/descifrado de PII (TT-104)                   | `encryptPii()`, `decryptPii()`, `isPiiEncryptionAvailable()`, catálogo `PII_FIELD_KEYS` en `src/lib/pii-encryption.ts`        |
+| Validación de seguridad y aislamiento (TT-113)       | Checklist ejecutable: `docs/TT113_SECURITY_QA_CHECKLIST.md` (ZAP, Snyk, pruebas multi-tenant, ASVS L1, plantilla de informe). |
 
 ---
 
-*Documento generado en el marco del ticket TT-112. Para el estado de los demás tickets del plan de migración, ver [MIGRATION_PLAN_TICKETS.md](./MIGRATION_PLAN_TICKETS.md).*
+_Documento generado en el marco del ticket TT-112. Para el estado de los demás tickets del plan de migración, ver [MIGRATION_PLAN_TICKETS.md](./MIGRATION_PLAN_TICKETS.md)._

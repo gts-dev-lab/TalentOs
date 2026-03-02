@@ -1,4 +1,3 @@
-
 # Guía de Configuración del Entorno de Desarrollo
 
 Esta guía te llevará paso a paso a través del proceso de configuración de TalentOS en tu máquina local para el desarrollo.
@@ -8,9 +7,10 @@ Esta guía te llevará paso a paso a través del proceso de configuración de Ta
 ### Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalado lo siguiente:
--   **Node.js:** Versión 20.x o superior.
--   **npm:** Generalmente se instala junto con Node.js.
--   **Git:** Para clonar el repositorio.
+
+- **Node.js:** Versión 20.x o superior.
+- **npm:** Generalmente se instala junto con Node.js.
+- **Git:** Para clonar el repositorio.
 
 ---
 
@@ -32,6 +32,7 @@ Una vez dentro de la carpeta del proyecto, instala todas las dependencias necesa
 ```bash
 npm install
 ```
+
 Este comando leerá el archivo `package.json` y descargará todas las librerías requeridas.
 
 ---
@@ -42,11 +43,11 @@ TalentOS utiliza una base de datos local (Dexie.js) para funcionar, pero para la
 
 1.  **Configura tu proyecto de Supabase:** Si aún no lo has hecho, necesitarás una cuenta de Supabase y crear un nuevo proyecto.
 2.  **Crea las Tablas:** Dentro de tu proyecto en Supabase, crea todas las tablas y campos exactamente como se especifica en nuestra guía del esquema.
-    -   🔗 **Referencia Obligatoria:** [**Guía del Esquema de Supabase**](./supabase_schema.md)
+    - 🔗 **Referencia Obligatoria:** [**Guía del Esquema de Supabase**](./supabase_schema.md)
 3.  **Obtén tus Credenciales:** Necesitarás tres credenciales de la sección `Project Settings > API` de tu proyecto de Supabase.
-    -   **Project URL**
-    -   **Project API Keys -> `anon` `public`**
-    -   **Project API Keys -> `service_role` `secret`**
+    - **Project URL**
+    - **Project API Keys -> `anon` `public`**
+    - **Project API Keys -> `service_role` `secret`**
 
 Guarda estas tres credenciales, las usarás en el siguiente paso.
 
@@ -71,7 +72,7 @@ La aplicación necesita claves secretas para conectarse a servicios externos. Es
     # Clave de API para Google Gemini (para las funciones de IA)
     # Obtenla desde Google AI Studio
     GOOGLE_API_KEY="TU_CLAVE_API_DE_GOOGLE_AI"
-    
+
     # --- Configuración de Email (Opcional pero Recomendado) ---
     # Clave de API de Resend para enviar emails
     RESEND_API_KEY="TU_CLAVE_API_DE_RESEND"
@@ -103,10 +104,10 @@ La aplicación debería estar disponible en `http://localhost:3000` (o el puerto
 
 La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) estará vacía. Para facilitar el desarrollo, el sistema la poblará automáticamente con datos de ejemplo.
 
--   **¿Cómo funciona?:** El archivo `src/lib/db-providers/dexie.ts` contiene una función `populateDatabase()` que se ejecuta al inicio. Si no detecta un usuario administrador (`user_1`), borra todas las tablas y las llena con los datos definidos en `src/lib/data.ts`.
--   **Inicio de Sesión:** Puedes usar cualquiera de las cuentas de prueba definidas en `src/app/login/page.tsx` para acceder. Por ejemplo, el usuario administrador:
-    -   **Email:** `elena.vargas@example.com`
-    -   **Contraseña:** `password123`
--   **Sincronización:** Recuerda que estos datos iniciales solo existen en tu navegador. Para subirlos a Supabase, ve a `Ajustes > Sincronización` y ejecuta el proceso de sincronización manual.
+- **¿Cómo funciona?:** El archivo `src/lib/db-providers/dexie.ts` contiene una función `populateDatabase()` que se ejecuta al inicio. Si no detecta un usuario administrador (`user_1`), borra todas las tablas y las llena con los datos definidos en `src/lib/data.ts`.
+- **Inicio de Sesión:** Puedes usar cualquiera de las cuentas de prueba definidas en `src/app/login/page.tsx` para acceder. Por ejemplo, el usuario administrador:
+  - **Email:** `elena.vargas@example.com`
+  - **Contraseña:** `password123`
+- **Sincronización:** Recuerda que estos datos iniciales solo existen en tu navegador. Para subirlos a Supabase, ve a `Ajustes > Sincronización` y ejecuta el proceso de sincronización manual.
 
 ¡Y eso es todo! Ahora tienes un entorno de desarrollo de TalentOS completamente funcional.

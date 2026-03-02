@@ -1,4 +1,3 @@
-
 // src/lib/db-providers/index.ts
 
 import type { DBProvider } from './types';
@@ -28,4 +27,6 @@ if (!providers[key]) {
 }
 
 // Modo solo diseño: sin IndexedDB ni APIs, solo UI con datos vacíos
-export const dbProvider: DBProvider = FRONTEND_ONLY ? mockFrontendProvider : (providers[key] || providers['dexie']);
+export const dbProvider: DBProvider = FRONTEND_ONLY
+  ? mockFrontendProvider
+  : providers[key] || providers['dexie'];

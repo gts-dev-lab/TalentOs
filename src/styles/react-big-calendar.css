@@ -1,4 +1,3 @@
-
 .rbc-calendar {
   box-sizing: border-box;
   height: 100%;
@@ -90,8 +89,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.rbc-row-content-scrollable
-  .rbc-row-content-scroll-container::-webkit-scrollbar {
+.rbc-row-content-scrollable .rbc-row-content-scroll-container::-webkit-scrollbar {
   display: none;
 }
 
@@ -394,10 +392,10 @@
   text-transform: lowercase;
 }
 .rbc-agenda-time-cell .rbc-continues-after:after {
-  content: " »";
+  content: ' »';
 }
 .rbc-agenda-time-cell .rbc-continues-prior:before {
-  content: "« ";
+  content: '« ';
 }
 
 .rbc-agenda-date-cell,
@@ -555,7 +553,7 @@
   pointer-events: none;
 }
 .rbc-current-time-indicator:before {
-  content: "";
+  content: '';
   position: absolute;
   left: -4px;
   top: -3px;

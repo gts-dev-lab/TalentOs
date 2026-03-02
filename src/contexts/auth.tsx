@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { User } from '@/lib/types';
@@ -36,7 +43,9 @@ const SESSION_CHECK_TIMEOUT_MS = 3500;
 function fetchWithTimeout(url: string, ms: number): Promise<Response> {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), ms);
-  return fetch(url, { credentials: 'same-origin', signal: controller.signal }).finally(() => clearTimeout(t));
+  return fetch(url, { credentials: 'same-origin', signal: controller.signal }).finally(() =>
+    clearTimeout(t)
+  );
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -44,9 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-  
 
-  
   const checkUserStatus = useCallback(async () => {
     if (typeof window === 'undefined') {
       setIsLoading(false);
@@ -92,14 +99,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     checkUserStatus();
   }, [checkUserStatus]);
-  
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (FRONTEND_ONLY) return; // No redirigir a login en modo solo frontend
-    const publicPages = ['/', '/login', '/register', '/pending-approval', '/forgot-password', '/password-reset', '/features', '/terms', '/privacy-policy', '/request-demo', '/certificates/verify', '/auth/error'];
+    const publicPages = [
+      '/',
+      '/login',
+      '/register',
+      '/pending-approval',
+      '/forgot-password',
+      '/password-reset',
+      '/features',
+      '/terms',
+      '/privacy-policy',
+      '/request-demo',
+      '/certificates/verify',
+      '/auth/error',
+    ];
     const isPublicPage = publicPages.includes(pathname);
     if (!isLoading && !user && !isPublicPage) {
-        router.push('/login');
+      router.push('/login');
     }
   }, [user, isLoading, pathname, router]);
 

@@ -36,9 +36,7 @@ export function getLtiPlatformConfig(iss: string): LtiPlatformConfig | null {
  */
 export function isLtiOidcConfigured(): boolean {
   return Boolean(
-    process.env.LTI_ISSUER &&
-    process.env.LTI_AUTH_REQUEST_URL &&
-    process.env.LTI_JWKS_URI
+    process.env.LTI_ISSUER && process.env.LTI_AUTH_REQUEST_URL && process.env.LTI_JWKS_URI
   );
 }
 

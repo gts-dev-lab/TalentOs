@@ -24,10 +24,10 @@ export async function personalizedCourseRecommendations(
 }
 
 const prompt = ai.definePrompt({
-    name: 'courseSuggestionPrompt',
-    inputSchema: PersonalizedCourseRecommendationsInputSchema,
-    outputSchema: PersonalizedCourseRecommendationsOutputSchema,
-    prompt: `You are an expert career advisor for an emergency services training platform. Your task is to recommend relevant internal courses to a user based on their profile.
+  name: 'courseSuggestionPrompt',
+  inputSchema: PersonalizedCourseRecommendationsInputSchema,
+  outputSchema: PersonalizedCourseRecommendationsOutputSchema,
+  prompt: `You are an expert career advisor for an emergency services training platform. Your task is to recommend relevant internal courses to a user based on their profile.
 
       Analyze the user's data:
       - Role: {{{userRole}}}
@@ -45,7 +45,7 @@ const prompt = ai.definePrompt({
       - If there are no clear links, suggest courses that are highly relevant to their role.
       - For each suggestion, provide a short, encouraging reason in Spanish.
 
-      Return the suggestions in the specified JSON format.`
+      Return the suggestions in the specified JSON format.`,
 });
 
 const personalizedCourseRecommendationsFlow = ai.defineFlow(
@@ -55,7 +55,7 @@ const personalizedCourseRecommendationsFlow = ai.defineFlow(
     outputSchema: PersonalizedCourseRecommendationsOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

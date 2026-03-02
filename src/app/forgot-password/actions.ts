@@ -28,7 +28,7 @@ export async function handlePasswordRequest(prevState: any, formData: FormData) 
       '/password-reset',
       process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     ).toString();
-      
+
     const { error } = await supabase!.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
     });
@@ -39,14 +39,16 @@ export async function handlePasswordRequest(prevState: any, formData: FormData) 
 
     return {
       success: true,
-      message: 'Si existe una cuenta con este email, recibirás un enlace para restablecer tu contraseña.',
+      message:
+        'Si existe una cuenta con este email, recibirás un enlace para restablecer tu contraseña.',
     };
   } catch (error: any) {
     console.error('Password reset request error:', error);
     // Return a generic message to avoid disclosing whether an email exists in the system.
     return {
       success: true,
-      message: 'Si existe una cuenta con este email, recibirás un enlace para restablecer tu contraseña.',
+      message:
+        'Si existe una cuenta con este email, recibirás un enlace para restablecer tu contraseña.',
     };
   }
 }

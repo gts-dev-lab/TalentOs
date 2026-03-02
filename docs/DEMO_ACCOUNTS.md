@@ -32,6 +32,7 @@ Acceso a: TODO (gestión completa)
 ```
 
 **Permisos especiales:**
+
 - ✅ Gestión de usuarios
 - ✅ Configuración del sistema
 - ✅ Logs del sistema
@@ -53,6 +54,7 @@ Acceso a: Gestión de formación
 ```
 
 **Permisos:**
+
 - ✅ Crear/editar cursos
 - ✅ Gestión de inscripciones
 - ✅ Planes de Carrera
@@ -77,6 +79,7 @@ Acceso a: Gestión de personal
 ```
 
 **Permisos:**
+
 - ✅ Gestión de usuarios
 - ✅ Formadores
 - ✅ PDI
@@ -99,6 +102,7 @@ Acceso a: Impartir cursos
 ```
 
 **Permisos:**
+
 - ✅ Ver cursos asignados
 - ✅ Gestionar contenido de sus cursos
 - ✅ Responder en foros
@@ -120,6 +124,7 @@ Acceso a: Realizar cursos
 ```
 
 **Permisos:**
+
 - ✅ Ver catálogo de cursos
 - ✅ Inscribirse a cursos
 - ✅ Realizar cursos
@@ -144,6 +149,7 @@ Acceso a: Realizar cursos
 ```
 
 **Características:**
+
 - 🔕 **Notificaciones desactivadas** (para probar ese flujo)
 - 🏆 Mayor puntuación (210 puntos)
 - ✅ Mismos permisos que trabajador 1
@@ -152,42 +158,48 @@ Acceso a: Realizar cursos
 
 ## 📊 Resumen de Cuentas
 
-| # | Nombre | Email | Rol | Departamento | Puntos |
-|---|--------|-------|-----|--------------|--------|
-| 1 | Elena Vargas | elena.vargas@example.com | **Admin General** | Administración | 120 |
-| 2 | Lucía Fernández | lucia.fernandez@example.com | **Jefe Formación** | Formación | 300 |
-| 3 | Marcos Solís | marcos.solis@example.com | **Gestor RRHH** | Administración | 15 |
-| 4 | Dr. Alejandro Torres | alejandro.torres@example.com | **Formador** | Formación | 0 |
-| 5 | Carlos Ruiz | carlos.ruiz@example.com | **Trabajador** | Técnicos Emergencias | 50 |
-| 6 | Ana Gómez | ana.gomez@example.com | **Trabajador** | Teleoperadores | 210 |
+| #   | Nombre               | Email                        | Rol                | Departamento         | Puntos |
+| --- | -------------------- | ---------------------------- | ------------------ | -------------------- | ------ |
+| 1   | Elena Vargas         | elena.vargas@example.com     | **Admin General**  | Administración       | 120    |
+| 2   | Lucía Fernández      | lucia.fernandez@example.com  | **Jefe Formación** | Formación            | 300    |
+| 3   | Marcos Solís         | marcos.solis@example.com     | **Gestor RRHH**    | Administración       | 15     |
+| 4   | Dr. Alejandro Torres | alejandro.torres@example.com | **Formador**       | Formación            | 0      |
+| 5   | Carlos Ruiz          | carlos.ruiz@example.com      | **Trabajador**     | Técnicos Emergencias | 50     |
+| 6   | Ana Gómez            | ana.gomez@example.com        | **Trabajador**     | Teleoperadores       | 210    |
 
 ---
 
 ## 🎯 Cuentas Recomendadas para Pruebas
 
 ### Para Pruebas Generales
+
 ```
 elena.vargas@example.com
 password123
 ```
+
 **Por qué:** Acceso completo a todas las funcionalidades
 
 ---
 
 ### Para Probar Vista de Estudiante
+
 ```
 carlos.ruiz@example.com
 password123
 ```
+
 **Por qué:** Vista limitada, experiencia de usuario final
 
 ---
 
 ### Para Probar Gestión de Formación
+
 ```
 lucia.fernandez@example.com
 password123
 ```
+
 **Por qué:** Puede crear cursos, gestionar PDI y Compliance
 
 ---
@@ -218,12 +230,14 @@ password123
 ## 🔑 Hash de Contraseña
 
 El hash almacenado para `password123` es:
+
 ```
 $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0g1AYoRxTTZLBkd8ko
 ```
 
 **Algoritmo:** Argon2id  
 **Parámetros:**
+
 - Time cost: 3
 - Memory cost: 19456 KiB (~19 MB)
 - Parallelism: 1
@@ -260,6 +274,7 @@ $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0
 ## 🧪 Escenarios de Prueba Sugeridos
 
 ### Escenario 1: Flujo Completo de Estudiante
+
 ```
 1. Login: carlos.ruiz@example.com
 2. Navegar a Cursos
@@ -270,6 +285,7 @@ $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0
 ```
 
 ### Escenario 2: Gestión de Formación
+
 ```
 1. Login: lucia.fernandez@example.com
 2. Crear un nuevo curso
@@ -280,6 +296,7 @@ $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0
 ```
 
 ### Escenario 3: Administración Completa
+
 ```
 1. Login: elena.vargas@example.com
 2. Gestionar usuarios
@@ -303,11 +320,12 @@ console.log(newHash);
 ```
 
 O desde la consola del navegador después de login como admin:
+
 ```javascript
 // Ejecutar en DevTools Console
 const db = await import('/src/lib/db');
-await db.updateUser('user_1', { 
-  passwordHash: 'nuevo-hash-aqui' 
+await db.updateUser('user_1', {
+  passwordHash: 'nuevo-hash-aqui',
 });
 ```
 
@@ -316,15 +334,18 @@ await db.updateUser('user_1', {
 ## 📝 Notas Adicionales
 
 ### Notificaciones
+
 - **Elena, Carlos, Alejandro, Marcos**: Tienen notificaciones habilitadas
 - **Ana**: Notificaciones desactivadas (para probar ese flujo)
 - **Lucía**: Todas las notificaciones activadas (email, WhatsApp, app)
 
 ### Avatares
+
 - Todos usan avatares de https://i.pravatar.cc
 - Se generan automáticamente basados en el ID de usuario
 
 ### Datos Adicionales
+
 - Todos los usuarios tienen estado `approved`
 - Algunos usuarios tienen puntos de gamificación pre-asignados
 - Ana Gómez tiene la mayor puntuación (210) para probar clasificación
@@ -334,6 +355,7 @@ await db.updateUser('user_1', {
 ## 🚀 Inicio Rápido
 
 ### Login Rápido como Admin:
+
 ```bash
 1. Abrir http://localhost:3000
 2. Email: elena.vargas@example.com
@@ -342,6 +364,7 @@ await db.updateUser('user_1', {
 ```
 
 ### Probar Diferentes Roles:
+
 ```bash
 # Cerrar sesión (menú usuario > Cerrar Sesión)
 # Login con diferente cuenta

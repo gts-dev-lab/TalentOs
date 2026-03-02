@@ -1,11 +1,18 @@
-
 'use client';
 
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { PlusCircle, Trash2, FileText, Link as LinkIcon, Video, Loader2, FileUp } from 'lucide-react';
+import {
+  PlusCircle,
+  Trash2,
+  FileText,
+  Link as LinkIcon,
+  Video,
+  Loader2,
+  FileUp,
+} from 'lucide-react';
 
 import * as db from '@/lib/db';
 import type { Resource, ResourceType } from '@/lib/types';
@@ -34,8 +41,21 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const resourceTypeIcons: Record<ResourceType, React.ElementType> = {
   pdf: FileText,
@@ -44,7 +64,13 @@ const resourceTypeIcons: Record<ResourceType, React.ElementType> = {
   video: Video,
 };
 
-function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
+function AddResourceDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [type, setType] = useState<ResourceType | undefined>();
@@ -61,7 +87,7 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files?.[0] || null);
-    if(e.target.files?.[0]) {
+    if (e.target.files?.[0]) {
       setName(e.target.files[0].name);
     }
   };
@@ -69,7 +95,11 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !type) {
-      toast({ title: 'Error', description: 'Nombre y tipo son obligatorios.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'Nombre y tipo son obligatorios.',
+        variant: 'destructive',
+      });
       return;
     }
     setLoading(true);
@@ -79,14 +109,18 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
     if (file) {
       resourceUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (event) => resolve(event.target?.result as string);
-        reader.onerror = (error) => reject(error);
+        reader.onload = event => resolve(event.target?.result as string);
+        reader.onerror = error => reject(error);
         reader.readAsDataURL(file);
       });
     }
 
     if (!resourceUrl) {
-      toast({ title: 'Error', description: 'Debes proporcionar una URL o subir un archivo.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'Debes proporcionar una URL o subir un archivo.',
+        variant: 'destructive',
+      });
       setLoading(false);
       return;
     }
@@ -103,14 +137,24 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
       onOpenChange(false);
     } catch (err) {
       console.error(err);
-      toast({ title: 'Error', description: 'No se pudo añadir el recurso.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo añadir el recurso.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { onOpenChange(isOpen); if (!isOpen) resetForm(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={isOpen => {
+        onOpenChange(isOpen);
+        if (!isOpen) resetForm();
+      }}
+    >
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>Añadir Nuevo Recurso</DialogTitle>
@@ -118,12 +162,19 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
         <form id="resource-form" onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="resource-name">Nombre del Recurso</Label>
-            <Input id="resource-name" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Input
+              id="resource-name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="resource-type">Tipo de Recurso</Label>
             <Select onValueChange={(v: ResourceType) => setType(v)} value={type}>
-              <SelectTrigger id="resource-type"><SelectValue placeholder="Selecciona un tipo" /></SelectTrigger>
+              <SelectTrigger id="resource-type">
+                <SelectValue placeholder="Selecciona un tipo" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="pdf">PDF</SelectItem>
                 <SelectItem value="document">Documento (Word, etc.)</SelectItem>
@@ -135,7 +186,14 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
           {type === 'link' && (
             <div className="space-y-2">
               <Label htmlFor="resource-url">URL del Enlace</Label>
-              <Input id="resource-url" type="url" value={url} onChange={(e) => setUrl(e.target.value)} required placeholder="https://..." />
+              <Input
+                id="resource-url"
+                type="url"
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+                required
+                placeholder="https://..."
+              />
             </div>
           )}
           {type && type !== 'link' && (
@@ -146,7 +204,11 @@ function AddResourceDialog({ open, onOpenChange }: { open: boolean, onOpenChange
           )}
         </form>
         <DialogFooter>
-          <DialogClose asChild><Button type="button" variant="outline">Cancelar</Button></DialogClose>
+          <DialogClose asChild>
+            <Button type="button" variant="outline">
+              Cancelar
+            </Button>
+          </DialogClose>
           <Button type="submit" form="resource-form" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Guardar Recurso
@@ -170,7 +232,11 @@ export default function LibraryPage() {
       toast({ title: 'Éxito', description: 'El recurso ha sido eliminado.' });
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo eliminar el recurso.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar el recurso.',
+        variant: 'destructive',
+      });
     } finally {
       setResourceToDelete(null);
     }
@@ -181,7 +247,9 @@ export default function LibraryPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Biblioteca de Recursos</h1>
-          <p className="text-muted-foreground">Gestiona los materiales de estudio para todos los cursos.</p>
+          <p className="text-muted-foreground">
+            Gestiona los materiales de estudio para todos los cursos.
+          </p>
         </div>
         <Button onClick={() => setIsAddDialogOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
@@ -189,7 +257,10 @@ export default function LibraryPage() {
         </Button>
       </div>
 
-      <AlertDialog open={!!resourceToDelete} onOpenChange={(open) => !open && setResourceToDelete(null)}>
+      <AlertDialog
+        open={!!resourceToDelete}
+        onOpenChange={open => !open && setResourceToDelete(null)}
+      >
         <Card>
           <CardHeader>
             <CardTitle>Recursos Disponibles</CardTitle>
@@ -201,61 +272,75 @@ export default function LibraryPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             ) : resources.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                    <FileUp className="mx-auto h-12 w-12" />
-                    <p className="mt-4 font-semibold">La biblioteca está vacía.</p>
-                    <p className="text-sm">Añade tu primer recurso para empezar.</p>
-                </div>
+              <div className="text-center py-12 text-muted-foreground">
+                <FileUp className="mx-auto h-12 w-12" />
+                <p className="mt-4 font-semibold">La biblioteca está vacía.</p>
+                <p className="text-sm">Añade tu primer recurso para empezar.</p>
+              </div>
             ) : (
               <div className="border rounded-lg">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">Tipo</TableHead>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Fecha de subida</TableHead>
-                    <TableHead className="w-[100px] text-right">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {resources.map((resource) => {
-                    const Icon = resourceTypeIcons[resource.type];
-                    return (
-                      <TableRow key={resource.id}>
-                        <TableCell><Icon className="h-5 w-5 text-muted-foreground" /></TableCell>
-                        <TableCell className="font-medium">{resource.name}</TableCell>
-                        <TableCell>{format(new Date(resource.uploadedAt), 'd MMM, yyyy', { locale: es })}</TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => setResourceToDelete(resource)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[50px]">Tipo</TableHead>
+                      <TableHead>Nombre</TableHead>
+                      <TableHead>Fecha de subida</TableHead>
+                      <TableHead className="w-[100px] text-right">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {resources.map(resource => {
+                      const Icon = resourceTypeIcons[resource.type];
+                      return (
+                        <TableRow key={resource.id}>
+                          <TableCell>
+                            <Icon className="h-5 w-5 text-muted-foreground" />
+                          </TableCell>
+                          <TableCell className="font-medium">{resource.name}</TableCell>
+                          <TableCell>
+                            {format(new Date(resource.uploadedAt), 'd MMM, yyyy', { locale: es })}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setResourceToDelete(resource)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
               </div>
             )}
           </CardContent>
         </Card>
-        
+
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Seguro que quieres eliminar este recurso?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. El recurso "{resourceToDelete?.name}" se eliminará de la biblioteca y se desvinculará de todos los cursos.
+              Esta acción no se puede deshacer. El recurso "{resourceToDelete?.name}" se eliminará
+              de la biblioteca y se desvinculará de todos los cursos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setResourceToDelete(null)}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+            <AlertDialogCancel onClick={() => setResourceToDelete(null)}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive hover:bg-destructive/90"
+            >
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       <AddResourceDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
     </div>
   );

@@ -18,37 +18,73 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 
-const regulationTypes: RegulationType[] = ['ISO', 'PRL', 'GDPR', 'LOPD', 'Ley', 'Normativa', 'Certificación', 'Otro'];
+const regulationTypes: RegulationType[] = [
+  'ISO',
+  'PRL',
+  'GDPR',
+  'LOPD',
+  'Ley',
+  'Normativa',
+  'Certificación',
+  'Otro',
+];
 
-const regulationSchema = z.object({
-  code: z.string().min(1, 'El código es obligatorio'),
-  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
-  description: z.string().optional(),
-  type: z.enum(regulationTypes as [string, ...string[]], { required_error: 'Debes seleccionar un tipo' }),
-  applicableRoles: z.array(z.string()).min(1, 'Debes seleccionar al menos un rol'),
-  applicableDepartments: z.array(z.string()).optional(),
-  courseIds: z.array(z.string()).optional(),
-  validityPeriod: z.number().optional(),
-  requiresRenewal: z.boolean(),
-  renewalPeriod: z.number().optional(),
-  isActive: z.boolean(),
-}).refine(data => {
-  if (data.requiresRenewal && !data.validityPeriod) {
-    return false;
-  }
-  return true;
-}, {
-  message: 'Si requiere renovación, debes especificar el período de validez',
-  path: ['validityPeriod'],
-});
+const regulationSchema = z
+  .object({
+    code: z.string().min(1, 'El código es obligatorio'),
+    name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
+    description: z.string().optional(),
+    type: z.enum(regulationTypes as [string, ...string[]], {
+      required_error: 'Debes seleccionar un tipo',
+    }),
+    applicableRoles: z.array(z.string()).min(1, 'Debes seleccionar al menos un rol'),
+    applicableDepartments: z.array(z.string()).optional(),
+    courseIds: z.array(z.string()).optional(),
+    validityPeriod: z.number().optional(),
+    requiresRenewal: z.boolean(),
+    renewalPeriod: z.number().optional(),
+    isActive: z.boolean(),
+  })
+  .refine(
+    data => {
+      if (data.requiresRenewal && !data.validityPeriod) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'Si requiere renovación, debes especificar el período de validez',
+      path: ['validityPeriod'],
+    }
+  );
 
 type RegulationFormValues = z.infer<typeof regulationSchema>;
 
@@ -79,7 +115,8 @@ export default function NewRegulationPage() {
     },
   });
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
 
   if (!isManager) {
     router.push('/dashboard/compliance');
@@ -99,18 +136,28 @@ export default function NewRegulationPage() {
         description: data.description || undefined,
         type: data.type as any,
         applicableRoles: data.applicableRoles as Role[],
-        applicableDepartments: data.applicableDepartments && data.applicableDepartments.length > 0 ? data.applicableDepartments as Department[] : undefined,
+        applicableDepartments:
+          data.applicableDepartments && data.applicableDepartments.length > 0
+            ? (data.applicableDepartments as Department[])
+            : undefined,
         courseIds: data.courseIds || [],
         validityPeriod: data.validityPeriod,
         requiresRenewal: data.requiresRenewal,
         renewalPeriod: data.renewalPeriod,
         isActive: data.isActive,
       });
-      toast({ title: 'Normativa Creada', description: 'La normativa ha sido creada exitosamente.' });
+      toast({
+        title: 'Normativa Creada',
+        description: 'La normativa ha sido creada exitosamente.',
+      });
       router.push('/dashboard/compliance');
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo crear la normativa.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo crear la normativa.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -126,7 +173,9 @@ export default function NewRegulationPage() {
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Crear Nueva Normativa</CardTitle>
-          <CardDescription>Registra una nueva normativa o regulación que debe cumplirse en la organización</CardDescription>
+          <CardDescription>
+            Registra una nueva normativa o regulación que debe cumplirse en la organización
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -160,7 +209,9 @@ export default function NewRegulationPage() {
                         </FormControl>
                         <SelectContent>
                           {regulationTypes.map(type => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -191,7 +242,10 @@ export default function NewRegulationPage() {
                   <FormItem>
                     <FormLabel>Descripción (opcional)</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Describe la normativa y sus requisitos..." {...field} />
+                      <Textarea
+                        placeholder="Describe la normativa y sus requisitos..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -203,7 +257,9 @@ export default function NewRegulationPage() {
                 <Popover open={rolesOpen} onOpenChange={setRolesOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start">
-                      {selectedRoles.length > 0 ? `${selectedRoles.length} roles seleccionados` : 'Selecciona roles'}
+                      {selectedRoles.length > 0
+                        ? `${selectedRoles.length} roles seleccionados`
+                        : 'Selecciona roles'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[400px] p-0">
@@ -212,7 +268,7 @@ export default function NewRegulationPage() {
                       <CommandList>
                         <CommandEmpty>No se encontraron roles.</CommandEmpty>
                         <CommandGroup>
-                          {roles.map((role) => {
+                          {roles.map(role => {
                             const isSelected = selectedRoles.includes(role);
                             return (
                               <CommandItem
@@ -220,13 +276,21 @@ export default function NewRegulationPage() {
                                 onSelect={() => {
                                   const current = form.getValues('applicableRoles') || [];
                                   if (isSelected) {
-                                    form.setValue('applicableRoles', current.filter(r => r !== role));
+                                    form.setValue(
+                                      'applicableRoles',
+                                      current.filter(r => r !== role)
+                                    );
                                   } else {
                                     form.setValue('applicableRoles', [...current, role]);
                                   }
                                 }}
                               >
-                                <div className={cn('mr-2 h-4 w-4 border rounded', isSelected && 'bg-primary')} />
+                                <div
+                                  className={cn(
+                                    'mr-2 h-4 w-4 border rounded',
+                                    isSelected && 'bg-primary'
+                                  )}
+                                />
                                 {role}
                               </CommandItem>
                             );
@@ -238,13 +302,16 @@ export default function NewRegulationPage() {
                 </Popover>
                 {selectedRoles.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedRoles.map((role) => (
+                    {selectedRoles.map(role => (
                       <Badge key={role} variant="secondary">
                         {role}
                         <button
                           type="button"
                           onClick={() => {
-                            form.setValue('applicableRoles', selectedRoles.filter(r => r !== role));
+                            form.setValue(
+                              'applicableRoles',
+                              selectedRoles.filter(r => r !== role)
+                            );
                           }}
                           className="ml-2 hover:text-destructive"
                         >
@@ -255,7 +322,9 @@ export default function NewRegulationPage() {
                   </div>
                 )}
                 {form.formState.errors.applicableRoles && (
-                  <p className="text-sm text-destructive">{form.formState.errors.applicableRoles.message}</p>
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.applicableRoles.message}
+                  </p>
                 )}
               </div>
 
@@ -264,7 +333,9 @@ export default function NewRegulationPage() {
                 <Popover open={departmentsOpen} onOpenChange={setDepartmentsOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start">
-                      {selectedDepartments.length > 0 ? `${selectedDepartments.length} departamentos seleccionados` : 'Selecciona departamentos (opcional)'}
+                      {selectedDepartments.length > 0
+                        ? `${selectedDepartments.length} departamentos seleccionados`
+                        : 'Selecciona departamentos (opcional)'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[400px] p-0">
@@ -273,7 +344,7 @@ export default function NewRegulationPage() {
                       <CommandList>
                         <CommandEmpty>No se encontraron departamentos.</CommandEmpty>
                         <CommandGroup>
-                          {departments.map((dept) => {
+                          {departments.map(dept => {
                             const isSelected = selectedDepartments.includes(dept);
                             return (
                               <CommandItem
@@ -281,13 +352,21 @@ export default function NewRegulationPage() {
                                 onSelect={() => {
                                   const current = form.getValues('applicableDepartments') || [];
                                   if (isSelected) {
-                                    form.setValue('applicableDepartments', current.filter(d => d !== dept));
+                                    form.setValue(
+                                      'applicableDepartments',
+                                      current.filter(d => d !== dept)
+                                    );
                                   } else {
                                     form.setValue('applicableDepartments', [...current, dept]);
                                   }
                                 }}
                               >
-                                <div className={cn('mr-2 h-4 w-4 border rounded', isSelected && 'bg-primary')} />
+                                <div
+                                  className={cn(
+                                    'mr-2 h-4 w-4 border rounded',
+                                    isSelected && 'bg-primary'
+                                  )}
+                                />
                                 {dept}
                               </CommandItem>
                             );
@@ -299,13 +378,16 @@ export default function NewRegulationPage() {
                 </Popover>
                 {selectedDepartments.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedDepartments.map((dept) => (
+                    {selectedDepartments.map(dept => (
                       <Badge key={dept} variant="secondary">
                         {dept}
                         <button
                           type="button"
                           onClick={() => {
-                            form.setValue('applicableDepartments', selectedDepartments.filter(d => d !== dept));
+                            form.setValue(
+                              'applicableDepartments',
+                              selectedDepartments.filter(d => d !== dept)
+                            );
                           }}
                           className="ml-2 hover:text-destructive"
                         >
@@ -322,7 +404,9 @@ export default function NewRegulationPage() {
                 <Popover open={courseOpen} onOpenChange={setCourseOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start">
-                      {selectedCourses.length > 0 ? `${selectedCourses.length} cursos seleccionados` : 'Selecciona cursos (opcional)'}
+                      {selectedCourses.length > 0
+                        ? `${selectedCourses.length} cursos seleccionados`
+                        : 'Selecciona cursos (opcional)'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[400px] p-0">
@@ -331,7 +415,7 @@ export default function NewRegulationPage() {
                       <CommandList>
                         <CommandEmpty>No se encontraron cursos.</CommandEmpty>
                         <CommandGroup>
-                          {(allCourses || []).map((course) => {
+                          {(allCourses || []).map(course => {
                             const isSelected = selectedCourseIds?.includes(course.id);
                             return (
                               <CommandItem
@@ -339,13 +423,21 @@ export default function NewRegulationPage() {
                                 onSelect={() => {
                                   const current = form.getValues('courseIds') || [];
                                   if (isSelected) {
-                                    form.setValue('courseIds', current.filter(id => id !== course.id));
+                                    form.setValue(
+                                      'courseIds',
+                                      current.filter(id => id !== course.id)
+                                    );
                                   } else {
                                     form.setValue('courseIds', [...current, course.id]);
                                   }
                                 }}
                               >
-                                <div className={cn('mr-2 h-4 w-4 border rounded', isSelected && 'bg-primary')} />
+                                <div
+                                  className={cn(
+                                    'mr-2 h-4 w-4 border rounded',
+                                    isSelected && 'bg-primary'
+                                  )}
+                                />
                                 {course.title}
                               </CommandItem>
                             );
@@ -357,13 +449,16 @@ export default function NewRegulationPage() {
                 </Popover>
                 {selectedCourses.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedCourses.map((course) => (
+                    {selectedCourses.map(course => (
                       <Badge key={course.id} variant="secondary">
                         {course.title}
                         <button
                           type="button"
                           onClick={() => {
-                            form.setValue('courseIds', selectedCourseIds?.filter(id => id !== course.id) || []);
+                            form.setValue(
+                              'courseIds',
+                              selectedCourseIds?.filter(id => id !== course.id) || []
+                            );
                           }}
                           className="ml-2 hover:text-destructive"
                         >
@@ -404,7 +499,9 @@ export default function NewRegulationPage() {
                             min="1"
                             placeholder="Ej: 24"
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                            onChange={e =>
+                              field.onChange(e.target.value ? Number(e.target.value) : undefined)
+                            }
                             value={field.value || ''}
                           />
                         </FormControl>
@@ -425,7 +522,9 @@ export default function NewRegulationPage() {
                             min="1"
                             placeholder="Ej: 12"
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                            onChange={e =>
+                              field.onChange(e.target.value ? Number(e.target.value) : undefined)
+                            }
                             value={field.value || ''}
                           />
                         </FormControl>

@@ -10,13 +10,21 @@ type CertificateListProps = {
   showUser?: boolean;
 };
 
-const statusLabels: Record<Certificate['status'], { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+const statusLabels: Record<
+  Certificate['status'],
+  { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
+> = {
   active: { label: 'Activo', variant: 'default' },
   expired: { label: 'Vencido', variant: 'secondary' },
   revoked: { label: 'Revocado', variant: 'destructive' },
 };
 
-export function CertificateList({ certificates, usersById, coursesById, showUser }: CertificateListProps) {
+export function CertificateList({
+  certificates,
+  usersById,
+  coursesById,
+  showUser,
+}: CertificateListProps) {
   if (certificates.length === 0) {
     return (
       <Card>
@@ -30,7 +38,7 @@ export function CertificateList({ certificates, usersById, coursesById, showUser
 
   return (
     <div className="space-y-4">
-      {certificates.map((certificate) => {
+      {certificates.map(certificate => {
         const user = usersById.get(certificate.userId);
         const course = coursesById.get(certificate.courseId);
         const status = statusLabels[certificate.status];
@@ -50,7 +58,10 @@ export function CertificateList({ certificates, usersById, coursesById, showUser
               </div>
             </CardHeader>
             <CardContent>
-              <Link href={`/dashboard/certificates/${certificate.id}`} className="text-sm text-primary hover:underline">
+              <Link
+                href={`/dashboard/certificates/${certificate.id}`}
+                className="text-sm text-primary hover:underline"
+              >
                 Ver detalle del certificado
               </Link>
             </CardContent>

@@ -19,19 +19,37 @@ export default function CertificateDetailPage() {
     const result = await db.getCertificateById(params.id);
     return result || null;
   }, [params.id]);
-  const certificateUser = useLiveQuery(() => (certificate ? db.getUserById(certificate.userId) : null), [certificate?.userId]);
-  const certificateCourse = useLiveQuery(() => (certificate ? db.getCourseById(certificate.courseId) : null), [certificate?.courseId]);
-  const certificateTemplate = useLiveQuery(() => (certificate ? db.getCertificateTemplateById(certificate.templateId) : null), [certificate?.templateId]);
+  const certificateUser = useLiveQuery(
+    () => (certificate ? db.getUserById(certificate.userId) : null),
+    [certificate?.userId]
+  );
+  const certificateCourse = useLiveQuery(
+    () => (certificate ? db.getCourseById(certificate.courseId) : null),
+    [certificate?.courseId]
+  );
+  const certificateTemplate = useLiveQuery(
+    () => (certificate ? db.getCertificateTemplateById(certificate.templateId) : null),
+    [certificate?.templateId]
+  );
 
   useEffect(() => {
     if (!user || !certificate) return;
-    const canSeeAll = user.role === 'Administrador General' || user.role === 'Jefe de Formación' || isSuperadmin(user.email);
+    const canSeeAll =
+      user.role === 'Administrador General' ||
+      user.role === 'Jefe de Formación' ||
+      isSuperadmin(user.email);
     if (!canSeeAll && certificate.userId !== user.id) {
       router.push('/dashboard/certificates');
     }
   }, [user, certificate, router]);
 
-  if (!user || certificate === undefined || certificateUser === undefined || certificateCourse === undefined || certificateTemplate === undefined) {
+  if (
+    !user ||
+    certificate === undefined ||
+    certificateUser === undefined ||
+    certificateCourse === undefined ||
+    certificateTemplate === undefined
+  ) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loader2 className="h-16 w-16 animate-spin text-primary" />

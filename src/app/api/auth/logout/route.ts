@@ -8,7 +8,7 @@ const AUTH_COOKIE = 'auth-token';
 function getCookieFromRequest(request: Request, name: string): string | null {
   const cookieHeader = request.headers.get('cookie');
   if (!cookieHeader) return null;
-  const parts = cookieHeader.split(';').map((s) => s.trim());
+  const parts = cookieHeader.split(';').map(s => s.trim());
   for (const part of parts) {
     const [key, ...v] = part.split('=');
     if (key?.toLowerCase() === name.toLowerCase()) return v.join('=').trim() || null;

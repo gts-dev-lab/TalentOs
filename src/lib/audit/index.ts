@@ -6,11 +6,7 @@
 
 import type { AuditLogEntry, AuditEventKind } from './types';
 import { memoryStore } from './memory-store';
-import {
-  appendAuditLogPg,
-  getAuditLogsByTenantPg,
-  isPostgresAuditEnabled,
-} from './postgres-store';
+import { appendAuditLogPg, getAuditLogsByTenantPg, isPostgresAuditEnabled } from './postgres-store';
 
 /**
  * Registra un evento de auditoría (auth.login.success, auth.login.failure, auth.logout).
@@ -61,7 +57,10 @@ export async function logAuthSuccess(tenantId: string, userId: string, method?: 
   await logAudit(tenantId, 'auth.login.success', { userId, details: { method } });
 }
 
-export async function logAuthFailure(options: { reason: string; code: string; email: string }, ip?: string) {
+export async function logAuthFailure(
+  options: { reason: string; code: string; email: string },
+  ip?: string
+) {
   await logAudit('unknown', 'auth.login.failure', { details: { ...options, ip } });
 }
 

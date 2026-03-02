@@ -6,10 +6,10 @@ Lista de tareas para asistentes de código, priorizada por impacto. Basada en el
 
 ## Diferenciación conceptual
 
-| Tipo | Descripción | Ejemplo |
-|------|-------------|---------|
-| **Tareas técnicas (tickets TT-XXX)** | Artefactos del plan de migración. Dividen y organizan el trabajo de desarrollo. Documentados en `docs/MIGRATION_PLAN_TICKETS.md`. | TT-113, TT-114, TT-117 |
-| **Funcionalidades de negocio** | Entidades del dominio y flujos de la aplicación. No son tickets. | Enrollment, PDI, Compliance, Course |
+| Tipo                                 | Descripción                                                                                                                       | Ejemplo                             |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| **Tareas técnicas (tickets TT-XXX)** | Artefactos del plan de migración. Dividen y organizan el trabajo de desarrollo. Documentados en `docs/MIGRATION_PLAN_TICKETS.md`. | TT-113, TT-114, TT-117              |
+| **Funcionalidades de negocio**       | Entidades del dominio y flujos de la aplicación. No son tickets.                                                                  | Enrollment, PDI, Compliance, Course |
 
 ---
 
@@ -82,11 +82,11 @@ Tareas de mejora sobre entidades del dominio. **No son tickets TT-XXX.**
 
 ## Tareas técnicas (referencia a tickets TT-XXX)
 
-| Ticket | Estado | Acción sugerida |
-|--------|--------|-----------------|
+| Ticket | Estado            | Acción sugerida                                           |
+| ------ | ----------------- | --------------------------------------------------------- |
 | TT-113 | Checklist + tests | Ejecutar pruebas manuales, rellenar informe, marcar hecho |
-| TT-114 | ✅ Completado | Todos los métodos del provider PostgreSQL implementados |
-| TT-117 | Pendiente | Crear tests de integración PostgreSQL + RLS |
+| TT-114 | ✅ Completado     | Todos los métodos del provider PostgreSQL implementados   |
+| TT-117 | Pendiente         | Crear tests de integración PostgreSQL + RLS               |
 
 ---
 

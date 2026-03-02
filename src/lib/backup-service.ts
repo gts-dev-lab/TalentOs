@@ -18,14 +18,36 @@ export interface BackupMetadata {
 export async function exportDatabaseBackup(): Promise<{ blob: Blob; metadata: BackupMetadata }> {
   try {
     const tables = [
-      'users', 'courses', 'enrollments', 'userProgress', 'forumMessages',
-      'notifications', 'resources', 'courseResources', 'announcements',
-      'chatChannels', 'chatMessages', 'calendarEvents', 'externalTrainings',
-      'costs', 'aiConfig', 'aiUsageLog', 'badges', 'userBadges',
-      'costCategories', 'learningPaths', 'userLearningPathProgress',
-      'courseRatings', 'rolePermissions', 'systemLogs',
-      'certificates', 'certificateTemplates', 'individualDevelopmentPlans',
-      'regulations', 'regulationCompliance', 'complianceAudits',
+      'users',
+      'courses',
+      'enrollments',
+      'userProgress',
+      'forumMessages',
+      'notifications',
+      'resources',
+      'courseResources',
+      'announcements',
+      'chatChannels',
+      'chatMessages',
+      'calendarEvents',
+      'externalTrainings',
+      'costs',
+      'aiConfig',
+      'aiUsageLog',
+      'badges',
+      'userBadges',
+      'costCategories',
+      'learningPaths',
+      'userLearningPathProgress',
+      'courseRatings',
+      'rolePermissions',
+      'systemLogs',
+      'certificates',
+      'certificateTemplates',
+      'individualDevelopmentPlans',
+      'regulations',
+      'regulationCompliance',
+      'complianceAudits',
     ];
 
     const backupData: Record<string, any[]> = {};
@@ -63,7 +85,7 @@ export async function exportDatabaseBackup(): Promise<{ blob: Blob; metadata: Ba
     const jsonString = JSON.stringify(fullBackup, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
 
-    await db.logSystemEvent('INFO', 'Database backup exported', { 
+    await db.logSystemEvent('INFO', 'Database backup exported', {
       recordCounts,
       size: metadata.size,
     });
@@ -71,8 +93,8 @@ export async function exportDatabaseBackup(): Promise<{ blob: Blob; metadata: Ba
     return { blob, metadata };
   } catch (error) {
     console.error('Error exporting backup:', error);
-    await db.logSystemEvent('ERROR', 'Failed to export database backup', { 
-      error: (error as Error).message 
+    await db.logSystemEvent('ERROR', 'Failed to export database backup', {
+      error: (error as Error).message,
     });
     throw error;
   }
@@ -85,7 +107,7 @@ export async function exportDatabaseBackup(): Promise<{ blob: Blob; metadata: Ba
  */
 export async function importDatabaseBackup(
   file: File,
-  options: { 
+  options: {
     clearExisting?: boolean;
     skipTables?: string[];
   } = {}
@@ -128,7 +150,7 @@ export async function importDatabaseBackup(
       }
     });
 
-    await db.logSystemEvent('INFO', 'Database backup imported', { 
+    await db.logSystemEvent('INFO', 'Database backup imported', {
       imported,
       errors,
       clearExisting,
@@ -137,8 +159,8 @@ export async function importDatabaseBackup(
     return { imported, errors };
   } catch (error) {
     console.error('Error importing backup:', error);
-    await db.logSystemEvent('ERROR', 'Failed to import database backup', { 
-      error: (error as Error).message 
+    await db.logSystemEvent('ERROR', 'Failed to import database backup', {
+      error: (error as Error).message,
     });
     throw error;
   }
@@ -168,14 +190,36 @@ export async function getDatabaseStats(): Promise<{
   lastBackup?: string;
 }> {
   const tables = [
-    'users', 'courses', 'enrollments', 'userProgress', 'forumMessages',
-    'notifications', 'resources', 'courseResources', 'announcements',
-    'chatChannels', 'chatMessages', 'calendarEvents', 'externalTrainings',
-    'costs', 'aiConfig', 'aiUsageLog', 'badges', 'userBadges',
-    'costCategories', 'learningPaths', 'userLearningPathProgress',
-    'courseRatings', 'rolePermissions', 'systemLogs',
-    'certificates', 'certificateTemplates', 'individualDevelopmentPlans',
-    'regulations', 'regulationCompliance', 'complianceAudits',
+    'users',
+    'courses',
+    'enrollments',
+    'userProgress',
+    'forumMessages',
+    'notifications',
+    'resources',
+    'courseResources',
+    'announcements',
+    'chatChannels',
+    'chatMessages',
+    'calendarEvents',
+    'externalTrainings',
+    'costs',
+    'aiConfig',
+    'aiUsageLog',
+    'badges',
+    'userBadges',
+    'costCategories',
+    'learningPaths',
+    'userLearningPathProgress',
+    'courseRatings',
+    'rolePermissions',
+    'systemLogs',
+    'certificates',
+    'certificateTemplates',
+    'individualDevelopmentPlans',
+    'regulations',
+    'regulationCompliance',
+    'complianceAudits',
   ];
 
   const tableCounts: Record<string, number> = {};
@@ -203,16 +247,14 @@ export async function getDatabaseStats(): Promise<{
 /**
  * Cleans up old data based on retention policies
  */
-export async function cleanupOldData(options: {
-  notificationsDays?: number;
-  systemLogsDays?: number;
-  aiUsageLogDays?: number;
-} = {}): Promise<{ deleted: number; errors: number }> {
-  const { 
-    notificationsDays = 90, 
-    systemLogsDays = 180,
-    aiUsageLogDays = 365,
-  } = options;
+export async function cleanupOldData(
+  options: {
+    notificationsDays?: number;
+    systemLogsDays?: number;
+    aiUsageLogDays?: number;
+  } = {}
+): Promise<{ deleted: number; errors: number }> {
+  const { notificationsDays = 90, systemLogsDays = 180, aiUsageLogDays = 365 } = options;
 
   const cutoffDate = new Date();
   let deleted = 0;
@@ -227,7 +269,7 @@ export async function cleanupOldData(options: {
         .where('timestamp')
         .below(notificationCutoff.toISOString())
         .toArray();
-      
+
       if (oldNotifications.length > 0) {
         await db.db.notifications.bulkDelete(oldNotifications.map(n => n.id!));
         deleted += oldNotifications.length;
@@ -243,7 +285,7 @@ export async function cleanupOldData(options: {
         .below(logCutoff.toISOString())
         .filter(log => log.level === 'INFO')
         .toArray();
-      
+
       if (oldLogs.length > 0) {
         await db.db.systemLogs.bulkDelete(oldLogs.map(l => l.id!));
         deleted += oldLogs.length;
@@ -258,14 +300,14 @@ export async function cleanupOldData(options: {
         .where('timestamp')
         .below(aiCutoff.toISOString())
         .toArray();
-      
+
       if (oldAiLogs.length > 0) {
         await db.db.aiUsageLog.bulkDelete(oldAiLogs.map(l => l.id!));
         deleted += oldAiLogs.length;
       }
     }
 
-    await db.logSystemEvent('INFO', 'Database cleanup completed', { 
+    await db.logSystemEvent('INFO', 'Database cleanup completed', {
       deleted,
       errors,
     });
@@ -273,8 +315,8 @@ export async function cleanupOldData(options: {
     return { deleted, errors };
   } catch (error) {
     console.error('Error cleaning up old data:', error);
-    await db.logSystemEvent('ERROR', 'Failed to cleanup old data', { 
-      error: (error as Error).message 
+    await db.logSystemEvent('ERROR', 'Failed to cleanup old data', {
+      error: (error as Error).message,
     });
     return { deleted, errors: 1 };
   }

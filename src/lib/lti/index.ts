@@ -3,6 +3,16 @@
  */
 
 export { buildPlatformAuthRedirectUrl, verifyState, verifyLtiIdToken } from './oidc';
-export { getLtiPlatformConfig, isLtiOidcConfigured, getLtiOidcCallbackUrl, getLtiOidcLoginUrl } from './config';
+export {
+  getLtiPlatformConfig,
+  isLtiOidcConfigured,
+  getLtiOidcCallbackUrl,
+  getLtiOidcLoginUrl,
+} from './config';
 export { getCourseIdByResourceLinkId, getLaunchRedirectUrl } from './resource-link';
-export type { LtiOidcLoginParams, LtiPlatformConfig, LtiIdTokenPayload, LtiOidcStatePayload } from './types';
+export type {
+  LtiOidcLoginParams,
+  LtiPlatformConfig,
+  LtiIdTokenPayload,
+  LtiOidcStatePayload,
+} from './types';

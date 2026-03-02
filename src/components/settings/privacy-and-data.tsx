@@ -34,7 +34,11 @@ export function PrivacyAndDataSettings() {
     try {
       const data = await exportUserData(user.id);
       if (!data) {
-        toast({ title: 'Error', description: 'No se pudieron obtener tus datos.', variant: 'destructive' });
+        toast({
+          title: 'Error',
+          description: 'No se pudieron obtener tus datos.',
+          variant: 'destructive',
+        });
         return;
       }
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -74,7 +78,8 @@ export function PrivacyAndDataSettings() {
       URL.revokeObjectURL(url);
       toast({
         title: 'Exportación para migración',
-        description: 'Se ha descargado el JSON. Usa scripts/migrate-indexeddb-to-postgres.mjs con este archivo y el tenant_id.',
+        description:
+          'Se ha descargado el JSON. Usa scripts/migrate-indexeddb-to-postgres.mjs con este archivo y el tenant_id.',
       });
     } catch (err) {
       console.error(err);
@@ -94,7 +99,11 @@ export function PrivacyAndDataSettings() {
     try {
       const result = await requestErasure(user.id, { notify: true });
       if (!result.ok) {
-        toast({ title: 'Error', description: result.error ?? 'No se pudo completar la solicitud.', variant: 'destructive' });
+        toast({
+          title: 'Error',
+          description: result.error ?? 'No se pudo completar la solicitud.',
+          variant: 'destructive',
+        });
         setIsDeleting(false);
         return;
       }
@@ -129,12 +138,12 @@ export function PrivacyAndDataSettings() {
       </p>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center flex-wrap">
-        <Button
-          variant="outline"
-          onClick={handleExportData}
-          disabled={isExporting}
-        >
-          {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+        <Button variant="outline" onClick={handleExportData} disabled={isExporting}>
+          {isExporting ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="mr-2 h-4 w-4" />
+          )}
           Exportar mis datos
         </Button>
         <Button
@@ -143,13 +152,25 @@ export function PrivacyAndDataSettings() {
           disabled={isExportingMigration}
           title="Exportar toda la base IndexedDB para cargar en PostgreSQL (admin/migración)"
         >
-          {isExportingMigration ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
+          {isExportingMigration ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Database className="mr-2 h-4 w-4" />
+          )}
           Exportar para migración PostgreSQL
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="outline" className="text-destructive hover:bg-destructive/10 hover:text-destructive" disabled={isDeleting}>
-              {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+            <Button
+              variant="outline"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="mr-2 h-4 w-4" />
+              )}
               Solicitar eliminación de cuenta
             </Button>
           </AlertDialogTrigger>
@@ -157,15 +178,15 @@ export function PrivacyAndDataSettings() {
             <AlertDialogHeader>
               <AlertDialogTitle>¿Eliminar tu cuenta?</AlertDialogTitle>
               <AlertDialogDescription>
-                Esta acción eliminará tu cuenta y tus datos personales de forma permanente (borrado lógico).
-                Recibirás un correo de confirmación. No podrás volver a iniciar sesión con esta cuenta.
-                ¿Estás seguro?
+                Esta acción eliminará tu cuenta y tus datos personales de forma permanente (borrado
+                lógico). Recibirás un correo de confirmación. No podrás volver a iniciar sesión con
+                esta cuenta. ¿Estás seguro?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
               <AlertDialogAction
-                onClick={(e) => {
+                onClick={e => {
                   e.preventDefault();
                   handleRequestErasure();
                 }}

@@ -28,12 +28,7 @@ export async function appendAuditLogPg(
     await client.query(
       `INSERT INTO public.audit_logs (tenant_id, event_kind, user_id, details, created_at)
        VALUES ($1, $2, $3, $4, (now() AT TIME ZONE 'UTC'))`,
-      [
-        tenantId,
-        entry.eventKind,
-        entry.userId ?? null,
-        JSON.stringify(entry.details ?? {}),
-      ]
+      [tenantId, entry.eventKind, entry.userId ?? null, JSON.stringify(entry.details ?? {})]
     );
   } finally {
     client.release();

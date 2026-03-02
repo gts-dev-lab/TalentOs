@@ -103,6 +103,7 @@ npm start
 ## 🚀 Deployment en Vercel (Recomendado)
 
 ### Ventajas
+
 - ✅ Gratis para proyectos personales
 - ✅ Deploy automático desde Git
 - ✅ SSL automático
@@ -191,6 +192,7 @@ Crear `vercel.json` (opcional):
 ## 🐳 Deployment con Docker
 
 ### Ventajas
+
 - ✅ Portabilidad total
 - ✅ Aislamiento de dependencias
 - ✅ Fácil escalado
@@ -272,7 +274,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - JWT_SECRET=${JWT_SECRET}
@@ -282,7 +284,7 @@ services:
       - .env.production
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3000']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -330,6 +332,7 @@ docker-compose down
 ## 🐧 Deployment en Servidor Linux
 
 ### Requisitos
+
 - Ubuntu/Debian 20.04+
 - Node.js 20+
 - Nginx (opcional, para reverse proxy)
@@ -591,12 +594,12 @@ npm run build -- --debug
 
 ## 📊 Comparación de Opciones
 
-| Opción | Dificultad | Costo | Escalado | SSL | Recomendado para |
-|--------|------------|-------|----------|-----|------------------|
-| **Vercel** | ⭐ Fácil | Gratis/$$ | Automático | ✅ | Proyectos pequeños/medianos |
-| **Docker** | ⭐⭐ Media | Servidor | Manual | Manual | Servidor propio, CI/CD |
-| **Linux + PM2** | ⭐⭐⭐ Media | Servidor | Manual | Manual | VPS dedicado |
-| **Firebase** | ⭐⭐ Media | Gratis/$$ | Automático | ✅ | Proyectos Firebase |
+| Opción          | Dificultad   | Costo     | Escalado   | SSL    | Recomendado para            |
+| --------------- | ------------ | --------- | ---------- | ------ | --------------------------- |
+| **Vercel**      | ⭐ Fácil     | Gratis/$$ | Automático | ✅     | Proyectos pequeños/medianos |
+| **Docker**      | ⭐⭐ Media   | Servidor  | Manual     | Manual | Servidor propio, CI/CD      |
+| **Linux + PM2** | ⭐⭐⭐ Media | Servidor  | Manual     | Manual | VPS dedicado                |
+| **Firebase**    | ⭐⭐ Media   | Gratis/$$ | Automático | ✅     | Proyectos Firebase          |
 
 ---
 
@@ -618,12 +621,14 @@ npm run build -- --debug
 ## 🚀 Recomendación
 
 **Para empezar rápido**: **Vercel** (5 minutos)
+
 - Gratis
 - Deploy automático
 - SSL incluido
 - Perfecto para Next.js
 
 **Para producción empresarial**: **Docker + Servidor Linux**
+
 - Control total
 - Escalable
 - Aislamiento

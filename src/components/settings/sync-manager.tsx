@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -23,7 +22,7 @@ export function SyncManager() {
     });
 
     const result = await runSyncAction();
-    
+
     if (result.success) {
       toast({
         title: 'Sincronización Exitosa',

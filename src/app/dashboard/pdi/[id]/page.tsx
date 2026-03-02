@@ -4,7 +4,20 @@ import { useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowLeft, Loader2, Target, Calendar, User, CheckCircle2, Clock, Archive, Edit, Plus, Check, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  Loader2,
+  Target,
+  Calendar,
+  User,
+  CheckCircle2,
+  Clock,
+  Archive,
+  Edit,
+  Plus,
+  Check,
+  X,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
 import type { IndividualDevelopmentPlan, Course } from '@/lib/types';
@@ -15,14 +28,27 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-const statusConfig: Record<IndividualDevelopmentPlan['status'], { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive'; icon: typeof CheckCircle2 }> = {
+const statusConfig: Record<
+  IndividualDevelopmentPlan['status'],
+  {
+    label: string;
+    variant: 'default' | 'secondary' | 'outline' | 'destructive';
+    icon: typeof CheckCircle2;
+  }
+> = {
   draft: { label: 'Borrador', variant: 'outline', icon: Clock },
   active: { label: 'Activo', variant: 'default', icon: CheckCircle2 },
   completed: { label: 'Completado', variant: 'secondary', icon: CheckCircle2 },
@@ -44,7 +70,10 @@ export default function PDIDetailPage() {
   const pdi = useLiveQuery(() => db.getPDIById(id), [id]);
   const users = useLiveQuery(() => db.getAllUsers(), []);
   const courses = useLiveQuery(() => db.getAllCourses(), []);
-  const userProgress = useLiveQuery(() => user ? db.getUserProgressForUser(user.id) : Promise.resolve([]), [user?.id]);
+  const userProgress = useLiveQuery(
+    () => (user ? db.getUserProgressForUser(user.id) : Promise.resolve([])),
+    [user?.id]
+  );
 
   const usersById = useMemo(() => new Map((users || []).map(u => [u.id, u])), [users]);
   const coursesById = useMemo(() => new Map((courses || []).map(c => [c.id, c])), [courses]);
@@ -60,7 +89,8 @@ export default function PDIDetailPage() {
     return map;
   }, [userProgress, coursesById]);
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
   const canEdit = isManager && pdi && pdi.managerId === user.id;
 
   if (!user || pdi === undefined || users === undefined || courses === undefined) {
@@ -83,7 +113,9 @@ export default function PDIDetailPage() {
         <Card>
           <CardHeader>
             <CardTitle>PDI no encontrado</CardTitle>
-            <CardDescription>El Plan de Desarrollo Individual solicitado no existe.</CardDescription>
+            <CardDescription>
+              El Plan de Desarrollo Individual solicitado no existe.
+            </CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -106,14 +138,21 @@ export default function PDIDetailPage() {
         feedback: reviewFeedback,
         nextSteps: reviewNextSteps || undefined,
       });
-      toast({ title: 'Revisión añadida', description: 'La revisión ha sido registrada exitosamente.' });
+      toast({
+        title: 'Revisión añadida',
+        description: 'La revisión ha sido registrada exitosamente.',
+      });
       setReviewDialogOpen(false);
       setReviewFeedback('');
       setReviewNextSteps('');
       setReviewProgress(50);
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo añadir la revisión.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo añadir la revisión.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -126,10 +165,19 @@ export default function PDIDetailPage() {
         completed: !milestone.completed,
         completedAt: !milestone.completed ? new Date().toISOString() : undefined,
       });
-      toast({ title: 'Hito actualizado', description: milestone.completed ? 'Hito marcado como pendiente' : 'Hito marcado como completado' });
+      toast({
+        title: 'Hito actualizado',
+        description: milestone.completed
+          ? 'Hito marcado como pendiente'
+          : 'Hito marcado como completado',
+      });
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo actualizar el hito.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el hito.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -167,7 +215,9 @@ export default function PDIDetailPage() {
                   {statusInfo.label}
                 </Badge>
               </div>
-              {pdi.description && <CardDescription className="mt-1">{pdi.description}</CardDescription>}
+              {pdi.description && (
+                <CardDescription className="mt-1">{pdi.description}</CardDescription>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -187,12 +237,16 @@ export default function PDIDetailPage() {
             )}
             <div>
               <span className="text-sm text-muted-foreground">Inicio</span>
-              <p className="font-medium">{format(new Date(pdi.startDate), 'PPP', { locale: es })}</p>
+              <p className="font-medium">
+                {format(new Date(pdi.startDate), 'PPP', { locale: es })}
+              </p>
             </div>
             {pdi.endDate && (
               <div>
                 <span className="text-sm text-muted-foreground">Fin</span>
-                <p className="font-medium">{format(new Date(pdi.endDate), 'PPP', { locale: es })}</p>
+                <p className="font-medium">
+                  {format(new Date(pdi.endDate), 'PPP', { locale: es })}
+                </p>
               </div>
             )}
           </div>
@@ -216,7 +270,7 @@ export default function PDIDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {pdi.courseIds.map((courseId) => {
+                  {pdi.courseIds.map(courseId => {
                     const course = coursesById.get(courseId);
                     const progress = progressByCourse.get(courseId) || 0;
                     return (
@@ -241,7 +295,9 @@ export default function PDIDetailPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Hitos completados</span>
-                    <span className="font-medium">{completedMilestones}/{totalMilestones}</span>
+                    <span className="font-medium">
+                      {completedMilestones}/{totalMilestones}
+                    </span>
                   </div>
                   <Progress value={milestoneProgress} />
                 </div>
@@ -270,7 +326,7 @@ export default function PDIDetailPage() {
 
         <TabsContent value="courses" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {pdi.courseIds.map((courseId) => {
+            {pdi.courseIds.map(courseId => {
               const course = coursesById.get(courseId);
               const progress = progressByCourse.get(courseId) || 0;
               if (!course) return null;
@@ -308,11 +364,16 @@ export default function PDIDetailPage() {
             </CardHeader>
             <CardContent>
               {pdi.milestones.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">No hay hitos definidos aún.</p>
+                <p className="text-muted-foreground text-center py-8">
+                  No hay hitos definidos aún.
+                </p>
               ) : (
                 <div className="space-y-4">
-                  {pdi.milestones.map((milestone) => (
-                    <div key={milestone.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                  {pdi.milestones.map(milestone => (
+                    <div
+                      key={milestone.id}
+                      className="flex items-start gap-4 p-4 border rounded-lg"
+                    >
                       <button
                         onClick={() => canEdit && handleToggleMilestone(milestone.id)}
                         disabled={!canEdit}
@@ -329,20 +390,29 @@ export default function PDIDetailPage() {
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className={cn('font-medium', milestone.completed && 'line-through text-muted-foreground')}>
+                            <h4
+                              className={cn(
+                                'font-medium',
+                                milestone.completed && 'line-through text-muted-foreground'
+                              )}
+                            >
                               {milestone.title}
                             </h4>
                             {milestone.description && (
-                              <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {milestone.description}
+                              </p>
                             )}
                             {milestone.targetDate && (
                               <p className="text-xs text-muted-foreground mt-1">
-                                Objetivo: {format(new Date(milestone.targetDate), 'PPP', { locale: es })}
+                                Objetivo:{' '}
+                                {format(new Date(milestone.targetDate), 'PPP', { locale: es })}
                               </p>
                             )}
                             {milestone.completedAt && (
                               <p className="text-xs text-muted-foreground mt-1">
-                                Completado: {format(new Date(milestone.completedAt), 'PPP', { locale: es })}
+                                Completado:{' '}
+                                {format(new Date(milestone.completedAt), 'PPP', { locale: es })}
                               </p>
                             )}
                             {milestone.notes && (
@@ -374,40 +444,42 @@ export default function PDIDetailPage() {
             </CardHeader>
             <CardContent>
               {pdi.reviews.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">Aún no hay revisiones registradas.</p>
+                <p className="text-muted-foreground text-center py-8">
+                  Aún no hay revisiones registradas.
+                </p>
               ) : (
                 <div className="space-y-4">
-                  {pdi.reviews.map((review) => (
-                      <Card key={review.id}>
-                        <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <CardTitle className="text-lg">{review.reviewerName}</CardTitle>
-                              <CardDescription>
-                                {format(new Date(review.reviewDate), 'PPP', { locale: es })}
-                              </CardDescription>
-                            </div>
-                            <Badge variant="secondary">{review.progress}%</Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
+                  {pdi.reviews.map(review => (
+                    <Card key={review.id}>
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
                           <div>
-                            <Label className="text-sm font-medium">Progreso</Label>
-                            <Progress value={review.progress} className="mt-2" />
+                            <CardTitle className="text-lg">{review.reviewerName}</CardTitle>
+                            <CardDescription>
+                              {format(new Date(review.reviewDate), 'PPP', { locale: es })}
+                            </CardDescription>
                           </div>
+                          <Badge variant="secondary">{review.progress}%</Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div>
+                          <Label className="text-sm font-medium">Progreso</Label>
+                          <Progress value={review.progress} className="mt-2" />
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium">Feedback</Label>
+                          <p className="text-sm mt-1">{review.feedback}</p>
+                        </div>
+                        {review.nextSteps && (
                           <div>
-                            <Label className="text-sm font-medium">Feedback</Label>
-                            <p className="text-sm mt-1">{review.feedback}</p>
+                            <Label className="text-sm font-medium">Próximos Pasos</Label>
+                            <p className="text-sm mt-1">{review.nextSteps}</p>
                           </div>
-                          {review.nextSteps && (
-                            <div>
-                              <Label className="text-sm font-medium">Próximos Pasos</Label>
-                              <p className="text-sm mt-1">{review.nextSteps}</p>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               )}
             </CardContent>
@@ -429,7 +501,7 @@ export default function PDIDetailPage() {
                   min="0"
                   max="100"
                   value={reviewProgress}
-                  onChange={(e) => setReviewProgress(Number(e.target.value))}
+                  onChange={e => setReviewProgress(Number(e.target.value))}
                 />
                 <Progress value={reviewProgress} />
               </div>
@@ -439,7 +511,7 @@ export default function PDIDetailPage() {
               <Textarea
                 placeholder="Describe el progreso y observaciones..."
                 value={reviewFeedback}
-                onChange={(e) => setReviewFeedback(e.target.value)}
+                onChange={e => setReviewFeedback(e.target.value)}
                 rows={4}
                 className="mt-2"
               />
@@ -449,15 +521,19 @@ export default function PDIDetailPage() {
               <Textarea
                 placeholder="Indica los próximos pasos a seguir..."
                 value={reviewNextSteps}
-                onChange={(e) => setReviewNextSteps(e.target.value)}
+                onChange={e => setReviewNextSteps(e.target.value)}
                 rows={3}
                 className="mt-2"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setReviewDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleAddReview} disabled={!reviewFeedback.trim()}>Guardar Revisión</Button>
+            <Button variant="outline" onClick={() => setReviewDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleAddReview} disabled={!reviewFeedback.trim()}>
+              Guardar Revisión
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

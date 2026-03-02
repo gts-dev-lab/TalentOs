@@ -4,22 +4,28 @@ import type { Course } from './types';
 
 function escapeXml(unsafe: string): string {
   if (!unsafe) return '';
-  return unsafe.replace(/[<>&'"]/g, (c) => {
+  return unsafe.replace(/[<>&'"]/g, c => {
     switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case '\'': return '&apos;';
-      case '"': return '&quot;';
-      default: return c;
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case "'":
+        return '&apos;';
+      case '"':
+        return '&quot;';
+      default:
+        return c;
     }
   });
 }
 
 function generateModuleHTML(title: string, content: string): string {
-    const safeTitle = escapeXml(title);
-    const safeContent = escapeXml(content).replace(/\n/g, '<br />');
-    return `
+  const safeTitle = escapeXml(title);
+  const safeContent = escapeXml(content).replace(/\n/g, '<br />');
+  return `
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,15 +52,23 @@ function generateManifestXML(course: Course): string {
   const courseIdentifier = `COURSE-${course.id}`;
   const organizationIdentifier = `ORG-${course.id}`;
 
-  const moduleItems = course.modules.map((module) => `
+  const moduleItems = course.modules
+    .map(
+      module => `
       <item identifier="ITEM-${module.id}" identifierref="RESOURCE-${module.id}">
         <title>${escapeXml(module.title)}</title>
-      </item>`).join('');
+      </item>`
+    )
+    .join('');
 
-  const moduleResources = course.modules.map((module, index) => `
+  const moduleResources = course.modules
+    .map(
+      (module, index) => `
     <resource identifier="RESOURCE-${module.id}" type="webcontent" adlcp:scormtype="sco" href="content/module_${index + 1}.html">
       <file href="content/module_${index + 1}.html" />
-    </resource>`).join('');
+    </resource>`
+    )
+    .join('');
 
   const xmlString = `<?xml version="1.0" encoding="UTF-8"?>
 <manifest identifier="MANIFEST-${course.id}" version="1.2"
@@ -95,29 +109,29 @@ function generateManifestXML(course: Course): string {
 
 // This function will now generate and download the zip file on the client
 export async function downloadCourseAsScormZip(course: Course) {
-    const zip = new JSZip();
+  const zip = new JSZip();
 
-    // 1. Generate and add the manifest
-    const manifestXml = generateManifestXML(course);
-    zip.file('imsmanifest.xml', manifestXml);
+  // 1. Generate and add the manifest
+  const manifestXml = generateManifestXML(course);
+  zip.file('imsmanifest.xml', manifestXml);
 
-    // 2. Generate and add HTML for each module
-    const contentFolder = zip.folder('content');
-    if (contentFolder) {
-        course.modules.forEach((module, index) => {
-            const moduleHtml = generateModuleHTML(module.title, module.content);
-            contentFolder.file(`module_${index + 1}.html`, moduleHtml);
-        });
-    }
+  // 2. Generate and add HTML for each module
+  const contentFolder = zip.folder('content');
+  if (contentFolder) {
+    course.modules.forEach((module, index) => {
+      const moduleHtml = generateModuleHTML(module.title, module.content);
+      contentFolder.file(`module_${index + 1}.html`, moduleHtml);
+    });
+  }
 
-    // 3. Generate the zip file and trigger download
-    const blob = await zip.generateAsync({ type: 'blob' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    const safeFilename = course.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    link.download = `${safeFilename}_scorm.zip`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
+  // 3. Generate the zip file and trigger download
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  const safeFilename = course.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  link.download = `${safeFilename}_scorm.zip`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
 }

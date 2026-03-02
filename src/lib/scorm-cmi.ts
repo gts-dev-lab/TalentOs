@@ -29,7 +29,9 @@ export function cmiToScormCmiState(
   _courseId: string,
   cmi: Record<string, unknown>
 ): Omit<ScormCmiState, 'id' | 'userId' | 'courseId' | 'updatedAt'> {
-  const completionStatus = String(cmi['cmi.completion_status'] ?? cmi['cmi.core.lesson_status'] ?? 'incomplete').toLowerCase();
+  const completionStatus = String(
+    cmi['cmi.completion_status'] ?? cmi['cmi.core.lesson_status'] ?? 'incomplete'
+  ).toLowerCase();
   const successStatus = String(cmi['cmi.success_status'] ?? 'unknown').toLowerCase();
   const scoreScaledRaw = cmi['cmi.score.scaled'];
   const scoreScaled = clampScoreScaled(Number(scoreScaledRaw));
@@ -37,8 +39,14 @@ export function cmiToScormCmiState(
   const suspendData = String(cmi['cmi.suspend_data'] ?? '');
 
   return {
-    completionStatus: COMPLETION_VALUES.includes(completionStatus as (typeof COMPLETION_VALUES)[number]) ? completionStatus : 'incomplete',
-    successStatus: SUCCESS_VALUES.includes(successStatus as (typeof SUCCESS_VALUES)[number]) ? successStatus : 'unknown',
+    completionStatus: COMPLETION_VALUES.includes(
+      completionStatus as (typeof COMPLETION_VALUES)[number]
+    )
+      ? completionStatus
+      : 'incomplete',
+    successStatus: SUCCESS_VALUES.includes(successStatus as (typeof SUCCESS_VALUES)[number])
+      ? successStatus
+      : 'unknown',
     scoreScaled,
     location,
     suspendData,

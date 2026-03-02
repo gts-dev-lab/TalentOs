@@ -7,13 +7,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase-client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AppLogo } from '@/components/icons';
@@ -55,15 +49,13 @@ export function PasswordResetForm() {
 
       toast({
         title: 'Contraseña Actualizada',
-        description:
-          'Tu contraseña ha sido restablecida con éxito. Ya puedes iniciar sesión.',
+        description: 'Tu contraseña ha sido restablecida con éxito. Ya puedes iniciar sesión.',
       });
 
       router.push('/login');
     } catch (err: any) {
       setError(
-        err.message ||
-          'Error al restablecer la contraseña. El enlace puede haber expirado.'
+        err.message || 'Error al restablecer la contraseña. El enlace puede haber expirado.'
       );
       console.error(err);
     } finally {
@@ -95,9 +87,7 @@ export function PasswordResetForm() {
             <AppLogo className="h-10 w-10 text-primary" />
             <CardTitle className="text-3xl font-bold">TalentOS</CardTitle>
           </Link>
-          <CardDescription>
-            Establece tu nueva contraseña para acceder a tu cuenta.
-          </CardDescription>
+          <CardDescription>Establece tu nueva contraseña para acceder a tu cuenta.</CardDescription>
         </CardHeader>
         <CardContent>
           {hasAccessToken ? (
@@ -115,7 +105,7 @@ export function PasswordResetForm() {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   disabled={loading}
                 />
@@ -126,7 +116,7 @@ export function PasswordResetForm() {
                   id="confirm-password"
                   type="password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   required
                   disabled={loading}
                 />
@@ -139,8 +129,8 @@ export function PasswordResetForm() {
           ) : (
             <div className="text-center text-muted-foreground">
               <p>
-                Este enlace de restablecimiento no es válido o ha expirado. Por
-                favor, solicita uno nuevo.
+                Este enlace de restablecimiento no es válido o ha expirado. Por favor, solicita uno
+                nuevo.
               </p>
               <Button asChild variant="link" className="mt-4">
                 <Link href="/login">Volver a Inicio de Sesión</Link>

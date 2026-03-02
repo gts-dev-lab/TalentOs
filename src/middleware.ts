@@ -19,7 +19,7 @@ const PUBLIC_API_PREFIXES = [
 ];
 
 function isPublicApiPath(pathname: string): boolean {
-  return PUBLIC_API_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
+  return PUBLIC_API_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'));
 }
 
 export async function middleware(request: NextRequest) {
@@ -34,10 +34,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!isJwtConfigured()) {
-    return NextResponse.json(
-      { error: 'Auth not configured' },
-      { status: 503 }
-    );
+    return NextResponse.json({ error: 'Auth not configured' }, { status: 503 });
   }
 
   const token = request.cookies.get(AUTH_COOKIE)?.value;

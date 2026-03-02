@@ -21,27 +21,27 @@ Documento orientado a asistentes de código (OpenClaw, Cursor, Copilot). Sirve p
 
 ## Qué puede modificar el asistente
 
-| Área | Permitido |
-|------|-----------|
-| UI/UX | Componentes, estilos, layout, accesibilidad |
-| Features nuevas | Páginas, flujos, endpoints siguiendo la arquitectura |
-| Tests | Añadir/ajustar tests (Jest, `src/__tests__/`) |
-| Correcciones | Bugs, refactors menores, mejoras de tipos |
-| Documentación | Comentarios, docs, README |
+| Área               | Permitido                                                                 |
+| ------------------ | ------------------------------------------------------------------------- |
+| UI/UX              | Componentes, estilos, layout, accesibilidad                               |
+| Features nuevas    | Páginas, flujos, endpoints siguiendo la arquitectura                      |
+| Tests              | Añadir/ajustar tests (Jest, `src/__tests__/`)                             |
+| Correcciones       | Bugs, refactors menores, mejoras de tipos                                 |
+| Documentación      | Comentarios, docs, README                                                 |
 | Integración TT-114 | Implementar métodos pendientes del provider PostgreSQL según `DBProvider` |
 
 ---
 
 ## Qué NO debe modificar el asistente sin revisión
 
-| Área | Restricción |
-|------|-------------|
-| **Interfaz DBProvider** | No cambiar la firma de métodos en `src/lib/db-providers/types.ts` sin actualizar todos los providers |
-| **Middleware de auth** | `src/middleware.ts`: mantener verificación JWT + `tenantId`; no debilitar seguridad |
-| **Tenant context** | `src/lib/tenant-context.ts`: lógica de `getCurrentTenantId()`, `runWithTenant` — crítica para RLS |
-| **Flujo de matriculaciones** | Estados de `Enrollment` en `src/lib/types.ts`: cambios pueden afectar lógica de aprobación |
-| **Políticas RLS** | Migraciones en `migrations/`: no eliminar ni relajar políticas sin justificación |
-| **LTI/SCORM** | Cambios en `src/lib/lti/` y `src/lib/scorm-*` pueden romper integraciones estándar |
+| Área                         | Restricción                                                                                          |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Interfaz DBProvider**      | No cambiar la firma de métodos en `src/lib/db-providers/types.ts` sin actualizar todos los providers |
+| **Middleware de auth**       | `src/middleware.ts`: mantener verificación JWT + `tenantId`; no debilitar seguridad                  |
+| **Tenant context**           | `src/lib/tenant-context.ts`: lógica de `getCurrentTenantId()`, `runWithTenant` — crítica para RLS    |
+| **Flujo de matriculaciones** | Estados de `Enrollment` en `src/lib/types.ts`: cambios pueden afectar lógica de aprobación           |
+| **Políticas RLS**            | Migraciones en `migrations/`: no eliminar ni relajar políticas sin justificación                     |
+| **LTI/SCORM**                | Cambios en `src/lib/lti/` y `src/lib/scorm-*` pueden romper integraciones estándar                   |
 
 ---
 

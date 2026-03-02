@@ -33,12 +33,11 @@ export default function InstructorsPage() {
     if (!allCourses || !instructors) return new Map<string, Course[]>();
     const map = new Map<string, Course[]>();
     instructors.forEach(instructor => {
-        const assigned = allCourses.filter(course => course.instructor === instructor.name);
-        map.set(instructor.id, assigned);
+      const assigned = allCourses.filter(course => course.instructor === instructor.name);
+      map.set(instructor.id, assigned);
     });
     return map;
   }, [allCourses, instructors]);
-
 
   if (!allUsers || !allCourses || !currentUser) {
     return (
@@ -63,7 +62,7 @@ export default function InstructorsPage() {
           placeholder="Buscar formador por nombre..."
           className="pl-8 md:w-1/3"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
         />
       </div>
 
@@ -84,7 +83,9 @@ export default function InstructorsPage() {
             {searchQuery ? 'No se encontraron formadores' : 'No hay formadores registrados'}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            {searchQuery ? 'Intenta con otro nombre.' : 'Añade un usuario con el rol de "Formador" en la sección de Usuarios.'}
+            {searchQuery
+              ? 'Intenta con otro nombre.'
+              : 'Añade un usuario con el rol de "Formador" en la sección de Usuarios.'}
           </p>
         </div>
       )}

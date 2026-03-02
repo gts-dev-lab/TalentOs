@@ -2,11 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAuth } from '@/contexts/auth';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarInset,
-} from '@/components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { PageTransition } from '@/components/page-transition';
 import { SidebarContents } from '@/components/sidebar-contents';
@@ -16,11 +12,7 @@ import { getNavItems } from '@/lib/nav';
 
 const FRONTEND_ONLY = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -37,12 +29,11 @@ export default function DashboardLayout({
   if (!FRONTEND_ONLY && (isLoading || !user)) {
     return <DashboardLoadingSkeleton />;
   }
-  
+
   const pageTitle =
     navItems
-      .filter((item) => pathname.startsWith(item.href))
+      .filter(item => pathname.startsWith(item.href))
       .sort((a, b) => b.href.length - a.href.length)[0]?.label || 'Dashboard';
-
 
   return (
     <SidebarProvider>

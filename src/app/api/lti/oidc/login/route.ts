@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
 
   if (!iss || !login_hint || !target_link_uri || !client_id) {
     return NextResponse.json(
-      { error: 'Missing required LTI OIDC parameters: iss, login_hint, target_link_uri, client_id' },
+      {
+        error: 'Missing required LTI OIDC parameters: iss, login_hint, target_link_uri, client_id',
+      },
       { status: 400 }
     );
   }
@@ -47,9 +49,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(url);
   } catch (err) {
     console.error('[LTI OIDC] Login initiation error', err);
-    return NextResponse.json(
-      { error: 'Failed to build authorization redirect' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to build authorization redirect' }, { status: 500 });
   }
 }

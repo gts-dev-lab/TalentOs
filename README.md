@@ -39,10 +39,10 @@ Si en el futuro se añade un sistema de tickets de negocio (soporte, incidencias
 
 ### Documentos clave
 
-| Documento | Descripción |
-|-----------|-------------|
+| Documento                        | Descripción                                                          |
+| -------------------------------- | -------------------------------------------------------------------- |
 | `docs/MIGRATION_PLAN_TICKETS.md` | Plan completo: epics, tickets, criterios de aceptación, dependencias |
-| `docs/MIGRATION_STATUS.md` | Estado actual y progreso (92% Fase 1 completada) |
+| `docs/MIGRATION_STATUS.md`       | Estado actual y progreso (92% Fase 1 completada)                     |
 
 ---
 
@@ -56,16 +56,16 @@ Si en el futuro se añade un sistema de tickets de negocio (soporte, incidencias
 
 ## Tecnologías
 
-| Capa | Tecnología |
-|------|------------|
-| Framework | Next.js 15 (App Router) |
-| Lenguaje | TypeScript |
-| Estilos | Tailwind CSS |
-| UI | Shadcn/ui |
-| BD local | Dexie.js (IndexedDB) |
-| BD servidor | PostgreSQL (opcional) |
-| IA | Genkit (Google Gemini) |
-| Auth | JWT + NextAuth (modular) |
+| Capa        | Tecnología               |
+| ----------- | ------------------------ |
+| Framework   | Next.js 15 (App Router)  |
+| Lenguaje    | TypeScript               |
+| Estilos     | Tailwind CSS             |
+| UI          | Shadcn/ui                |
+| BD local    | Dexie.js (IndexedDB)     |
+| BD servidor | PostgreSQL (opcional)    |
+| IA          | Genkit (Google Gemini)   |
+| Auth        | JWT + NextAuth (modular) |
 
 ---
 
@@ -95,10 +95,10 @@ npm start
 
 ## Documentación adicional
 
-| Documento | Descripción |
-|-----------|-------------|
-| [README_DEV.md](./README_DEV.md) | Reglas de desarrollo para asistentes de código |
-| [README_TODO.md](./README_TODO.md) | Tareas pendientes y prioridades |
-| [README_ARCHITECTURE.md](./README_ARCHITECTURE.md) | Arquitectura y diagramas |
-| [docs/MIGRATION_PLAN_TICKETS.md](./docs/MIGRATION_PLAN_TICKETS.md) | Plan de migración y tickets |
-| [docs/ARCHITECTURE_MULTITENANT_AND_SECURITY.md](./docs/ARCHITECTURE_MULTITENANT_AND_SECURITY.md) | Seguridad y multi-tenant |
+| Documento                                                                                        | Descripción                                    |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [README_DEV.md](./README_DEV.md)                                                                 | Reglas de desarrollo para asistentes de código |
+| [README_TODO.md](./README_TODO.md)                                                               | Tareas pendientes y prioridades                |
+| [README_ARCHITECTURE.md](./README_ARCHITECTURE.md)                                               | Arquitectura y diagramas                       |
+| [docs/MIGRATION_PLAN_TICKETS.md](./docs/MIGRATION_PLAN_TICKETS.md)                               | Plan de migración y tickets                    |
+| [docs/ARCHITECTURE_MULTITENANT_AND_SECURITY.md](./docs/ARCHITECTURE_MULTITENANT_AND_SECURITY.md) | Seguridad y multi-tenant                       |

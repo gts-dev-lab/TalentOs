@@ -1,4 +1,3 @@
-
 import type { User } from '@/lib/types';
 
 /**
@@ -18,13 +17,13 @@ export interface AuthProvider {
   /**
    * Registers a new user.
    */
-  register: (name: string, email: string, password?: string) => Promise<{user: any, error: any}>;
+  register: (name: string, email: string, password?: string) => Promise<{ user: any; error: any }>;
 
   /**
    * Logs the current user out.
    */
   logout: () => Promise<void>;
-  
+
   /**
    * Subscribes to changes in the authentication state.
    * This is used to keep the UI in sync with the user's login status.

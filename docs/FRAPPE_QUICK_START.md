@@ -9,6 +9,7 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 ## 🎨 Cambios Visuales Principales
 
 ### 1. **Sidebar Oscuro** (Estilo Frappe)
+
 - Fondo oscuro profesional
 - Texto claro
 - Hover suave
@@ -17,12 +18,14 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 - Drawer en móvil
 
 ### 2. **Topbar Claro**
+
 - Fondo blanco/claro
 - Border sutil
 - Shadow ligero
 - Altura compacta (56px)
 
 ### 3. **Componentes Estilo Frappe**
+
 - **Cards**: Sombras sutiles, bordes redondeados (6px)
 - **Botones**: Bordes redondeados (4px), sombras en primary
 - **Tablas**: Header con fondo, bordes sutiles, hover suave
@@ -30,6 +33,7 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 - **Modales**: Overlay con blur, sombras grandes
 
 ### 4. **Transiciones Suaves**
+
 - Fade entre páginas (300ms)
 - Hover con transiciones rápidas (150ms)
 - Animaciones consistentes
@@ -56,16 +60,19 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 ## 🎯 Páginas Ejemplo
 
 ### Dashboard
+
 - Grid de StatCards (4 columnas)
 - Cards con hover suave
 - Layout responsive
 
 ### Empleados (`/dashboard/users`)
+
 - Tabla estilo Frappe
 - Filtros y paginación
 - Badges de estado
 
 ### Nómina (`/dashboard/nomina`) ✨ NUEVO
+
 - Página ejemplo completa
 - StatCards de resumen
 - Tabla con datos mock
@@ -110,6 +117,7 @@ duration-frappe-slow /* 300ms */
 **Archivo**: `src/styles/design-tokens.css`
 
 Todos los tokens están disponibles como variables CSS:
+
 - `--frappe-sidebar-bg`
 - `--frappe-primary`
 - `--frappe-shadow`
@@ -121,6 +129,7 @@ Todos los tokens están disponibles como variables CSS:
 ## 🚀 Verificación Rápida
 
 ### 1. Sidebar Oscuro
+
 ```
 ✅ Abre /dashboard
 ✅ Sidebar debe tener fondo oscuro
@@ -129,6 +138,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 2. Topbar Claro
+
 ```
 ✅ Header debe tener fondo claro
 ✅ Border bottom sutil
@@ -136,6 +146,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 3. Cards
+
 ```
 ✅ Cards deben tener sombra sutil
 ✅ Bordes redondeados (6px)
@@ -143,6 +154,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 4. Tablas
+
 ```
 ✅ Header con fondo gris claro
 ✅ Bordes sutiles entre filas
@@ -150,6 +162,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 5. PWA
+
 ```
 ✅ Abre DevTools → Application → Service Workers
 ✅ Debe estar registrado "talentos-v1"

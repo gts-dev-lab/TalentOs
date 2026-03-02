@@ -4,7 +4,17 @@ import { useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowLeft, Loader2, ShieldCheck, Edit, Plus, AlertTriangle, CheckCircle2, XCircle, Calendar } from 'lucide-react';
+import {
+  ArrowLeft,
+  Loader2,
+  ShieldCheck,
+  Edit,
+  Plus,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  Calendar,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
 import type { Regulation, RegulationCompliance, User, Course } from '@/lib/types';
@@ -14,12 +24,31 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { format, addMonths, isBefore, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -42,26 +71,38 @@ export default function RegulationDetailPage() {
   const { user } = useAuth();
   const [complianceDialogOpen, setComplianceDialogOpen] = useState(false);
   const [complianceUserId, setComplianceUserId] = useState<string>('');
-  const [complianceDate, setComplianceDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [complianceDate, setComplianceDate] = useState<string>(
+    new Date().toISOString().split('T')[0]
+  );
   const [complianceNotes, setComplianceNotes] = useState<string>('');
 
   const regulation = useLiveQuery(() => db.getRegulationById(id), [id]);
   const allUsers = useLiveQuery(() => db.getAllUsers(), []);
   const allCourses = useLiveQuery(() => db.getAllCourses(), []);
-  const allCompliance = useLiveQuery(() => regulation ? db.getComplianceForRegulation(regulation.id) : Promise.resolve([]), [regulation?.id]);
-  const allAudits = useLiveQuery(() => regulation ? db.getAuditsForRegulation(regulation.id) : Promise.resolve([]), [regulation?.id]);
+  const allCompliance = useLiveQuery(
+    () => (regulation ? db.getComplianceForRegulation(regulation.id) : Promise.resolve([])),
+    [regulation?.id]
+  );
+  const allAudits = useLiveQuery(
+    () => (regulation ? db.getAuditsForRegulation(regulation.id) : Promise.resolve([])),
+    [regulation?.id]
+  );
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
 
   const usersById = useMemo(() => new Map((allUsers || []).map(u => [u.id, u])), [allUsers]);
   const coursesById = useMemo(() => new Map((allCourses || []).map(c => [c.id, c])), [allCourses]);
 
   const applicableUsers = useMemo(() => {
     if (!regulation || !allUsers) return [];
-    return allUsers.filter(u => 
-      u.status === 'approved' && 
-      regulation.applicableRoles.includes(u.role) &&
-      (!regulation.applicableDepartments || regulation.applicableDepartments.length === 0 || regulation.applicableDepartments.includes(u.department))
+    return allUsers.filter(
+      u =>
+        u.status === 'approved' &&
+        regulation.applicableRoles.includes(u.role) &&
+        (!regulation.applicableDepartments ||
+          regulation.applicableDepartments.length === 0 ||
+          regulation.applicableDepartments.includes(u.department))
     );
   }, [regulation, allUsers]);
 
@@ -74,7 +115,8 @@ export default function RegulationDetailPage() {
   }, [allCompliance]);
 
   const complianceStats = useMemo(() => {
-    if (!regulation || !applicableUsers.length) return { total: 0, compliant: 0, nonCompliant: 0, expiring: 0, rate: 0 };
+    if (!regulation || !applicableUsers.length)
+      return { total: 0, compliant: 0, nonCompliant: 0, expiring: 0, rate: 0 };
     const total = applicableUsers.length;
     const compliant = applicableUsers.filter(u => complianceByUser.has(u.id!)).length;
     const nonCompliant = total - compliant;
@@ -85,7 +127,13 @@ export default function RegulationDetailPage() {
       const daysUntilExpiry = differenceInDays(expDate, today);
       return daysUntilExpiry > 0 && daysUntilExpiry <= 30;
     }).length;
-    return { total, compliant, nonCompliant, expiring, rate: total > 0 ? (compliant / total) * 100 : 0 };
+    return {
+      total,
+      compliant,
+      nonCompliant,
+      expiring,
+      rate: total > 0 ? (compliant / total) * 100 : 0,
+    };
   }, [regulation, applicableUsers, complianceByUser, allCompliance]);
 
   if (!user || !isManager) {
@@ -101,7 +149,13 @@ export default function RegulationDetailPage() {
     );
   }
 
-  if (!regulation || allUsers === undefined || allCourses === undefined || allCompliance === undefined || allAudits === undefined) {
+  if (
+    !regulation ||
+    allUsers === undefined ||
+    allCourses === undefined ||
+    allCompliance === undefined ||
+    allAudits === undefined
+  ) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loader2 className="h-16 w-16 animate-spin text-primary" />
@@ -112,10 +166,10 @@ export default function RegulationDetailPage() {
   const handleAddCompliance = async () => {
     if (!complianceUserId || !user) return;
     try {
-      const expirationDate = regulation.validityPeriod 
+      const expirationDate = regulation.validityPeriod
         ? addMonths(new Date(complianceDate), regulation.validityPeriod).toISOString()
         : undefined;
-      
+
       await db.addRegulationCompliance({
         userId: complianceUserId,
         regulationId: regulation.id,
@@ -123,14 +177,21 @@ export default function RegulationDetailPage() {
         expirationDate,
         notes: complianceNotes || undefined,
       });
-      toast({ title: 'Cumplimiento Registrado', description: 'El cumplimiento ha sido registrado exitosamente.' });
+      toast({
+        title: 'Cumplimiento Registrado',
+        description: 'El cumplimiento ha sido registrado exitosamente.',
+      });
       setComplianceDialogOpen(false);
       setComplianceUserId('');
       setComplianceDate(new Date().toISOString().split('T')[0]);
       setComplianceNotes('');
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo registrar el cumplimiento.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo registrar el cumplimiento.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -141,7 +202,8 @@ export default function RegulationDetailPage() {
     const today = new Date();
     const daysUntilExpiry = differenceInDays(expDate, today);
     if (daysUntilExpiry < 0) return { status: 'expired', label: 'Vencido', color: 'destructive' };
-    if (daysUntilExpiry <= 30) return { status: 'expiring', label: `Vence en ${daysUntilExpiry} días`, color: 'secondary' };
+    if (daysUntilExpiry <= 30)
+      return { status: 'expiring', label: `Vence en ${daysUntilExpiry} días`, color: 'secondary' };
     return { status: 'compliant', label: 'Cumplido', color: 'default' };
   };
 
@@ -204,11 +266,15 @@ export default function RegulationDetailPage() {
               <>
                 <div>
                   <span className="text-sm text-muted-foreground">Validez</span>
-                  <p className="font-medium">{regulation.validityPeriod ? `${regulation.validityPeriod} meses` : 'N/A'}</p>
+                  <p className="font-medium">
+                    {regulation.validityPeriod ? `${regulation.validityPeriod} meses` : 'N/A'}
+                  </p>
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">Renovación</span>
-                  <p className="font-medium">{regulation.renewalPeriod ? `Cada ${regulation.renewalPeriod} meses` : 'N/A'}</p>
+                  <p className="font-medium">
+                    {regulation.renewalPeriod ? `Cada ${regulation.renewalPeriod} meses` : 'N/A'}
+                  </p>
                 </div>
               </>
             )}
@@ -284,7 +350,7 @@ export default function RegulationDetailPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {applicableUsers.map((u) => {
+                  {applicableUsers.map(u => {
                     const comp = complianceByUser.get(u.id!);
                     const status = getComplianceStatus(comp);
                     return (
@@ -296,10 +362,14 @@ export default function RegulationDetailPage() {
                           <Badge variant={status.color as any}>{status.label}</Badge>
                         </TableCell>
                         <TableCell>
-                          {comp?.complianceDate ? format(new Date(comp.complianceDate), 'PPP', { locale: es }) : '-'}
+                          {comp?.complianceDate
+                            ? format(new Date(comp.complianceDate), 'PPP', { locale: es })
+                            : '-'}
                         </TableCell>
                         <TableCell>
-                          {comp?.expirationDate ? format(new Date(comp.expirationDate), 'PPP', { locale: es }) : '-'}
+                          {comp?.expirationDate
+                            ? format(new Date(comp.expirationDate), 'PPP', { locale: es })
+                            : '-'}
                         </TableCell>
                       </TableRow>
                     );
@@ -312,7 +382,7 @@ export default function RegulationDetailPage() {
 
         <TabsContent value="courses" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {regulation.courseIds.map((courseId) => {
+            {regulation.courseIds.map(courseId => {
               const course = coursesById.get(courseId);
               if (!course) return null;
               return (
@@ -345,7 +415,9 @@ export default function RegulationDetailPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Auditorías de Cumplimiento</CardTitle>
-                  <CardDescription>Registro de auditorías realizadas para esta normativa</CardDescription>
+                  <CardDescription>
+                    Registro de auditorías realizadas para esta normativa
+                  </CardDescription>
                 </div>
                 <Button size="sm" asChild>
                   <Link href={`/dashboard/compliance/${regulation.id}/audit/new`}>
@@ -357,10 +429,12 @@ export default function RegulationDetailPage() {
             </CardHeader>
             <CardContent>
               {allAudits.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">No hay auditorías registradas aún.</p>
+                <p className="text-muted-foreground text-center py-8">
+                  No hay auditorías registradas aún.
+                </p>
               ) : (
                 <div className="space-y-4">
-                  {allAudits.map((audit) => (
+                  {allAudits.map(audit => (
                     <Card key={audit.id}>
                       <CardHeader>
                         <div className="flex items-center justify-between">
@@ -391,8 +465,11 @@ export default function RegulationDetailPage() {
                         <div>
                           <Label className="text-sm font-medium">Usuarios No Cumplidores</Label>
                           <p className="text-sm mt-1">
-                            {audit.nonCompliantUserIds.length > 0 
-                              ? audit.nonCompliantUserIds.map(id => usersById.get(id)?.name).filter(Boolean).join(', ')
+                            {audit.nonCompliantUserIds.length > 0
+                              ? audit.nonCompliantUserIds
+                                  .map(id => usersById.get(id)?.name)
+                                  .filter(Boolean)
+                                  .join(', ')
                               : 'Ninguno'}
                           </p>
                         </div>
@@ -421,7 +498,7 @@ export default function RegulationDetailPage() {
                 <SelectContent>
                   {applicableUsers
                     .filter(u => !complianceByUser.has(u.id!))
-                    .map((u) => (
+                    .map(u => (
                       <SelectItem key={u.id} value={u.id!}>
                         {u.name} ({u.role})
                       </SelectItem>
@@ -434,12 +511,15 @@ export default function RegulationDetailPage() {
               <Input
                 type="date"
                 value={complianceDate}
-                onChange={(e) => setComplianceDate(e.target.value)}
+                onChange={e => setComplianceDate(e.target.value)}
               />
             </div>
             {regulation.validityPeriod && (
               <div className="text-sm text-muted-foreground">
-                El cumplimiento vencerá el {format(addMonths(new Date(complianceDate), regulation.validityPeriod), 'PPP', { locale: es })}
+                El cumplimiento vencerá el{' '}
+                {format(addMonths(new Date(complianceDate), regulation.validityPeriod), 'PPP', {
+                  locale: es,
+                })}
               </div>
             )}
             <div>
@@ -447,13 +527,15 @@ export default function RegulationDetailPage() {
               <Textarea
                 placeholder="Notas adicionales sobre el cumplimiento..."
                 value={complianceNotes}
-                onChange={(e) => setComplianceNotes(e.target.value)}
+                onChange={e => setComplianceNotes(e.target.value)}
                 rows={3}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setComplianceDialogOpen(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setComplianceDialogOpen(false)}>
+              Cancelar
+            </Button>
             <Button onClick={handleAddCompliance} disabled={!complianceUserId || !complianceDate}>
               Registrar Cumplimiento
             </Button>

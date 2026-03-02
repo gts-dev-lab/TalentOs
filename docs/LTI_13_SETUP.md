@@ -4,15 +4,15 @@ TalentOS actúa como **herramienta (Tool)** en el flujo LTI 1.3. La plataforma (
 
 ## Variables de entorno
 
-| Variable | Descripción |
-|----------|-------------|
-| `LTI_ISSUER` | Issuer de la plataforma (ej. `https://canvas.instructure.com`) — debe coincidir con el `iss` que envía la plataforma. |
-| `LTI_AUTH_REQUEST_URL` | URL del endpoint de autorización de la plataforma (donde redirigimos al usuario). |
-| `LTI_JWKS_URI` | URL del JWKS de la plataforma para verificar el `id_token`. |
-| `LTI_CLIENT_ID` | (Opcional) Client ID que la plataforma asigna a esta herramienta; se valida contra el claim `aud` del token. |
-| `LTI_TENANT_ID` | (Opcional) UUID del inquilino para usuarios que entran por LTI. Por defecto se usa `TENANT_ID_DEFAULT`. |
-| `JWT_SECRET` | Requerido para firmar el `state` (≥32 caracteres). |
-| `NEXT_PUBLIC_APP_URL` o `VERCEL_URL` | Base URL de la app para construir `redirect_uri` y login URL. |
+| Variable                             | Descripción                                                                                                           |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `LTI_ISSUER`                         | Issuer de la plataforma (ej. `https://canvas.instructure.com`) — debe coincidir con el `iss` que envía la plataforma. |
+| `LTI_AUTH_REQUEST_URL`               | URL del endpoint de autorización de la plataforma (donde redirigimos al usuario).                                     |
+| `LTI_JWKS_URI`                       | URL del JWKS de la plataforma para verificar el `id_token`.                                                           |
+| `LTI_CLIENT_ID`                      | (Opcional) Client ID que la plataforma asigna a esta herramienta; se valida contra el claim `aud` del token.          |
+| `LTI_TENANT_ID`                      | (Opcional) UUID del inquilino para usuarios que entran por LTI. Por defecto se usa `TENANT_ID_DEFAULT`.               |
+| `JWT_SECRET`                         | Requerido para firmar el `state` (≥32 caracteres).                                                                    |
+| `NEXT_PUBLIC_APP_URL` o `VERCEL_URL` | Base URL de la app para construir `redirect_uri` y login URL.                                                         |
 
 ## URLs a registrar en la plataforma
 
@@ -38,6 +38,7 @@ Tras el callback OIDC, si el `id_token` incluye el claim `resource_link.id`, Tal
 Variable de entorno **`LTI_RESOURCE_LINK_MAP`**: JSON con pares `resource_link_id` → `courseId` (UUID o id del curso en TalentOS).
 
 Ejemplo:
+
 ```bash
 LTI_RESOURCE_LINK_MAP='{"abc123":"course_uuid_o_id_local","link_456":"course_2"}'
 ```

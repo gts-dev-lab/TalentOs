@@ -3,6 +3,7 @@
 Este documento es la **guía de ejecución** del ticket TT-113: validación de seguridad y aislamiento entre inquilinos. Sirve como runbook para pruebas de penetración ligeras, escaneos automatizados y verificación de controles OWASP ASVS Nivel 1.
 
 **Criterios de aceptación (del plan):**
+
 - Informe de vulnerabilidades corregidas (XSS, SQLi, IDOR).
 - Verificación exitosa de que el Inquilino A no ve datos del Inquilino B.
 - Cumplimiento verificado de los controles Nivel 1 de ASVS.
@@ -11,20 +12,20 @@ Este documento es la **guía de ejecución** del ticket TT-113: validación de s
 
 ## 1. Prerrequisitos
 
-| Requisito | Descripción |
-|-----------|-------------|
-| **Entorno** | Aplicación desplegada o ejecutándose en local (`npm run dev`) con HTTPS en staging/producción. |
-| **Dos inquilinos** | Al menos dos `tenant_id` (UUID) distintos con datos: usuarios, cursos, matriculaciones. Pueden crearse vía seed o con `TENANT_ID_DEFAULT` y usuarios con `tenantId` distinto en Dexie/PostgreSQL. |
-| **Usuarios de prueba** | Usuario A (tenant 1) y Usuario B (tenant 2), cada uno con sesión (JWT con su `tenantId`). |
-| **Herramientas opcionales** | [OWASP ZAP](https://www.zaproxy.org/) (escaneo automático), [Snyk](https://snyk.io/) (dependencias y/o código). |
+| Requisito                   | Descripción                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Entorno**                 | Aplicación desplegada o ejecutándose en local (`npm run dev`) con HTTPS en staging/producción.                                                                                                    |
+| **Dos inquilinos**          | Al menos dos `tenant_id` (UUID) distintos con datos: usuarios, cursos, matriculaciones. Pueden crearse vía seed o con `TENANT_ID_DEFAULT` y usuarios con `tenantId` distinto en Dexie/PostgreSQL. |
+| **Usuarios de prueba**      | Usuario A (tenant 1) y Usuario B (tenant 2), cada uno con sesión (JWT con su `tenantId`).                                                                                                         |
+| **Herramientas opcionales** | [OWASP ZAP](https://www.zaproxy.org/) (escaneo automático), [Snyk](https://snyk.io/) (dependencias y/o código).                                                                                   |
 
 ### 1.1 Comprobaciones automatizadas (TT-113)
 
-| Acción | Comando | Descripción |
-|--------|---------|-------------|
-| Auditoría de dependencias | `npm run audit` | Ejecuta `npm audit`; revisar vulnerabilidades High/Critical y documentar en el informe. |
+| Acción                            | Comando                 | Descripción                                                                                                                                                                         |
+| --------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auditoría de dependencias         | `npm run audit`         | Ejecuta `npm audit`; revisar vulnerabilidades High/Critical y documentar en el informe.                                                                                             |
 | Tests de seguridad del middleware | `npm run test:security` | Ejecuta los tests en `src/__tests__/middleware.security.test.ts`: 401 sin token, token inválido, token sin tenantId; rutas públicas permitidas. Usa `jest.config.js` (sin ts-node). |
-| Escaneo OWASP ZAP baseline | `npm run security:zap` | Ejecuta `scripts/run-zap-baseline.sh` contra `http://localhost:3000`. Requiere Docker y app levantada. Para otra URL: `./scripts/run-zap-baseline.sh <URL>`. |
+| Escaneo OWASP ZAP baseline        | `npm run security:zap`  | Ejecuta `scripts/run-zap-baseline.sh` contra `http://localhost:3000`. Requiere Docker y app levantada. Para otra URL: `./scripts/run-zap-baseline.sh <URL>`.                        |
 
 ---
 
@@ -68,11 +69,11 @@ Objetivo: **El Inquilino A no debe poder ver ni modificar datos del Inquilino B.
 
 ### 3.1 Listados y vistas
 
-| Prueba | Pasos | Resultado esperado |
-|--------|--------|--------------------|
-| Listado de usuarios | Con sesión de Usuario A (tenant 1), acceder al listado de usuarios (admin o gestor). | Solo aparecen usuarios del tenant 1. |
-| Listado de cursos | Con sesión de Usuario A, listar cursos. | Solo cursos del tenant 1. |
-| Listado de matriculaciones | Con sesión de Usuario A, listar matriculaciones. | Solo las del tenant 1. |
+| Prueba                     | Pasos                                                                                | Resultado esperado                   |
+| -------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------ |
+| Listado de usuarios        | Con sesión de Usuario A (tenant 1), acceder al listado de usuarios (admin o gestor). | Solo aparecen usuarios del tenant 1. |
+| Listado de cursos          | Con sesión de Usuario A, listar cursos.                                              | Solo cursos del tenant 1.            |
+| Listado de matriculaciones | Con sesión de Usuario A, listar matriculaciones.                                     | Solo las del tenant 1.               |
 
 **Comprobación:** Tener al menos un usuario y un curso en tenant 2; confirmar que no aparecen cuando la sesión es de tenant 1.
 
@@ -80,21 +81,21 @@ Objetivo: **El Inquilino A no debe poder ver ni modificar datos del Inquilino B.
 
 Con sesión de **Usuario A (tenant 1)**:
 
-| Prueba | Pasos | Resultado esperado |
-|--------|--------|--------------------|
+| Prueba                            | Pasos                                                                                                                                                                                                  | Resultado esperado                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | Detalle de usuario de otro tenant | Obtener un `userId` o `courseId` que pertenezca al tenant 2 (p. ej. de una exportación o de otra sesión). Llamar a la API o abrir la URL de detalle (ej. `/dashboard/users/[id]` o `/api/users/[id]`). | **403 Forbidden** o **404**, y en ningún caso datos del usuario/curso del tenant 2. |
-| Detalle de curso de otro tenant | Misma idea con un `courseId` del tenant 2. | 403 o 404; no mostrar datos del curso del otro inquilino. |
-| Modificación | Si existe API de actualización (ej. PATCH usuario o curso), enviar una petición con el ID de un recurso del tenant 2. | 403 o 404; no aplicar cambios en datos del tenant 2. |
+| Detalle de curso de otro tenant   | Misma idea con un `courseId` del tenant 2.                                                                                                                                                             | 403 o 404; no mostrar datos del curso del otro inquilino.                           |
+| Modificación                      | Si existe API de actualización (ej. PATCH usuario o curso), enviar una petición con el ID de un recurso del tenant 2.                                                                                  | 403 o 404; no aplicar cambios en datos del tenant 2.                                |
 
 **Nota:** En la arquitectura actual (Dexie en el cliente), el filtrado por tenant viene del JWT y del contexto; al pasar a PostgreSQL + RLS, las políticas deben impedir por defecto el acceso entre inquilinos. Estas pruebas validan tanto el middleware/contexto como (en el futuro) el comportamiento con RLS.
 
 ### 3.3 Token y cabeceras
 
-| Prueba | Pasos | Resultado esperado |
-|--------|--------|--------------------|
-| Petición sin token | Llamar a una ruta protegida `/api/*` sin cookie `auth-token` (o sin Authorization). | **401 Unauthorized**. |
-| Token con `tenantId` alterado | Si es posible generar o modificar un JWT (solo en entorno de prueba): usar un JWT con `tenantId` del tenant 2 mientras se intenta acceder a recursos que deberían ser del tenant 1. | Comportamiento coherente: o bien el token no es válido (firma), o bien se ven solo datos del tenant del token (no mezcla). |
-| Cabecera `X-Tenant-Id` | Enviar `X-Tenant-Id: <uuid-tenant-2>` con sesión de tenant 1. | El servidor **no** debe usar esta cabecera para cambiar de inquilino; debe seguir el `tenantId` del JWT. (Ver ARCHITECTURE_MULTITENANT_AND_SECURITY.md.) |
+| Prueba                        | Pasos                                                                                                                                                                               | Resultado esperado                                                                                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Petición sin token            | Llamar a una ruta protegida `/api/*` sin cookie `auth-token` (o sin Authorization).                                                                                                 | **401 Unauthorized**.                                                                                                                                    |
+| Token con `tenantId` alterado | Si es posible generar o modificar un JWT (solo en entorno de prueba): usar un JWT con `tenantId` del tenant 2 mientras se intenta acceder a recursos que deberían ser del tenant 1. | Comportamiento coherente: o bien el token no es válido (firma), o bien se ven solo datos del tenant del token (no mezcla).                               |
+| Cabecera `X-Tenant-Id`        | Enviar `X-Tenant-Id: <uuid-tenant-2>` con sesión de tenant 1.                                                                                                                       | El servidor **no** debe usar esta cabecera para cambiar de inquilino; debe seguir el `tenantId` del JWT. (Ver ARCHITECTURE_MULTITENANT_AND_SECURITY.md.) |
 
 ---
 
@@ -102,17 +103,17 @@ Con sesión de **Usuario A (tenant 1)**:
 
 Verificación manual o por diseño. Marcar cuando se considere cumplido.
 
-| ID / Área | Control (resumido) | Cómo verificarlo en TalentOS |
-|-----------|--------------------|------------------------------|
-| **V2.1** | Contraseñas: longitud mínima, no en claro, hash seguro. | Login: contraseñas hasheadas (Argon2/bcrypt); no se almacenan en claro. Ver `src/lib/auth` y flujo de registro. |
-| **V2.2** | Sesión: gestión segura, timeout, cookie segura. | JWT en cookie httpOnly; sesión vinculada a tenant. Ver middleware y tenant-context. |
-| **V4.1** | Control de acceso: verificación en cada petición. | Middleware exige JWT + tenantId; rutas protegidas usan `getSessionFromRequest` / `requireTenant`. |
-| **V4.2** | Negación por defecto. | Rutas `/api/*` protegidas por defecto; lista blanca de rutas públicas (login, session, logout, nextauth, lti). |
-| **V5.1** | Validación de entrada (lado servidor). | Validar con Zod en API Routes; no confiar en body/query sin validar. Revisar rutas que aceptan input. |
-| **V5.2** | Salida codificada / sanitizada (XSS). | React escapa por defecto; revisar `dangerouslySetInnerHTML` si existe; cabeceras CSP si aplica. |
-| **V5.4** | Prevención de IDOR. | IDs opacos (UUID v4, TT-103); acceso a recursos solo del tenant del JWT (TT-102, RLS TT-101). |
-| **V6.1** | Datos sensibles: no en logs. | Auditoría (TT-109) sin contraseñas ni tokens; logs sanitizados. |
-| **V7.1** | Criptografía: estándares y gestión de claves. | Cifrado PII (TT-104); ENCRYPTION_SECRET desde Key Vault en prod; HTTPS/TLS documentado. |
+| ID / Área | Control (resumido)                                      | Cómo verificarlo en TalentOS                                                                                    |
+| --------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **V2.1**  | Contraseñas: longitud mínima, no en claro, hash seguro. | Login: contraseñas hasheadas (Argon2/bcrypt); no se almacenan en claro. Ver `src/lib/auth` y flujo de registro. |
+| **V2.2**  | Sesión: gestión segura, timeout, cookie segura.         | JWT en cookie httpOnly; sesión vinculada a tenant. Ver middleware y tenant-context.                             |
+| **V4.1**  | Control de acceso: verificación en cada petición.       | Middleware exige JWT + tenantId; rutas protegidas usan `getSessionFromRequest` / `requireTenant`.               |
+| **V4.2**  | Negación por defecto.                                   | Rutas `/api/*` protegidas por defecto; lista blanca de rutas públicas (login, session, logout, nextauth, lti).  |
+| **V5.1**  | Validación de entrada (lado servidor).                  | Validar con Zod en API Routes; no confiar en body/query sin validar. Revisar rutas que aceptan input.           |
+| **V5.2**  | Salida codificada / sanitizada (XSS).                   | React escapa por defecto; revisar `dangerouslySetInnerHTML` si existe; cabeceras CSP si aplica.                 |
+| **V5.4**  | Prevención de IDOR.                                     | IDs opacos (UUID v4, TT-103); acceso a recursos solo del tenant del JWT (TT-102, RLS TT-101).                   |
+| **V6.1**  | Datos sensibles: no en logs.                            | Auditoría (TT-109) sin contraseñas ni tokens; logs sanitizados.                                                 |
+| **V7.1**  | Criptografía: estándares y gestión de claves.           | Cifrado PII (TT-104); ENCRYPTION_SECRET desde Key Vault en prod; HTTPS/TLS documentado.                         |
 
 Al finalizar, anotar en el informe: “Controles ASVS Nivel 1 revisados: [lista de V.x] cumplidos; [lista] con observaciones”.
 
@@ -122,32 +123,32 @@ Al finalizar, anotar en el informe: “Controles ASVS Nivel 1 revisados: [lista 
 
 ### 5.1 Metadatos
 
-- **Fecha de ejecución:** _______________
+- **Fecha de ejecución:** ******\_\_\_******
 - **Entorno:** [ ] Local [ ] Staging [ ] Producción
-- **URL base:** _______________
-- **Ejecutor:** _______________
+- **URL base:** ******\_\_\_******
+- **Ejecutor:** ******\_\_\_******
 
 ### 5.2 Vulnerabilidades (XSS, SQLi, IDOR, dependencias)
 
-| ID | Descripción | Severidad (H/M/L) | Estado (Abierto/Corregido/Aceptado) | Evidencia / Notas |
-|----|-------------|-------------------|--------------------------------------|-------------------|
-| 1  |            |                   |                                      |                   |
-| 2  |            |                   |                                      |                   |
+| ID  | Descripción | Severidad (H/M/L) | Estado (Abierto/Corregido/Aceptado) | Evidencia / Notas |
+| --- | ----------- | ----------------- | ----------------------------------- | ----------------- |
+| 1   |             |                   |                                     |                   |
+| 2   |             |                   |                                     |                   |
 
 ### 5.3 Aislamiento multi-tenant
 
-| Prueba | Resultado (OK / Fallo) | Notas |
-|--------|------------------------|--------|
-| Listados: solo datos del tenant de la sesión | | |
-| IDOR: acceso a usuario de otro tenant (403/404) | | |
-| IDOR: acceso a curso de otro tenant (403/404) | | |
-| Petición sin token → 401 | | |
-| No uso de X-Tenant-Id para cambiar tenant | | |
+| Prueba                                          | Resultado (OK / Fallo) | Notas |
+| ----------------------------------------------- | ---------------------- | ----- |
+| Listados: solo datos del tenant de la sesión    |                        |       |
+| IDOR: acceso a usuario de otro tenant (403/404) |                        |       |
+| IDOR: acceso a curso de otro tenant (403/404)   |                        |       |
+| Petición sin token → 401                        |                        |       |
+| No uso de X-Tenant-Id para cambiar tenant       |                        |       |
 
 ### 5.4 ASVS Nivel 1
 
-- Controles verificados: _______________
-- Observaciones o excepciones: _______________
+- Controles verificados: ******\_\_\_******
+- Observaciones o excepciones: ******\_\_\_******
 
 ### 5.5 Conclusión
 
@@ -156,4 +157,4 @@ Al finalizar, anotar en el informe: “Controles ASVS Nivel 1 revisados: [lista 
 
 ---
 
-*Documento asociado al ticket TT-113 del [Plan de Migración](./MIGRATION_PLAN_TICKETS.md).*
+_Documento asociado al ticket TT-113 del [Plan de Migración](./MIGRATION_PLAN_TICKETS.md)._

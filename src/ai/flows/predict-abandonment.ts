@@ -17,16 +17,17 @@ import {
   PredictAbandonmentOutputSchema,
 } from '@/lib/types';
 
-export async function predictAbandonment(input: PredictAbandonmentInput): Promise<PredictAbandonmentOutput> {
+export async function predictAbandonment(
+  input: PredictAbandonmentInput
+): Promise<PredictAbandonmentOutput> {
   return predictAbandonmentFlow(input);
 }
 
-
 const prompt = ai.definePrompt({
-    name: 'predictAbandonmentPrompt',
-    inputSchema: PredictAbandonmentInputSchema,
-    outputSchema: PredictAbandonmentOutputSchema,
-    prompt: `You are an expert student success advisor for a corporate training platform. Your task is to analyze student data and predict their risk of abandonment (Bajo, Medio, Alto).
+  name: 'predictAbandonmentPrompt',
+  inputSchema: PredictAbandonmentInputSchema,
+  outputSchema: PredictAbandonmentOutputSchema,
+  prompt: `You are an expert student success advisor for a corporate training platform. Your task is to analyze student data and predict their risk of abandonment (Bajo, Medio, Alto).
 
       Analyze the following student data:
       - Student Name: {{{userName}}}
@@ -52,7 +53,7 @@ const predictAbandonmentFlow = ai.defineFlow(
     outputSchema: PredictAbandonmentOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

@@ -27,7 +27,10 @@ export function runWithTenant<T>(context: TenantContext, fn: () => T): T {
 /**
  * Ejecuta `fn` de forma asíncrona con el contexto de inquilino.
  */
-export async function runWithTenantAsync<T>(context: TenantContext, fn: () => Promise<T>): Promise<T> {
+export async function runWithTenantAsync<T>(
+  context: TenantContext,
+  fn: () => Promise<T>
+): Promise<T> {
   return new Promise((resolve, reject) => {
     tenantStorage.run(context, () => {
       Promise.resolve(fn()).then(resolve, reject);
@@ -58,7 +61,7 @@ export function getCurrentSession(): SessionPayload | null {
 function getCookieFromRequest(request: Request, name: string): string | null {
   const cookieHeader = request.headers.get('cookie');
   if (!cookieHeader) return null;
-  const parts = cookieHeader.split(';').map((s) => s.trim());
+  const parts = cookieHeader.split(';').map(s => s.trim());
   for (const part of parts) {
     const [key, ...v] = part.split('=');
     if (key?.toLowerCase() === name.toLowerCase()) {

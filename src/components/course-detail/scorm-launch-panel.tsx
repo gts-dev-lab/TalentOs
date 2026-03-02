@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -13,7 +12,8 @@ export function ScormLaunchPanel({ course }: { course: Course }) {
       <CardHeader>
         <CardTitle>Contenido del Curso SCORM</CardTitle>
         <CardDescription>
-          Este curso se imparte a través de un paquete SCORM. Haz clic a continuación para iniciar la experiencia de aprendizaje.
+          Este curso se imparte a través de un paquete SCORM. Haz clic a continuación para iniciar
+          la experiencia de aprendizaje.
         </CardDescription>
       </CardHeader>
       <CardContent>

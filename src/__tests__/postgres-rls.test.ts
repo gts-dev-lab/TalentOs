@@ -5,7 +5,7 @@
  * - SET app.current_tenant_id funciona correctamente
  * - Queries sin SET devuelven 0 filas (RLS bloquea)
  * - Queries con SET devuelven solo datos del tenant correcto
- * 
+ *
  * @jest-environment node
  */
 
@@ -25,18 +25,24 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
 
   beforeAll(async () => {
     pool = new Pool({ connectionString: TEST_DATABASE_URL });
-    
-    await pool.query(`
+
+    await pool.query(
+      `
       INSERT INTO public.tenants (id, name, slug)
       VALUES ($1, 'Tenant A', 'tenant-a')
       ON CONFLICT (id) DO NOTHING
-    `, [tenantA]);
-    
-    await pool.query(`
+    `,
+      [tenantA]
+    );
+
+    await pool.query(
+      `
       INSERT INTO public.tenants (id, name, slug)
       VALUES ($1, 'Tenant B', 'tenant-b')
       ON CONFLICT (id) DO NOTHING
-    `, [tenantB]);
+    `,
+      [tenantB]
+    );
   });
 
   afterAll(async () => {
@@ -50,7 +56,7 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantA]);
-        
+
         const result = await client.query('SHOW app.current_tenant_id');
         expect(result.rows[0].app.current_tenant_id).toBe(tenantA);
       } finally {
@@ -62,7 +68,7 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantB]);
-        
+
         const result = await client.query('SHOW app.current_tenant_id');
         expect(result.rows[0].app.current_tenant_id).toBe(tenantB);
       } finally {
@@ -94,19 +100,25 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantA]);
-        const resultA = await client.query(`
+        const resultA = await client.query(
+          `
           INSERT INTO public.users (tenant_id, name, email, role, status, department)
           VALUES ($1, 'User A', 'usera@test.com', 'employee', 'approved', 'IT')
           RETURNING id
-        `, [tenantA]);
+        `,
+          [tenantA]
+        );
         testUserA = resultA.rows[0].id;
 
         await client.query('SET app.current_tenant_id = $1', [tenantB]);
-        const resultB = await client.query(`
+        const resultB = await client.query(
+          `
           INSERT INTO public.users (tenant_id, name, email, role, status, department)
           VALUES ($1, 'User B', 'userb@test.com', 'employee', 'approved', 'HR')
           RETURNING id
-        `, [tenantB]);
+        `,
+          [tenantB]
+        );
         testUserB = resultB.rows[0].id;
       } finally {
         client.release();
@@ -136,7 +148,7 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantA]);
-        
+
         const result = await client.query('SELECT * FROM public.users');
         expect(result.rows.length).toBe(1);
         expect(result.rows[0].email).toBe('usera@test.com');
@@ -150,7 +162,7 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantB]);
-        
+
         const result = await client.query('SELECT * FROM public.users');
         expect(result.rows.length).toBe(1);
         expect(result.rows[0].email).toBe('userb@test.com');
@@ -164,11 +176,8 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantA]);
-        
-        const result = await client.query(
-          'SELECT * FROM public.users WHERE id = $1',
-          [testUserB]
-        );
+
+        const result = await client.query('SELECT * FROM public.users WHERE id = $1', [testUserB]);
         expect(result.rows.length).toBe(0);
       } finally {
         client.release();
@@ -184,19 +193,25 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('SET app.current_tenant_id = $1', [tenantA]);
-        const resultA = await client.query(`
+        const resultA = await client.query(
+          `
           INSERT INTO public.courses (tenant_id, title, description, status, instructor, duration, modality)
           VALUES ($1, 'Course A', 'Description A', 'published', 'Instructor A', '10h', 'Online')
           RETURNING id
-        `, [tenantA]);
+        `,
+          [tenantA]
+        );
         testCourseA = resultA.rows[0].id;
 
         await client.query('SET app.current_tenant_id = $1', [tenantB]);
-        const resultB = await client.query(`
+        const resultB = await client.query(
+          `
           INSERT INTO public.courses (tenant_id, title, description, status, instructor, duration, modality)
           VALUES ($1, 'Course B', 'Description B', 'published', 'Instructor B', '5h', 'Online')
           RETURNING id
-        `, [tenantB]);
+        `,
+          [tenantB]
+        );
         testCourseB = resultB.rows[0].id;
       } finally {
         client.release();
@@ -206,7 +221,10 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
     afterAll(async () => {
       const client = await pool.connect();
       try {
-        await client.query('DELETE FROM public.courses WHERE id IN ($1, $2)', [testCourseA, testCourseB]);
+        await client.query('DELETE FROM public.courses WHERE id IN ($1, $2)', [
+          testCourseA,
+          testCourseB,
+        ]);
       } finally {
         client.release();
       }
@@ -235,10 +253,8 @@ describePostgres('TT-117: PostgreSQL + RLS Integration', () => {
       const client = await pool.connect();
       try {
         await client.query('RESET app.current_tenant_id');
-        
-        await expect(
-          client.query('SELECT * FROM public.users')
-        ).rejects.toThrow();
+
+        await expect(client.query('SELECT * FROM public.users')).rejects.toThrow();
       } finally {
         client.release();
       }

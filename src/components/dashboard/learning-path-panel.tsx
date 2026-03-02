@@ -72,52 +72,66 @@ export function LearningPathPanel({ user }: { user: User }) {
 
           return (
             <div key={path.id} className="space-y-4 p-4 border rounded-lg">
-                <div>
-                    <h3 className="font-semibold">{path.title}</h3>
-                    <Progress value={progressPercentage} className="mt-2 h-2" />
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Completados {completedSteps} de {totalSteps} cursos.
-                    </p>
-                </div>
-                <Separator />
-                <div className="space-y-3">
-                   {path.courseIds.map((courseId, index) => {
-                        const course = courseMap.get(courseId);
-                        if (!course) return null;
+              <div>
+                <h3 className="font-semibold">{path.title}</h3>
+                <Progress value={progressPercentage} className="mt-2 h-2" />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Completados {completedSteps} de {totalSteps} cursos.
+                </p>
+              </div>
+              <Separator />
+              <div className="space-y-3">
+                {path.courseIds.map((courseId, index) => {
+                  const course = courseMap.get(courseId);
+                  if (!course) return null;
 
-                        let status: 'completed' | 'active' | 'locked' = 'locked';
-                        if (completedIds.has(courseId)) {
-                            status = 'completed';
-                        } else if (!nextCourseFound) {
-                            status = 'active';
-                            nextCourseFound = true;
-                        }
+                  let status: 'completed' | 'active' | 'locked' = 'locked';
+                  if (completedIds.has(courseId)) {
+                    status = 'completed';
+                  } else if (!nextCourseFound) {
+                    status = 'active';
+                    nextCourseFound = true;
+                  }
 
-                        const Icon = status === 'completed' ? Check : status === 'active' ? PlayCircle : Lock;
-                        const iconColor = status === 'completed' ? 'bg-green-100 text-green-600' : status === 'active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground';
+                  const Icon =
+                    status === 'completed' ? Check : status === 'active' ? PlayCircle : Lock;
+                  const iconColor =
+                    status === 'completed'
+                      ? 'bg-green-100 text-green-600'
+                      : status === 'active'
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-muted text-muted-foreground';
 
-                        return (
-                            <div key={course.id} className="flex items-center gap-4">
-                                <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", iconColor)}>
-                                    <Icon className="h-5 w-5"/>
-                                </div>
-                                <div className="flex-grow">
-                                    <p className={cn("font-medium", status === 'locked' && 'text-muted-foreground')}>
-                                        {course.title}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">Paso {index + 1}</p>
-                                </div>
-                                {status === 'active' && (
-                                    <Button asChild size="sm">
-                                        <Link href={`/dashboard/courses/${course.id}`}>
-                                            Empezar
-                                        </Link>
-                                    </Button>
-                                )}
-                            </div>
-                        )
-                   })}
-                </div>
+                  return (
+                    <div key={course.id} className="flex items-center gap-4">
+                      <div
+                        className={cn(
+                          'flex h-8 w-8 items-center justify-center rounded-full',
+                          iconColor
+                        )}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div className="flex-grow">
+                        <p
+                          className={cn(
+                            'font-medium',
+                            status === 'locked' && 'text-muted-foreground'
+                          )}
+                        >
+                          {course.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">Paso {index + 1}</p>
+                      </div>
+                      {status === 'active' && (
+                        <Button asChild size="sm">
+                          <Link href={`/dashboard/courses/${course.id}`}>Empezar</Link>
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           );
         })}

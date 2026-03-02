@@ -20,7 +20,7 @@ export function ChunkLoadRecovery() {
       const message =
         event instanceof PromiseRejectionEvent
           ? String(event.reason?.message ?? event.reason)
-          : event.message ?? '';
+          : (event.message ?? '');
       if (!isChunkLoadError(message)) return;
       if (sessionStorage.getItem(RELOAD_KEY) === '1') return;
       sessionStorage.setItem(RELOAD_KEY, '1');

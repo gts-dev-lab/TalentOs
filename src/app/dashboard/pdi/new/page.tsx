@@ -17,10 +17,30 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -31,7 +51,9 @@ const pdiSchema = z.object({
   userId: z.string().min(1, 'Debes seleccionar un empleado'),
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
   description: z.string().optional(),
-  objectives: z.array(z.object({ value: z.string().min(1, 'El objetivo no puede estar vacío') })).min(1, 'Debes añadir al menos un objetivo'),
+  objectives: z
+    .array(z.object({ value: z.string().min(1, 'El objetivo no puede estar vacío') }))
+    .min(1, 'Debes añadir al menos un objetivo'),
   courseIds: z.array(z.string()).min(1, 'Debes seleccionar al menos un curso'),
   startDate: z.string().min(1, 'Debes seleccionar una fecha de inicio'),
   endDate: z.string().optional(),
@@ -65,7 +87,11 @@ export default function NewPDIPage() {
     },
   });
 
-  const { fields: objectiveFields, append: appendObjective, remove: removeObjective } = useFieldArray({
+  const {
+    fields: objectiveFields,
+    append: appendObjective,
+    remove: removeObjective,
+  } = useFieldArray({
     control: form.control,
     name: 'objectives',
   });
@@ -73,10 +99,14 @@ export default function NewPDIPage() {
   const selectedCourseIds = form.watch('courseIds');
   const selectedCourses = (allCourses || []).filter(c => selectedCourseIds.includes(c.id));
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
-  const availableUsers = (allUsers || []).filter(u => 
-    u.status === 'approved' && 
-    (isManager && user.role === 'Administrador General' ? true : u.department === user?.department)
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+  const availableUsers = (allUsers || []).filter(
+    u =>
+      u.status === 'approved' &&
+      (isManager && user.role === 'Administrador General'
+        ? true
+        : u.department === user?.department)
   );
 
   if (!isManager) {
@@ -100,7 +130,10 @@ export default function NewPDIPage() {
         endDate: data.endDate || undefined,
         status: data.status,
       });
-      toast({ title: 'PDI Creado', description: 'El Plan de Desarrollo Individual ha sido creado exitosamente.' });
+      toast({
+        title: 'PDI Creado',
+        description: 'El Plan de Desarrollo Individual ha sido creado exitosamente.',
+      });
       router.push('/dashboard/pdi');
     } catch (error) {
       console.error(error);
@@ -120,7 +153,9 @@ export default function NewPDIPage() {
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Crear Plan de Desarrollo Individual</CardTitle>
-          <CardDescription>Crea un plan personalizado de desarrollo para un empleado</CardDescription>
+          <CardDescription>
+            Crea un plan personalizado de desarrollo para un empleado
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -138,7 +173,7 @@ export default function NewPDIPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {availableUsers.map((u) => (
+                        {availableUsers.map(u => (
                           <SelectItem key={u.id} value={u.id}>
                             {u.name} ({u.email})
                           </SelectItem>
@@ -171,7 +206,10 @@ export default function NewPDIPage() {
                   <FormItem>
                     <FormLabel>Descripción (opcional)</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Describe los objetivos generales del plan..." {...field} />
+                      <Textarea
+                        placeholder="Describe los objetivos generales del plan..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,13 +233,23 @@ export default function NewPDIPage() {
                       )}
                     />
                     {objectiveFields.length > 1 && (
-                      <Button type="button" variant="outline" size="icon" onClick={() => removeObjective(index)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => removeObjective(index)}
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => appendObjective({ value: '' })}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => appendObjective({ value: '' })}
+                >
                   <Plus className="mr-2 h-4 w-4" />
                   Añadir Objetivo
                 </Button>
@@ -212,7 +260,9 @@ export default function NewPDIPage() {
                 <Popover open={courseOpen} onOpenChange={setCourseOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start">
-                      {selectedCourses.length > 0 ? `${selectedCourses.length} cursos seleccionados` : 'Selecciona cursos'}
+                      {selectedCourses.length > 0
+                        ? `${selectedCourses.length} cursos seleccionados`
+                        : 'Selecciona cursos'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[400px] p-0">
@@ -221,7 +271,7 @@ export default function NewPDIPage() {
                       <CommandList>
                         <CommandEmpty>No se encontraron cursos.</CommandEmpty>
                         <CommandGroup>
-                          {(allCourses || []).map((course) => {
+                          {(allCourses || []).map(course => {
                             const isSelected = selectedCourseIds.includes(course.id);
                             return (
                               <CommandItem
@@ -229,13 +279,21 @@ export default function NewPDIPage() {
                                 onSelect={() => {
                                   const current = form.getValues('courseIds');
                                   if (isSelected) {
-                                    form.setValue('courseIds', current.filter(id => id !== course.id));
+                                    form.setValue(
+                                      'courseIds',
+                                      current.filter(id => id !== course.id)
+                                    );
                                   } else {
                                     form.setValue('courseIds', [...current, course.id]);
                                   }
                                 }}
                               >
-                                <div className={cn('mr-2 h-4 w-4 border rounded', isSelected && 'bg-primary')} />
+                                <div
+                                  className={cn(
+                                    'mr-2 h-4 w-4 border rounded',
+                                    isSelected && 'bg-primary'
+                                  )}
+                                />
                                 {course.title}
                               </CommandItem>
                             );
@@ -247,13 +305,16 @@ export default function NewPDIPage() {
                 </Popover>
                 {selectedCourses.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedCourses.map((course) => (
+                    {selectedCourses.map(course => (
                       <Badge key={course.id} variant="secondary">
                         {course.title}
                         <button
                           type="button"
                           onClick={() => {
-                            form.setValue('courseIds', selectedCourseIds.filter(id => id !== course.id));
+                            form.setValue(
+                              'courseIds',
+                              selectedCourseIds.filter(id => id !== course.id)
+                            );
                           }}
                           className="ml-2 hover:text-destructive"
                         >
@@ -264,7 +325,9 @@ export default function NewPDIPage() {
                   </div>
                 )}
                 {form.formState.errors.courseIds && (
-                  <p className="text-sm text-destructive">{form.formState.errors.courseIds.message}</p>
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.courseIds.message}
+                  </p>
                 )}
               </div>
 
@@ -278,9 +341,17 @@ export default function NewPDIPage() {
                       <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="outline" className={cn('w-full justify-start text-left font-normal', !field.value && 'text-muted-foreground')}>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                'w-full justify-start text-left font-normal',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
                               <Calendar className="mr-2 h-4 w-4" />
-                              {field.value ? format(new Date(field.value), 'PPP', { locale: es }) : 'Selecciona fecha'}
+                              {field.value
+                                ? format(new Date(field.value), 'PPP', { locale: es })
+                                : 'Selecciona fecha'}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -288,7 +359,7 @@ export default function NewPDIPage() {
                           <CalendarComponent
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => {
+                            onSelect={date => {
                               field.onChange(date ? date.toISOString().split('T')[0] : '');
                               setStartDateOpen(false);
                             }}
@@ -310,9 +381,17 @@ export default function NewPDIPage() {
                       <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="outline" className={cn('w-full justify-start text-left font-normal', !field.value && 'text-muted-foreground')}>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                'w-full justify-start text-left font-normal',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
                               <Calendar className="mr-2 h-4 w-4" />
-                              {field.value ? format(new Date(field.value), 'PPP', { locale: es }) : 'Selecciona fecha'}
+                              {field.value
+                                ? format(new Date(field.value), 'PPP', { locale: es })
+                                : 'Selecciona fecha'}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -320,7 +399,7 @@ export default function NewPDIPage() {
                           <CalendarComponent
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => {
+                            onSelect={date => {
                               field.onChange(date ? date.toISOString().split('T')[0] : '');
                               setEndDateOpen(false);
                             }}

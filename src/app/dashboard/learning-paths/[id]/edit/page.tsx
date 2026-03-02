@@ -17,17 +17,39 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const pathSchema = z.object({
-  title: z.string().min(3, "El título debe tener al menos 3 caracteres."),
-  description: z.string().min(10, "La descripción es muy corta."),
-  targetRole: z.enum(roles as [string, ...string[]], { required_error: "Debes seleccionar un rol." }),
+  title: z.string().min(3, 'El título debe tener al menos 3 caracteres.'),
+  description: z.string().min(10, 'La descripción es muy corta.'),
+  targetRole: z.enum(roles as [string, ...string[]], {
+    required_error: 'Debes seleccionar un rol.',
+  }),
 });
 
 type PathFormValues = z.infer<typeof pathSchema>;
@@ -56,10 +78,16 @@ export default function EditLearningPathPage() {
             description: path.description,
             targetRole: path.targetRole,
           });
-          const orderedCourses = path.courseIds.map(id => allCourses.find(c => c.id === id)).filter(Boolean) as Course[];
+          const orderedCourses = path.courseIds
+            .map(id => allCourses.find(c => c.id === id))
+            .filter(Boolean) as Course[];
           setSelectedCourses(orderedCourses);
         } else {
-          toast({ title: 'Error', description: 'Plan de carrera no encontrado.', variant: 'destructive' });
+          toast({
+            title: 'Error',
+            description: 'Plan de carrera no encontrado.',
+            variant: 'destructive',
+          });
           router.push('/dashboard/learning-paths');
         }
         setInitialLoading(false);
@@ -81,7 +109,11 @@ export default function EditLearningPathPage() {
 
   const onSubmit = async (data: PathFormValues) => {
     if (selectedCourses.length === 0) {
-      toast({ title: 'Error', description: 'Debes seleccionar al menos un curso.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'Debes seleccionar al menos un curso.',
+        variant: 'destructive',
+      });
       return;
     }
     try {
@@ -90,19 +122,28 @@ export default function EditLearningPathPage() {
         courseIds: selectedCourses.map(c => c.id),
         targetRole: data.targetRole as any,
       });
-      toast({ title: 'Plan de Carrera Actualizado', description: 'Los cambios han sido guardados.' });
+      toast({
+        title: 'Plan de Carrera Actualizado',
+        description: 'Los cambios han sido guardados.',
+      });
       router.push('/dashboard/learning-paths');
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo actualizar el plan.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el plan.',
+        variant: 'destructive',
+      });
     }
   };
 
   if (initialLoading) {
-    return <div className="space-y-4">
-      <Skeleton className="h-8 w-40" />
-      <Skeleton className="h-96 w-full" />
-    </div>;
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-40" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
   }
 
   return (
@@ -118,38 +159,81 @@ export default function EditLearningPathPage() {
         <Card className="w-full max-w-3xl">
           <CardHeader>
             <CardTitle>Editar Plan de Carrera</CardTitle>
-            <CardDescription>Modifica la secuencia de cursos para un rol específico.</CardDescription>
+            <CardDescription>
+              Modifica la secuencia de cursos para un rol específico.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField control={form.control} name="title" render={({ field }) => (
-                  <FormItem><FormLabel>Título del Plan</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="description" render={({ field }) => (
-                  <FormItem><FormLabel>Descripción</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="targetRole" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rol de Destino</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger><SelectValue placeholder="Selecciona un rol..." /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        {roles.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Título del Plan</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Descripción</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="targetRole"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rol de Destino</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona un rol..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {roles.map(r => (
+                            <SelectItem key={r} value={r}>
+                              {r}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div>
                   <Label>Secuencia de Cursos</Label>
-                  <p className="text-sm text-muted-foreground mb-2">Añade o quita cursos del plan.</p>
-                  
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Añade o quita cursos del plan.
+                  </p>
+
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
-                        {selectedCourses.length > 0 ? `${selectedCourses.length} curso(s) seleccionado(s)` : "Seleccionar cursos..."}
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between"
+                      >
+                        {selectedCourses.length > 0
+                          ? `${selectedCourses.length} curso(s) seleccionado(s)`
+                          : 'Seleccionar cursos...'}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
@@ -159,13 +243,20 @@ export default function EditLearningPathPage() {
                         <CommandEmpty>No se encontró ningún curso.</CommandEmpty>
                         <CommandList>
                           <CommandGroup>
-                            {allCourses?.map((course) => (
+                            {allCourses?.map(course => (
                               <CommandItem
                                 key={course.id}
                                 value={course.title}
                                 onSelect={() => handleSelectCourse(course)}
                               >
-                                <Check className={cn("mr-2 h-4 w-4", selectedCourses.some(c => c.id === course.id) ? "opacity-100" : "opacity-0")} />
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    selectedCourses.some(c => c.id === course.id)
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
                                 {course.title}
                               </CommandItem>
                             ))}
@@ -177,15 +268,25 @@ export default function EditLearningPathPage() {
 
                   <div className="mt-4 space-y-2">
                     {selectedCourses.map((course, index) => (
-                      <div key={course.id} className="flex items-center justify-between rounded-lg border p-3">
-                         <div className="flex items-center gap-2">
-                            <GripVertical className="h-5 w-5 text-muted-foreground" />
-                            <span className="font-mono text-xs text-muted-foreground w-4">{index + 1}.</span>
-                            <span className="font-medium">{course.title}</span>
-                         </div>
-                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleSelectCourse(course)}>
-                            <X className="h-4 w-4"/>
-                         </Button>
+                      <div
+                        key={course.id}
+                        className="flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <div className="flex items-center gap-2">
+                          <GripVertical className="h-5 w-5 text-muted-foreground" />
+                          <span className="font-mono text-xs text-muted-foreground w-4">
+                            {index + 1}.
+                          </span>
+                          <span className="font-medium">{course.title}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => handleSelectCourse(course)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -193,7 +294,9 @@ export default function EditLearningPathPage() {
 
                 <div className="flex justify-end pt-4">
                   <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {form.formState.isSubmitting && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Guardar Cambios
                   </Button>
                 </div>

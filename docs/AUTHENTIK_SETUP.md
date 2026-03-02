@@ -24,15 +24,15 @@
 
 ### Comparación con Keycloak
 
-| Característica | Authentik | Keycloak |
-|----------------|-----------|----------|
-| **Facilidad** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐☆☆ |
-| **UI Moderna** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐☆☆ |
-| **Recursos** | 512MB RAM | 1-2GB RAM |
-| **Configuración** | UI intuitiva | Más complejo |
-| **Documentación** | Excelente | Buena pero densa |
-| **Comunidad** | Creciendo | Muy grande |
-| **Empresarial** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Característica    | Authentik    | Keycloak         |
+| ----------------- | ------------ | ---------------- |
+| **Facilidad**     | ⭐⭐⭐⭐⭐   | ⭐⭐⭐☆☆         |
+| **UI Moderna**    | ⭐⭐⭐⭐⭐   | ⭐⭐⭐☆☆         |
+| **Recursos**      | 512MB RAM    | 1-2GB RAM        |
+| **Configuración** | UI intuitiva | Más complejo     |
+| **Documentación** | Excelente    | Buena pero densa |
+| **Comunidad**     | Creciendo    | Muy grande       |
+| **Empresarial**   | ⭐⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐       |
 
 **Conclusión**: Para tu caso, Authentik es mejor porque es más fácil y tiene todo lo que necesitas.
 
@@ -41,16 +41,19 @@
 ## 📦 Requisitos
 
 ### Software
+
 - ✅ Docker (>= 20.10)
 - ✅ Docker Compose (>= 2.0)
 - ✅ Node.js (>= 18) - ya lo tienes
 - ✅ Navegador moderno
 
 ### Accesos Externos
+
 - 🔑 Cuenta de Google Cloud Console (para Google OAuth)
 - 🔑 Cuenta de Microsoft Azure Portal (para Microsoft OAuth)
 
 ### Puertos Necesarios
+
 - `9000` - Authentik Web UI
 - `9443` - Authentik HTTPS (opcional)
 - `3000` - TalentOS (Next.js)
@@ -81,6 +84,7 @@ cat .env
 ```
 
 **Resultado esperado**:
+
 ```env
 AUTHENTIK_SECRET_KEY=tu-secret-key-generado-aqui
 PG_PASS=tu-postgres-password-generado-aqui
@@ -292,8 +296,8 @@ docker-compose logs -f
 
 ```
 Nombre: TalentOS SSO
-Tipos de cuenta soportados: 
-  ✅ Cuentas en cualquier directorio organizacional 
+Tipos de cuenta soportados:
+  ✅ Cuentas en cualquier directorio organizacional
      y cuentas personales de Microsoft
 Redirect URI:
   Web: http://localhost:9000/source/oauth/callback/microsoft/
@@ -345,6 +349,7 @@ Click **Register**
      "tenant": "common"
    }
    ```
+
    - `"common"` = cualquier cuenta Microsoft
    - `"tu-tenant-id"` = solo tu organización
 5. **Save**
@@ -377,19 +382,21 @@ Click **Register**
 1. Authentik Admin: **Applications** > **Providers**
 2. Click: **Create** > **OAuth2/OpenID Provider**
 3. Configurar:
+
    ```
    Name: TalentOS Provider
    Authorization flow: default-provider-authorization-implicit-consent
-   
+
    Client type: Confidential
    Client ID: talentos-client
    Client Secret: [GENERAR NUEVO - copiar este valor]
-   
+
    Redirect URIs:
      http://localhost:3000/api/auth/callback/authentik
-   
+
    Signing Key: authentik Self-signed Certificate
    ```
+
 4. **Save** y **copiar Client Secret**
 
 ### Paso 3: Vincular Provider con Aplicación
@@ -425,6 +432,7 @@ EOF
 ```
 
 **Generar NEXTAUTH_SECRET**:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -561,7 +569,7 @@ export default function SignInPage() {
           {/* Botones directos (opcional) */}
           <div className="grid grid-cols-2 gap-4">
             <Button
-              onClick={() => signIn('authentik', { 
+              onClick={() => signIn('authentik', {
                 callbackUrl: '/dashboard',
                 // Forzar Google (si configuraste múltiples IDPs en Authentik)
               })}
@@ -590,7 +598,7 @@ export default function SignInPage() {
             </Button>
 
             <Button
-              onClick={() => signIn('authentik', { 
+              onClick={() => signIn('authentik', {
                 callbackUrl: '/dashboard',
               })}
               variant="outline"
@@ -669,10 +677,7 @@ Crear: `src/middleware.ts` (en la raíz de `src/`)
 export { default } from 'next-auth/middleware';
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/api/:path*',
-  ],
+  matcher: ['/dashboard/:path*', '/api/:path*'],
 };
 ```
 
@@ -718,12 +723,14 @@ import { signOut } from 'next-auth/react';
 ### Problema: "Redirect URI mismatch"
 
 **Solución**:
+
 - Verificar que las URIs en Google/Microsoft/Authentik sean **exactamente iguales**
 - Incluir la `/` final en: `http://localhost:9000/source/oauth/callback/google/`
 
 ### Problema: "Invalid client secret"
 
 **Solución**:
+
 - Regenerar Client Secret en Authentik
 - Actualizar `.env.local` con el nuevo valor
 - Reiniciar Next.js: `npm run dev`
@@ -731,22 +738,24 @@ import { signOut } from 'next-auth/react';
 ### Problema: "CORS error"
 
 **Solución**:
+
 - Authentik debe estar en `http://localhost:9000` (mismo dominio que desarrollo)
 - O configurar CORS en Authentik: **System** > **Settings** > **CORS allowed origins**: `http://localhost:3000`
 
 ### Problema: "User not found in database"
 
 **Solución**:
+
 - Implementar sincronización automática en callback `signIn`:
 
 ```typescript
 async signIn({ user, account, profile }) {
   // Conectar a Dexie
   const { createUser } = await import('@/lib/db');
-  
+
   // Verificar si usuario existe
   const existingUser = await db.users.where('email').equals(user.email!).first();
-  
+
   if (!existingUser) {
     // Crear usuario automáticamente
     await createUser({
@@ -757,7 +766,7 @@ async signIn({ user, account, profile }) {
       status: 'pending', // requiere aprobación de admin
     });
   }
-  
+
   return true;
 }
 ```
@@ -805,6 +814,7 @@ docker-compose logs -f server
 ## 🎉 ¡Listo!
 
 Tu TalentOS ahora tiene:
+
 - ✅ SSO empresarial autoalojado (Authentik)
 - ✅ Login con Google
 - ✅ Login con Microsoft/Outlook

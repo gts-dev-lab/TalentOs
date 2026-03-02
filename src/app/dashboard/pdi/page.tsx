@@ -3,7 +3,16 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Loader2, PlusCircle, Target, Calendar, User, CheckCircle2, Clock, Archive } from 'lucide-react';
+import {
+  Loader2,
+  PlusCircle,
+  Target,
+  Calendar,
+  User,
+  CheckCircle2,
+  Clock,
+  Archive,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
 import type { IndividualDevelopmentPlan, User as UserType, Course } from '@/lib/types';
@@ -12,7 +21,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination } from '@/components/ui/pagination';
 
-const statusConfig: Record<IndividualDevelopmentPlan['status'], { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive'; icon: typeof CheckCircle2 }> = {
+const statusConfig: Record<
+  IndividualDevelopmentPlan['status'],
+  {
+    label: string;
+    variant: 'default' | 'secondary' | 'outline' | 'destructive';
+    icon: typeof CheckCircle2;
+  }
+> = {
   draft: { label: 'Borrador', variant: 'outline', icon: Clock },
   active: { label: 'Activo', variant: 'default', icon: CheckCircle2 },
   completed: { label: 'Completado', variant: 'secondary', icon: CheckCircle2 },
@@ -24,8 +40,9 @@ export default function PDIPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
-  
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+
   const pdis = useLiveQuery(() => {
     if (!user) return Promise.resolve([]);
     if (isManager && user.role === 'Administrador General') {
@@ -46,7 +63,10 @@ export default function PDIPage() {
   const totalPages = useMemo(() => Math.ceil((pdis || []).length / itemsPerPage), [pdis]);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedPDIs = useMemo(() => (pdis || []).slice(startIndex, endIndex), [pdis, startIndex, endIndex]);
+  const paginatedPDIs = useMemo(
+    () => (pdis || []).slice(startIndex, endIndex),
+    [pdis, startIndex, endIndex]
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -70,7 +90,9 @@ export default function PDIPage() {
             Planes de Desarrollo Individual
           </h1>
           <p className="text-muted-foreground">
-            {isManager ? 'Gestiona los planes de desarrollo de tu equipo' : 'Consulta y sigue tu plan de desarrollo personalizado'}
+            {isManager
+              ? 'Gestiona los planes de desarrollo de tu equipo'
+              : 'Consulta y sigue tu plan de desarrollo personalizado'}
           </p>
         </div>
         {isManager && (
@@ -88,7 +110,7 @@ export default function PDIPage() {
           <CardHeader>
             <CardTitle>No hay PDIs</CardTitle>
             <CardDescription>
-              {isManager 
+              {isManager
                 ? 'Aún no has creado ningún Plan de Desarrollo Individual para tu equipo.'
                 : 'Aún no tienes un Plan de Desarrollo Individual asignado.'}
             </CardDescription>
@@ -104,7 +126,7 @@ export default function PDIPage() {
       ) : (
         <>
           <div className="grid gap-4">
-            {paginatedPDIs.map((pdi) => {
+            {paginatedPDIs.map(pdi => {
               const employee = usersById.get(pdi.userId);
               const manager = usersById.get(pdi.managerId);
               const statusInfo = statusConfig[pdi.status];
@@ -147,23 +169,31 @@ export default function PDIPage() {
                         )}
                         <div>
                           <span className="text-muted-foreground">Inicio:</span>
-                          <p className="font-medium">{new Date(pdi.startDate).toLocaleDateString('es-ES')}</p>
+                          <p className="font-medium">
+                            {new Date(pdi.startDate).toLocaleDateString('es-ES')}
+                          </p>
                         </div>
                         {pdi.endDate && (
                           <div>
                             <span className="text-muted-foreground">Fin:</span>
-                            <p className="font-medium">{new Date(pdi.endDate).toLocaleDateString('es-ES')}</p>
+                            <p className="font-medium">
+                              {new Date(pdi.endDate).toLocaleDateString('es-ES')}
+                            </p>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <div>
                           <span className="text-muted-foreground">Cursos:</span>
-                          <span className="ml-2 font-medium">{completedCourses}/{pdi.courseIds.length}</span>
+                          <span className="ml-2 font-medium">
+                            {completedCourses}/{pdi.courseIds.length}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Hitos:</span>
-                          <span className="ml-2 font-medium">{pdi.milestones.filter(m => m.completed).length}/{pdi.milestones.length}</span>
+                          <span className="ml-2 font-medium">
+                            {pdi.milestones.filter(m => m.completed).length}/{pdi.milestones.length}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Revisiones:</span>

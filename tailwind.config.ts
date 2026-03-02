@@ -1,5 +1,4 @@
-
-import type {Config} from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 
 export default {
   darkMode: ['class'],
@@ -11,9 +10,9 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: '2rem',
       screens: {
-        "2xl": "1400px",
+        '2xl': '1400px',
       },
     },
     extend: {
@@ -24,13 +23,13 @@ export default {
       },
       boxShadow: {
         'frappe-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        'frappe': '0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08)',
+        frappe: '0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08)',
         'frappe-md': '0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08)',
         'frappe-lg': '0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08)',
       },
       borderRadius: {
         'frappe-sm': '4px',
-        'frappe': '6px',
+        frappe: '6px',
         'frappe-lg': '8px',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -38,7 +37,7 @@ export default {
       },
       transitionDuration: {
         'frappe-fast': '150ms',
-        'frappe': '200ms',
+        frappe: '200ms',
         'frappe-slow': '300ms',
       },
       colors: {

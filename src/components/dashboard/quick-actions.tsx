@@ -1,15 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { PlusCircle, BookOpen, Users, Award, Target, ShieldCheck, Calendar, MessageSquare, TrendingUp, FileText } from 'lucide-react';
+import {
+  PlusCircle,
+  BookOpen,
+  Users,
+  Award,
+  Target,
+  ShieldCheck,
+  Calendar,
+  MessageSquare,
+  TrendingUp,
+  FileText,
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/auth';
 
 export function QuickActions() {
   const { user } = useAuth();
-  
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
   const isAdmin = user && user.role === 'Administrador General';
 
   const actions = [
@@ -120,7 +132,7 @@ export function QuickActions() {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {visibleActions.map((action) => (
+          {visibleActions.map(action => (
             <Link key={action.href} href={action.href}>
               <Button
                 variant="outline"

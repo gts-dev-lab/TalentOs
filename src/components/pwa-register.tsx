@@ -13,7 +13,7 @@ export function PWARegister() {
     const register = () => {
       navigator.serviceWorker
         .register('/sw.js', { scope: '/' })
-        .then((reg) => {
+        .then(reg => {
           if (reg.installing) {
             console.log('[PWA] Service worker installing');
           } else if (reg.waiting) {
@@ -22,7 +22,7 @@ export function PWARegister() {
             console.log('[PWA] Service worker active');
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.warn('[PWA] Service worker registration failed:', err);
         });
     };

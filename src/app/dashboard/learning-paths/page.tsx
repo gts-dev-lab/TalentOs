@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -10,7 +9,14 @@ import type { LearningPath, Course } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +41,7 @@ export default function LearningPathsPage() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   const learningPaths = useLiveQuery(() => db.getAllLearningPaths(), []);
   const allCourses = useLiveQuery(() => db.getAllCourses(), []);
   const [pathToDelete, setPathToDelete] = useState<LearningPath | null>(null);
@@ -46,17 +52,28 @@ export default function LearningPathsPage() {
     if (!pathToDelete?.id) return;
     try {
       await db.deleteLearningPath(pathToDelete.id);
-      toast({ title: 'Plan de Carrera Eliminado', description: `El plan "${pathToDelete.title}" ha sido eliminado.` });
+      toast({
+        title: 'Plan de Carrera Eliminado',
+        description: `El plan "${pathToDelete.title}" ha sido eliminado.`,
+      });
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'No se pudo eliminar el plan de carrera.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar el plan de carrera.',
+        variant: 'destructive',
+      });
     } finally {
       setPathToDelete(null);
     }
   };
 
   if (!learningPaths || !allCourses) {
-    return <div className="flex h-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin" /></div>;
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="h-16 w-16 animate-spin" />
+      </div>
+    );
   }
 
   const totalPages = Math.ceil(learningPaths.length / itemsPerPage);
@@ -75,7 +92,9 @@ export default function LearningPathsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Planes de Carrera</h1>
-            <p className="text-muted-foreground">Crea y gestiona rutas de aprendizaje guiadas para los empleados.</p>
+            <p className="text-muted-foreground">
+              Crea y gestiona rutas de aprendizaje guiadas para los empleados.
+            </p>
           </div>
           <Button asChild>
             <Link href="/dashboard/learning-paths/new">
@@ -105,12 +124,16 @@ export default function LearningPathsPage() {
                     learningPaths.map(path => (
                       <TableRow key={path.id}>
                         <TableCell className="font-medium">{path.title}</TableCell>
-                        <TableCell><Badge variant="secondary">{path.targetRole}</Badge></TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{path.targetRole}</Badge>
+                        </TableCell>
                         <TableCell>{path.courseIds.length} cursos</TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem asChild>
@@ -119,7 +142,10 @@ export default function LearningPathsPage() {
                                 </Link>
                               </DropdownMenuItem>
                               <AlertDialogTrigger asChild>
-                                <DropdownMenuItem onSelect={() => setPathToDelete(path)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                                <DropdownMenuItem
+                                  onSelect={() => setPathToDelete(path)}
+                                  className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                                >
                                   <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                                 </DropdownMenuItem>
                               </AlertDialogTrigger>
@@ -156,12 +182,16 @@ export default function LearningPathsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Confirmar eliminación?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará el plan de carrera "{pathToDelete?.title}" y todo el progreso asociado de los usuarios.
+              Esta acción eliminará el plan de carrera "{pathToDelete?.title}" y todo el progreso
+              asociado de los usuarios.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setPathToDelete(null)}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive hover:bg-destructive/90"
+            >
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>

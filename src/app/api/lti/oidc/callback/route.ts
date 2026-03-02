@@ -31,10 +31,7 @@ export async function POST(request: NextRequest) {
   const state = formData.get('state') as string | null;
 
   if (!id_token || !state) {
-    return NextResponse.json(
-      { error: 'Missing id_token or state in form body' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Missing id_token or state in form body' }, { status: 400 });
   }
 
   const statePayload = await verifyState(state);
@@ -57,7 +54,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid id_token' }, { status: 401 });
   }
 
-  const tenantId = process.env.LTI_TENANT_ID || process.env.TENANT_ID_DEFAULT || '00000000-0000-4000-8000-000000000001';
+  const tenantId =
+    process.env.LTI_TENANT_ID ||
+    process.env.TENANT_ID_DEFAULT ||
+    '00000000-0000-4000-8000-000000000001';
   const sub = `lti_${payload.iss}_${payload.sub}`.slice(0, 255);
   const email = payload.email || `${payload.sub}@lti.user`;
   const role = 'Trabajador';

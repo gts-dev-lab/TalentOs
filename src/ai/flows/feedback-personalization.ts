@@ -17,16 +17,17 @@ import {
   PersonalizedFeedbackOutputSchema,
 } from '@/lib/types';
 
-export async function personalizedFeedback(input: PersonalizedFeedbackInput): Promise<PersonalizedFeedbackOutput> {
+export async function personalizedFeedback(
+  input: PersonalizedFeedbackInput
+): Promise<PersonalizedFeedbackOutput> {
   return personalizedFeedbackFlow(input);
 }
 
-
 const prompt = ai.definePrompt({
-    name: 'personalizedFeedbackPrompt',
-    inputSchema: PersonalizedFeedbackInputSchema,
-    outputSchema: PersonalizedFeedbackOutputSchema,
-    prompt: `You are an AI assistant providing personalized, encouraging feedback to students on their test results.
+  name: 'personalizedFeedbackPrompt',
+  inputSchema: PersonalizedFeedbackInputSchema,
+  outputSchema: PersonalizedFeedbackOutputSchema,
+  prompt: `You are an AI assistant providing personalized, encouraging feedback to students on their test results.
 
       Student Name: {{{studentName}}}
       Assignment Name: {{{assignmentName}}}
@@ -54,7 +55,7 @@ const personalizedFeedbackFlow = ai.defineFlow(
     outputSchema: PersonalizedFeedbackOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

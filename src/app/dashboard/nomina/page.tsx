@@ -16,12 +16,66 @@ import { StatCard } from '@/components/stat-card';
 
 /* Datos de ejemplo para la vista Nómina (solo UI). */
 const MOCK_PAYROLL = [
-  { id: '1', employee: 'Elena Vargas', department: 'Administración', base: 3200, bonus: 200, deductions: 640, net: 2760, status: 'Pagada' },
-  { id: '2', employee: 'Carlos Ruiz', department: 'Técnicos de Emergencias', base: 2400, bonus: 150, deductions: 510, net: 2040, status: 'Pagada' },
-  { id: '3', employee: 'Ana Gómez', department: 'Teleoperadores', base: 2200, bonus: 100, deductions: 460, net: 1840, status: 'Pagada' },
-  { id: '4', employee: 'Dr. Alejandro Torres', department: 'Formación', base: 3800, bonus: 0, deductions: 760, net: 3040, status: 'Pendiente' },
-  { id: '5', employee: 'Lucía Fernández', department: 'Formación', base: 3500, bonus: 300, deductions: 760, net: 3040, status: 'Pagada' },
-  { id: '6', employee: 'Marcos Solís', department: 'Administración', base: 2900, bonus: 100, deductions: 600, net: 2400, status: 'Pagada' },
+  {
+    id: '1',
+    employee: 'Elena Vargas',
+    department: 'Administración',
+    base: 3200,
+    bonus: 200,
+    deductions: 640,
+    net: 2760,
+    status: 'Pagada',
+  },
+  {
+    id: '2',
+    employee: 'Carlos Ruiz',
+    department: 'Técnicos de Emergencias',
+    base: 2400,
+    bonus: 150,
+    deductions: 510,
+    net: 2040,
+    status: 'Pagada',
+  },
+  {
+    id: '3',
+    employee: 'Ana Gómez',
+    department: 'Teleoperadores',
+    base: 2200,
+    bonus: 100,
+    deductions: 460,
+    net: 1840,
+    status: 'Pagada',
+  },
+  {
+    id: '4',
+    employee: 'Dr. Alejandro Torres',
+    department: 'Formación',
+    base: 3800,
+    bonus: 0,
+    deductions: 760,
+    net: 3040,
+    status: 'Pendiente',
+  },
+  {
+    id: '5',
+    employee: 'Lucía Fernández',
+    department: 'Formación',
+    base: 3500,
+    bonus: 300,
+    deductions: 760,
+    net: 3040,
+    status: 'Pagada',
+  },
+  {
+    id: '6',
+    employee: 'Marcos Solís',
+    department: 'Administración',
+    base: 2900,
+    bonus: 100,
+    deductions: 600,
+    net: 2400,
+    status: 'Pagada',
+  },
 ];
 
 export default function NominaPage() {
@@ -44,7 +98,7 @@ export default function NominaPage() {
 
   const totalNet = MOCK_PAYROLL.reduce((s, r) => s + r.net, 0);
   const totalBase = MOCK_PAYROLL.reduce((s, r) => s + r.base, 0);
-  const paidCount = MOCK_PAYROLL.filter((r) => r.status === 'Pagada').length;
+  const paidCount = MOCK_PAYROLL.filter(r => r.status === 'Pagada').length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -78,7 +132,9 @@ export default function NominaPage() {
       <Card>
         <CardHeader>
           <CardTitle>Detalle de nóminas</CardTitle>
-          <CardDescription>Ejemplo de tabla con datos de nómina (solo presentación).</CardDescription>
+          <CardDescription>
+            Ejemplo de tabla con datos de nómina (solo presentación).
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
@@ -94,7 +150,7 @@ export default function NominaPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {MOCK_PAYROLL.map((row) => (
+              {MOCK_PAYROLL.map(row => (
                 <TableRow key={row.id}>
                   <TableCell className="font-medium">{row.employee}</TableCell>
                   <TableCell>{row.department}</TableCell>

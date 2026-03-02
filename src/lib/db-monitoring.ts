@@ -28,14 +28,36 @@ export interface DatabaseMetrics {
  */
 export async function getDatabaseMetrics(): Promise<DatabaseMetrics> {
   const tables = [
-    'users', 'courses', 'enrollments', 'userProgress', 'forumMessages',
-    'notifications', 'resources', 'courseResources', 'announcements',
-    'chatChannels', 'chatMessages', 'calendarEvents', 'externalTrainings',
-    'costs', 'aiConfig', 'aiUsageLog', 'badges', 'userBadges',
-    'costCategories', 'learningPaths', 'userLearningPathProgress',
-    'courseRatings', 'rolePermissions', 'systemLogs',
-    'certificates', 'certificateTemplates', 'individualDevelopmentPlans',
-    'regulations', 'regulationCompliance', 'complianceAudits',
+    'users',
+    'courses',
+    'enrollments',
+    'userProgress',
+    'forumMessages',
+    'notifications',
+    'resources',
+    'courseResources',
+    'announcements',
+    'chatChannels',
+    'chatMessages',
+    'calendarEvents',
+    'externalTrainings',
+    'costs',
+    'aiConfig',
+    'aiUsageLog',
+    'badges',
+    'userBadges',
+    'costCategories',
+    'learningPaths',
+    'userLearningPathProgress',
+    'courseRatings',
+    'rolePermissions',
+    'systemLogs',
+    'certificates',
+    'certificateTemplates',
+    'individualDevelopmentPlans',
+    'regulations',
+    'regulationCompliance',
+    'complianceAudits',
   ];
 
   const tableCounts: Record<string, number> = {};
@@ -51,10 +73,22 @@ export async function getDatabaseMetrics(): Promise<DatabaseMetrics> {
       totalRecords += count;
 
       // Count unsynced items if table has isSynced field
-      if (['users', 'courses', 'enrollments', 'userProgress', 'costs', 
-           'certificates', 'certificateTemplates', 'individualDevelopmentPlans',
-           'regulations', 'regulationCompliance', 'complianceAudits',
-           'calendarEvents'].includes(tableName)) {
+      if (
+        [
+          'users',
+          'courses',
+          'enrollments',
+          'userProgress',
+          'costs',
+          'certificates',
+          'certificateTemplates',
+          'individualDevelopmentPlans',
+          'regulations',
+          'regulationCompliance',
+          'complianceAudits',
+          'calendarEvents',
+        ].includes(tableName)
+      ) {
         try {
           const unsynced = await table.where('isSynced').equals(false).count();
           unsyncedCount += unsynced;
@@ -112,12 +146,21 @@ export async function getDatabaseMetrics(): Promise<DatabaseMetrics> {
 /**
  * Gets table growth statistics
  */
-export async function getTableGrowthStats(days: number = 30): Promise<Record<string, { current: number; growth: number }>> {
+export async function getTableGrowthStats(
+  days: number = 30
+): Promise<Record<string, { current: number; growth: number }>> {
   // This would ideally track historical data, but for now we'll return current counts
   // In a production system, you'd store historical snapshots
   const tables = [
-    'users', 'courses', 'enrollments', 'userProgress', 'forumMessages',
-    'notifications', 'chatMessages', 'systemLogs', 'certificates',
+    'users',
+    'courses',
+    'enrollments',
+    'userProgress',
+    'forumMessages',
+    'notifications',
+    'chatMessages',
+    'systemLogs',
+    'certificates',
   ];
 
   const stats: Record<string, { current: number; growth: number }> = {};
@@ -177,7 +220,8 @@ export async function getDatabaseHealth(): Promise<{
   }
 
   // Check database size
-  if (metrics.totalSize > 50 * 1024 * 1024) { // 50MB
+  if (metrics.totalSize > 50 * 1024 * 1024) {
+    // 50MB
     issues.push(`Base de datos grande: ${(metrics.totalSize / 1024 / 1024).toFixed(2)}MB`);
     recommendations.push('Considerar ejecutar limpieza de datos antiguos');
   }
@@ -186,7 +230,7 @@ export async function getDatabaseHealth(): Promise<{
   const largeTables = Object.entries(metrics.tableCounts)
     .filter(([, count]) => count > 10000)
     .map(([table]) => table);
-  
+
   if (largeTables.length > 0) {
     issues.push(`Tablas grandes detectadas: ${largeTables.join(', ')}`);
     recommendations.push('Considerar paginación o archivo de datos antiguos');

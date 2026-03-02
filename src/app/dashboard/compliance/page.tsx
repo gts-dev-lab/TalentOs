@@ -3,20 +3,51 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Loader2, PlusCircle, ShieldCheck, AlertTriangle, CheckCircle2, XCircle, TrendingUp, Users } from 'lucide-react';
+import {
+  Loader2,
+  PlusCircle,
+  ShieldCheck,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/auth';
 import * as db from '@/lib/db';
 import type { Regulation, RegulationType } from '@/lib/types';
 import { Progress } from '@/components/ui/progress';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Pagination } from '@/components/ui/pagination';
 
-const regulationTypes: RegulationType[] = ['ISO', 'PRL', 'GDPR', 'LOPD', 'Ley', 'Normativa', 'Certificación', 'Otro'];
+const regulationTypes: RegulationType[] = [
+  'ISO',
+  'PRL',
+  'GDPR',
+  'LOPD',
+  'Ley',
+  'Normativa',
+  'Certificación',
+  'Otro',
+];
 
 const typeColors: Record<RegulationType, string> = {
   ISO: 'bg-blue-500',
@@ -39,21 +70,31 @@ export default function CompliancePage() {
   const regulations = useLiveQuery(() => db.getAllRegulations(), []);
   const expiringCompliance = useLiveQuery(() => db.getExpiringCompliance(30), []);
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
 
   const filteredRegulations = useMemo(() => {
     if (!regulations) return [];
     return regulations.filter(reg => {
       const typeMatch = typeFilter === 'all' || reg.type === typeFilter;
-      const statusMatch = statusFilter === 'all' || (statusFilter === 'active' && reg.isActive) || (statusFilter === 'inactive' && !reg.isActive);
+      const statusMatch =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && reg.isActive) ||
+        (statusFilter === 'inactive' && !reg.isActive);
       return typeMatch && statusMatch;
     });
   }, [regulations, typeFilter, statusFilter]);
 
-  const totalPages = useMemo(() => Math.ceil(filteredRegulations.length / itemsPerPage), [filteredRegulations]);
+  const totalPages = useMemo(
+    () => Math.ceil(filteredRegulations.length / itemsPerPage),
+    [filteredRegulations]
+  );
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedRegulations = useMemo(() => filteredRegulations.slice(startIndex, endIndex), [filteredRegulations, startIndex, endIndex]);
+  const paginatedRegulations = useMemo(
+    () => filteredRegulations.slice(startIndex, endIndex),
+    [filteredRegulations, startIndex, endIndex]
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -133,18 +174,32 @@ export default function CompliancePage() {
               <div className="flex items-center justify-between">
                 <CardTitle>Normativas Registradas</CardTitle>
                 <div className="flex gap-2">
-                  <Select value={typeFilter} onValueChange={(value) => { setTypeFilter(value); setCurrentPage(1); }}>
+                  <Select
+                    value={typeFilter}
+                    onValueChange={value => {
+                      setTypeFilter(value);
+                      setCurrentPage(1);
+                    }}
+                  >
                     <SelectTrigger className="w-[150px]">
                       <SelectValue placeholder="Tipo" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Todos los tipos</SelectItem>
                       {regulationTypes.map(type => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select value={statusFilter} onValueChange={(value) => { setStatusFilter(value); setCurrentPage(1); }}>
+                  <Select
+                    value={statusFilter}
+                    onValueChange={value => {
+                      setStatusFilter(value);
+                      setCurrentPage(1);
+                    }}
+                  >
                     <SelectTrigger className="w-[150px]">
                       <SelectValue placeholder="Estado" />
                     </SelectTrigger>
@@ -168,14 +223,16 @@ export default function CompliancePage() {
               ) : (
                 <>
                   <div className="grid gap-4">
-                    {paginatedRegulations.map((regulation) => (
+                    {paginatedRegulations.map(regulation => (
                       <Card key={regulation.id} className="hover:shadow-md transition-shadow">
                         <CardHeader>
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 <CardTitle className="text-xl">{regulation.name}</CardTitle>
-                                <Badge className={typeColors[regulation.type]}>{regulation.type}</Badge>
+                                <Badge className={typeColors[regulation.type]}>
+                                  {regulation.type}
+                                </Badge>
                                 {regulation.isActive ? (
                                   <Badge variant="default" className="flex items-center gap-1">
                                     <CheckCircle2 className="h-3 w-3" />
@@ -213,18 +270,28 @@ export default function CompliancePage() {
                               <>
                                 <div>
                                   <span className="text-muted-foreground">Validez:</span>
-                                  <p className="font-medium">{regulation.validityPeriod ? `${regulation.validityPeriod} meses` : 'N/A'}</p>
+                                  <p className="font-medium">
+                                    {regulation.validityPeriod
+                                      ? `${regulation.validityPeriod} meses`
+                                      : 'N/A'}
+                                  </p>
                                 </div>
                                 <div>
                                   <span className="text-muted-foreground">Renovación:</span>
-                                  <p className="font-medium">{regulation.renewalPeriod ? `Cada ${regulation.renewalPeriod} meses` : 'N/A'}</p>
+                                  <p className="font-medium">
+                                    {regulation.renewalPeriod
+                                      ? `Cada ${regulation.renewalPeriod} meses`
+                                      : 'N/A'}
+                                  </p>
                                 </div>
                               </>
                             )}
                           </div>
                           <div className="flex justify-end pt-4">
                             <Button variant="outline" size="sm" asChild>
-                              <Link href={`/dashboard/compliance/${regulation.id}`}>Ver detalles</Link>
+                              <Link href={`/dashboard/compliance/${regulation.id}`}>
+                                Ver detalles
+                              </Link>
                             </Button>
                           </div>
                         </CardContent>
@@ -258,7 +325,8 @@ export default function CompliancePage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground text-center py-8">
-                Gestión de auditorías en desarrollo. Próximamente podrás crear y gestionar auditorías de cumplimiento.
+                Gestión de auditorías en desarrollo. Próximamente podrás crear y gestionar
+                auditorías de cumplimiento.
               </p>
             </CardContent>
           </Card>
@@ -282,10 +350,13 @@ function ComplianceDashboardComponent() {
     let totalExpired = 0;
 
     for (const regulation of allRegulations) {
-      const applicableUsers = allUsers.filter(u => 
-        u.status === 'approved' && 
-        regulation.applicableRoles.includes(u.role) &&
-        (!regulation.applicableDepartments || regulation.applicableDepartments.length === 0 || regulation.applicableDepartments.includes(u.department))
+      const applicableUsers = allUsers.filter(
+        u =>
+          u.status === 'approved' &&
+          regulation.applicableRoles.includes(u.role) &&
+          (!regulation.applicableDepartments ||
+            regulation.applicableDepartments.length === 0 ||
+            regulation.applicableDepartments.includes(u.department))
       );
       totalApplicable += applicableUsers.length;
     }
@@ -295,7 +366,9 @@ function ComplianceDashboardComponent() {
       for (const comp of expiringCompliance) {
         if (!comp.expirationDate) continue;
         const expDate = new Date(comp.expirationDate);
-        const daysUntilExpiry = Math.floor((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        const daysUntilExpiry = Math.floor(
+          (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+        );
         if (daysUntilExpiry < 0) totalExpired++;
         else if (daysUntilExpiry <= 30) totalExpiring++;
         totalCompliant++;
@@ -341,8 +414,12 @@ function ComplianceDashboardComponent() {
             <CheckCircle2 className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{complianceStats.totalCompliant}</div>
-            <p className="text-xs text-muted-foreground">{complianceStats.complianceRate.toFixed(1)}% de cumplimiento</p>
+            <div className="text-2xl font-bold text-green-600">
+              {complianceStats.totalCompliant}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {complianceStats.complianceRate.toFixed(1)}% de cumplimiento
+            </p>
           </CardContent>
         </Card>
 
@@ -352,7 +429,9 @@ function ComplianceDashboardComponent() {
             <AlertTriangle className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{complianceStats.totalExpiring}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {complianceStats.totalExpiring}
+            </div>
             <p className="text-xs text-muted-foreground">En los próximos 30 días</p>
           </CardContent>
         </Card>
@@ -390,17 +469,20 @@ function ComplianceDashboardComponent() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {allRegulations.map((regulation) => {
-                  const applicableUsers = allUsers.filter(u => 
-                    u.status === 'approved' && 
-                    regulation.applicableRoles.includes(u.role) &&
-                    (!regulation.applicableDepartments || regulation.applicableDepartments.length === 0 || regulation.applicableDepartments.includes(u.department))
+                {allRegulations.map(regulation => {
+                  const applicableUsers = allUsers.filter(
+                    u =>
+                      u.status === 'approved' &&
+                      regulation.applicableRoles.includes(u.role) &&
+                      (!regulation.applicableDepartments ||
+                        regulation.applicableDepartments.length === 0 ||
+                        regulation.applicableDepartments.includes(u.department))
                   );
-                  
+
                   return (
-                    <RegulationComplianceRow 
-                      key={regulation.id} 
-                      regulation={regulation} 
+                    <RegulationComplianceRow
+                      key={regulation.id}
+                      regulation={regulation}
                       applicableUsers={applicableUsers}
                     />
                   );
@@ -414,8 +496,17 @@ function ComplianceDashboardComponent() {
   );
 }
 
-function RegulationComplianceRow({ regulation, applicableUsers }: { regulation: Regulation; applicableUsers: any[] }) {
-  const compliance = useLiveQuery(() => db.getComplianceForRegulation(regulation.id), [regulation.id]);
+function RegulationComplianceRow({
+  regulation,
+  applicableUsers,
+}: {
+  regulation: Regulation;
+  applicableUsers: any[];
+}) {
+  const compliance = useLiveQuery(
+    () => db.getComplianceForRegulation(regulation.id),
+    [regulation.id]
+  );
   const compliantCount = compliance?.length || 0;
   const rate = applicableUsers.length > 0 ? (compliantCount / applicableUsers.length) * 100 : 0;
 

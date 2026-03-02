@@ -17,17 +17,17 @@ import {
   GenerateTestQuestionsOutputSchema,
 } from '@/lib/types';
 
-
-export async function generateTestQuestions(input: GenerateTestQuestionsInput): Promise<GenerateTestQuestionsOutput> {
+export async function generateTestQuestions(
+  input: GenerateTestQuestionsInput
+): Promise<GenerateTestQuestionsOutput> {
   return generateTestQuestionsFlow(input);
 }
 
-
 const prompt = ai.definePrompt({
-    name: 'generateTestQuestionsPrompt',
-    inputSchema: GenerateTestQuestionsInputSchema,
-    outputSchema: GenerateTestQuestionsOutputSchema,
-    prompt: `You are an expert medical educator specializing in creating tests and quizzes for emergency personnel (EMTs, dispatchers).
+  name: 'generateTestQuestionsPrompt',
+  inputSchema: GenerateTestQuestionsInputSchema,
+  outputSchema: GenerateTestQuestionsOutputSchema,
+  prompt: `You are an expert medical educator specializing in creating tests and quizzes for emergency personnel (EMTs, dispatchers).
 
       You will use the provided course content to generate {{numberOfQuestions}} test questions of {{difficulty}} difficulty.
 
@@ -39,7 +39,6 @@ const prompt = ai.definePrompt({
       `,
 });
 
-
 const generateTestQuestionsFlow = ai.defineFlow(
   {
     name: 'generateTestQuestionsFlow',
@@ -47,7 +46,7 @@ const generateTestQuestionsFlow = ai.defineFlow(
     outputSchema: GenerateTestQuestionsOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

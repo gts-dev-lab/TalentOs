@@ -9,13 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { 
-  exportDatabaseBackup, 
-  importDatabaseBackup, 
-  downloadBackup, 
+import {
+  exportDatabaseBackup,
+  importDatabaseBackup,
+  downloadBackup,
   getDatabaseStats,
   cleanupOldData,
-  type BackupMetadata 
+  type BackupMetadata,
 } from '@/lib/backup-service';
 import { getDatabaseMetrics, getDatabaseHealth, type DatabaseMetrics } from '@/lib/db-monitoring';
 import { format } from 'date-fns';
@@ -77,7 +77,10 @@ export function BackupManager() {
     setIsExporting(true);
     try {
       const { blob, metadata } = await exportDatabaseBackup();
-      downloadBackup(blob, `talentos-backup-${format(new Date(metadata.timestamp), 'yyyy-MM-dd-HHmmss')}.json`);
+      downloadBackup(
+        blob,
+        `talentos-backup-${format(new Date(metadata.timestamp), 'yyyy-MM-dd-HHmmss')}.json`
+      );
       toast({
         title: 'Backup Exportado',
         description: `Backup creado exitosamente. ${Object.keys(metadata.recordCounts).length} tablas exportadas.`,
@@ -156,7 +159,7 @@ export function BackupManager() {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
@@ -167,7 +170,9 @@ export function BackupManager() {
             <Database className="h-5 w-5" />
             Estadísticas de la Base de Datos
           </CardTitle>
-          <CardDescription>Información sobre el tamaño y contenido de la base de datos local</CardDescription>
+          <CardDescription>
+            Información sobre el tamaño y contenido de la base de datos local
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {stats ? (
@@ -199,7 +204,15 @@ export function BackupManager() {
                     ))}
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={() => { loadStats(); loadMetrics(); loadHealth(); }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  loadStats();
+                  loadMetrics();
+                  loadHealth();
+                }}
+              >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Actualizar Todo
               </Button>
@@ -256,7 +269,8 @@ export function BackupManager() {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Advertencia</AlertTitle>
             <AlertDescription>
-              Importar un backup reemplazará los datos existentes. Asegúrate de exportar un backup antes de importar.
+              Importar un backup reemplazará los datos existentes. Asegúrate de exportar un backup
+              antes de importar.
             </AlertDescription>
           </Alert>
           <div className="space-y-2">
@@ -264,7 +278,7 @@ export function BackupManager() {
             <Input
               type="file"
               accept=".json"
-              onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+              onChange={e => setImportFile(e.target.files?.[0] || null)}
             />
           </div>
           <div className="flex items-center space-x-2">
@@ -272,16 +286,16 @@ export function BackupManager() {
               type="checkbox"
               id="clearExisting"
               checked={clearExisting}
-              onChange={(e) => setClearExisting(e.target.checked)}
+              onChange={e => setClearExisting(e.target.checked)}
               className="rounded border-gray-300"
             />
             <Label htmlFor="clearExisting" className="text-sm">
               Limpiar datos existentes antes de importar
             </Label>
           </div>
-          <Button 
-            onClick={handleImport} 
-            disabled={isImporting || !importFile} 
+          <Button
+            onClick={handleImport}
+            disabled={isImporting || !importFile}
             variant="destructive"
             className="w-full"
           >
@@ -306,20 +320,22 @@ export function BackupManager() {
             <Trash2 className="h-5 w-5" />
             Limpieza de Datos Antiguos
           </CardTitle>
-          <CardDescription>Elimina registros antiguos para optimizar el rendimiento</CardDescription>
+          <CardDescription>
+            Elimina registros antiguos para optimizar el rendimiento
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Política de Retención</AlertTitle>
             <AlertDescription>
-              Se eliminarán: Notificaciones antiguas (90 días), Logs del sistema INFO (180 días), 
+              Se eliminarán: Notificaciones antiguas (90 días), Logs del sistema INFO (180 días),
               Logs de uso de IA (365 días). Los errores y advertencias se conservan más tiempo.
             </AlertDescription>
           </Alert>
-          <Button 
-            onClick={handleCleanup} 
-            disabled={isCleaning} 
+          <Button
+            onClick={handleCleanup}
+            disabled={isCleaning}
             variant="outline"
             className="w-full"
           >

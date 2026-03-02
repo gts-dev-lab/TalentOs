@@ -24,10 +24,10 @@ export async function generateNotificationEmail(
 }
 
 const prompt = ai.definePrompt({
-    name: 'notificationEmailPrompt',
-    inputSchema: GenerateNotificationEmailInputSchema,
-    outputSchema: GenerateNotificationEmailOutputSchema,
-    prompt: `You are an AI assistant for a corporate training platform called TalentOS. Your task is to generate a personalized and professional email notification.
+  name: 'notificationEmailPrompt',
+  inputSchema: GenerateNotificationEmailInputSchema,
+  outputSchema: GenerateNotificationEmailOutputSchema,
+  prompt: `You are an AI assistant for a corporate training platform called TalentOS. Your task is to generate a personalized and professional email notification.
 
       Recipient Name: {{{recipientName}}}
       Course Name: {{{courseName}}}
@@ -48,7 +48,7 @@ const generateNotificationEmailFlow = ai.defineFlow(
     outputSchema: GenerateNotificationEmailOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

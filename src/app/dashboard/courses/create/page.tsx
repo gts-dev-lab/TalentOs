@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -23,7 +22,9 @@ export default function CreateCourseHubPage() {
 
       <div className="text-center">
         <h1 className="text-3xl font-bold">Crear un Nuevo Curso</h1>
-        <p className="text-muted-foreground mt-2">Elige cómo quieres empezar a construir tu próxima formación.</p>
+        <p className="text-muted-foreground mt-2">
+          Elige cómo quieres empezar a construir tu próxima formación.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -37,41 +38,44 @@ export default function CreateCourseHubPage() {
             </CardHeader>
             <CardContent>
               <CardDescription className="text-center">
-                Completa un formulario detallado para crear un curso desde cero. Control total sobre cada aspecto de la formación.
+                Completa un formulario detallado para crear un curso desde cero. Control total sobre
+                cada aspecto de la formación.
               </CardDescription>
             </CardContent>
           </Card>
         </Link>
 
         {aiConfig?.enabledFeatures.courseGeneration && (
-            <Link href="/dashboard/courses/ai-generator" className="block">
-              <Card className="h-full hover:border-primary hover:shadow-lg transition-all">
-                <CardHeader className="items-center text-center">
-                  <div className="p-4 bg-primary/10 rounded-full mb-2">
-                    <Sparkles className="h-8 w-8 text-primary" />
-                  </div>
-                  <CardTitle>Generador con IA</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-center">
-                    Describe un tema y deja que la inteligencia artificial genere una estructura de curso completa, incluyendo módulos y descripciones.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </Link>
+          <Link href="/dashboard/courses/ai-generator" className="block">
+            <Card className="h-full hover:border-primary hover:shadow-lg transition-all">
+              <CardHeader className="items-center text-center">
+                <div className="p-4 bg-primary/10 rounded-full mb-2">
+                  <Sparkles className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle>Generador con IA</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-center">
+                  Describe un tema y deja que la inteligencia artificial genere una estructura de
+                  curso completa, incluyendo módulos y descripciones.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </Link>
         )}
 
         <Link href="/dashboard/courses/scorm-import" className="block">
           <Card className="h-full hover:border-primary hover:shadow-lg transition-all">
             <CardHeader className="items-center text-center">
-               <div className="p-4 bg-primary/10 rounded-full mb-2">
+              <div className="p-4 bg-primary/10 rounded-full mb-2">
                 <Upload className="h-8 w-8 text-primary" />
               </div>
               <CardTitle>Importar SCORM</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-center">
-                Sube un paquete SCORM (.zip) existente y la plataforma creará automáticamente la estructura del curso por ti.
+                Sube un paquete SCORM (.zip) existente y la plataforma creará automáticamente la
+                estructura del curso por ti.
               </CardDescription>
             </CardContent>
           </Card>

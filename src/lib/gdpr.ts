@@ -26,7 +26,12 @@ export type GdprExportPayload = {
   badges: Awaited<ReturnType<typeof db.getBadgesForUser>>;
   pdis: Awaited<ReturnType<typeof db.getPDIsForUser>>;
   regulationCompliance: Awaited<ReturnType<typeof db.getComplianceForUser>>;
-  courseRatings: { courseId: string; rating: number; instructorRating: number; timestamp?: string }[];
+  courseRatings: {
+    courseId: string;
+    rating: number;
+    instructorRating: number;
+    timestamp?: string;
+  }[];
 };
 
 /**
@@ -81,20 +86,49 @@ export async function exportUserData(userId: string): Promise<GdprExportPayload 
   };
 }
 
-async function getForumMessagesByUserId(userId: string): Promise<{ courseId: string; message: string; timestamp: string }[]> {
-  const dexie = db.db as { forumMessages?: { where: (key: string) => { equals: (v: string) => { toArray: () => Promise<{ courseId: string; message: string; timestamp: string }[]> } } } };
+async function getForumMessagesByUserId(
+  userId: string
+): Promise<{ courseId: string; message: string; timestamp: string }[]> {
+  const dexie = db.db as {
+    forumMessages?: {
+      where: (key: string) => {
+        equals: (v: string) => {
+          toArray: () => Promise<{ courseId: string; message: string; timestamp: string }[]>;
+        };
+      };
+    };
+  };
   if (!dexie?.forumMessages) return [];
   const messages = await dexie.forumMessages.where('userId').equals(userId).toArray();
-  return messages.map((m) => ({ courseId: m.courseId, message: m.message, timestamp: m.timestamp }));
+  return messages.map(m => ({ courseId: m.courseId, message: m.message, timestamp: m.timestamp }));
 }
 
-async function getCourseRatingsByUserId(userId: string): Promise<{ courseId: string; rating: number; instructorRating: number; timestamp?: string }[]> {
-  const dexie = db.db as { courseRatings?: { toArray: () => Promise<{ userId: string; courseId: string; rating: number; instructorRating: number; timestamp?: string }[]> } };
+async function getCourseRatingsByUserId(
+  userId: string
+): Promise<{ courseId: string; rating: number; instructorRating: number; timestamp?: string }[]> {
+  const dexie = db.db as {
+    courseRatings?: {
+      toArray: () => Promise<
+        {
+          userId: string;
+          courseId: string;
+          rating: number;
+          instructorRating: number;
+          timestamp?: string;
+        }[]
+      >;
+    };
+  };
   if (!dexie?.courseRatings) return [];
   const all = await dexie.courseRatings.toArray();
   return all
-    .filter((r) => r.userId === userId)
-    .map((r) => ({ courseId: r.courseId, rating: r.rating, instructorRating: r.instructorRating, timestamp: r.timestamp }));
+    .filter(r => r.userId === userId)
+    .map(r => ({
+      courseId: r.courseId,
+      rating: r.rating,
+      instructorRating: r.instructorRating,
+      timestamp: r.timestamp,
+    }));
 }
 
 /**
@@ -102,7 +136,10 @@ async function getCourseRatingsByUserId(userId: string): Promise<{ courseId: str
  * El usuario deja de ser visible en listados y no puede iniciar sesión.
  * Opcionalmente notifica al interesado por email.
  */
-export async function requestErasure(userId: string, options?: { notify?: boolean }): Promise<{ ok: boolean; email?: string; error?: string }> {
+export async function requestErasure(
+  userId: string,
+  options?: { notify?: boolean }
+): Promise<{ ok: boolean; email?: string; error?: string }> {
   const user = await db.getUserById(userId);
   if (!user) return { ok: false, error: 'Usuario no encontrado' };
   if (user.deletedAt) return { ok: false, error: 'El usuario ya fue eliminado' };
@@ -122,7 +159,8 @@ export async function requestErasure(userId: string, options?: { notify?: boolea
  * Usa el servicio de notificaciones existente o registra en log si no está configurado.
  */
 export async function notifyDataSubjectErasure(email: string, _userId: string): Promise<void> {
-  const message = 'Sus datos personales han sido eliminados de acuerdo con su solicitud (derecho al olvido, RGPD).';
+  const message =
+    'Sus datos personales han sido eliminados de acuerdo con su solicitud (derecho al olvido, RGPD).';
   try {
     const { sendEmail } = await import('@/lib/notification-service');
     const React = await import('react');
@@ -138,7 +176,11 @@ export async function notifyDataSubjectErasure(email: string, _userId: string): 
     });
   } catch (err) {
     if (typeof window !== 'undefined') {
-      import('@/lib/db').then(({ db: d }) => d.logSystemEvent('WARN', 'GDPR: notificación de supresión no enviada', { email })).catch(() => {});
+      import('@/lib/db')
+        .then(({ db: d }) =>
+          d.logSystemEvent('WARN', 'GDPR: notificación de supresión no enviada', { email })
+        )
+        .catch(() => {});
     }
   }
 }

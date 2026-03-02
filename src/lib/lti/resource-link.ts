@@ -44,6 +44,8 @@ function getAppBaseUrl(): string {
 export function getLaunchRedirectUrl(courseId: string, openScorm = false): string {
   const base = getAppBaseUrl();
   if (!base) return `/dashboard/courses/${courseId}`;
-  const path = openScorm ? `/dashboard/courses/${courseId}/scorm-player` : `/dashboard/courses/${courseId}`;
+  const path = openScorm
+    ? `/dashboard/courses/${courseId}/scorm-player`
+    : `/dashboard/courses/${courseId}`;
   return `${base}${path}`;
 }

@@ -27,6 +27,7 @@ cd ~/Documentos/00_Organizacion/01_Proyectos/01_Apps/2_Aplicaciones_Gestion/saas
 ```
 
 Este script generará:
+
 - `JWT_SECRET` - Para firmar tokens de sesión
 - `NEXTAUTH_SECRET` - Para NextAuth.js (SSO)
 
@@ -59,6 +60,7 @@ git commit -m "Ready for production deployment"
 ## 🌐 Opción 1: Vercel (Recomendado)
 
 **Ventajas:**
+
 - ✅ Despliegue automático desde Git
 - ✅ HTTPS incluido
 - ✅ CDN global
@@ -118,6 +120,7 @@ NEXT_PUBLIC_AUTHENTIK_ENABLED=true
 ### Paso 4: Configurar Build Settings
 
 Vercel debería detectar automáticamente:
+
 - **Framework Preset:** Next.js
 - **Build Command:** `npm run build`
 - **Output Directory:** `.next`
@@ -134,6 +137,7 @@ Si no, configúralo manualmente.
 ### Paso 6: Actualizar NEXTAUTH_URL
 
 Después del primer deploy, actualiza `NEXTAUTH_URL` en Vercel con la URL real:
+
 ```
 NEXTAUTH_URL=https://tu-proyecto-real.vercel.app
 ```
@@ -337,6 +341,7 @@ Verifica que todas las variables requeridas estén configuradas.
 ### Error: Build falla en Vercel
 
 **Posibles causas:**
+
 1. Dependencias no instaladas → Verifica `package.json`
 2. Errores TypeScript → Ejecuta `npm run typecheck` localmente
 3. Errores ESLint → Ejecuta `npm run lint` localmente
@@ -346,6 +351,7 @@ Verifica que todas las variables requeridas estén configuradas.
 ### Error: La aplicación no carga después del deploy
 
 **Verificar:**
+
 1. Logs del servidor (Vercel: Deployments → View Function Logs)
 2. Variables de entorno configuradas correctamente
 3. `NEXTAUTH_URL` coincide con la URL real
@@ -370,9 +376,11 @@ Verifica que todas las variables requeridas estén configuradas.
 Para actualizar la aplicación después del despliegue:
 
 ### Vercel:
+
 - Simplemente haz `git push` → Deploy automático
 
 ### Docker:
+
 ```bash
 git pull
 docker-compose build
@@ -380,6 +388,7 @@ docker-compose up -d
 ```
 
 ### Linux:
+
 ```bash
 git pull
 npm install --production --legacy-peer-deps
@@ -392,6 +401,7 @@ pm2 restart talentos
 ## 📞 Soporte
 
 Si tienes problemas:
+
 1. Revisa los logs del servidor
 2. Verifica las variables de entorno
 3. Consulta `docs/DEPLOYMENT_GUIDE.md` para más detalles

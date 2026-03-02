@@ -2,7 +2,6 @@
 
 This file contains a collection of archived markdown files for historical purposes.
 
-
 ---
 
 ## QUICK_DEPLOY.md
@@ -207,6 +206,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 ## ✅ Completado
 
 ### FASE 1: Fundamentos de seguridad
+
 - **DÍA 1: Eliminar passwords en texto plano**
   - Argon2 (servidor) + argon2-browser (cliente)
   - `User.passwordHash` en lugar de `password`
@@ -214,11 +214,13 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
   - `src/lib/auth/password.ts`, `src/lib/auth/encryption.ts`
 
 ### FASE 1: Certificaciones
+
 - Módulo de certificados: tipos, Dexie, plantillas, emisión al completar curso
   - UI: listado, detalle, descarga PDF, verificación pública
   - Rutas: `/dashboard/certificates`, `/certificates/verify`
 
 ### DÍA 4: Arreglar sistema de sincronización
+
 - `isSynced`: `.equals('false')` → `.equals(false)` (boolean)
   - En `supabase-sync.ts` y `getUnsyncedItemsCount`
 - `getUnsyncedItemsCount`: lista fija de tablas con `isSynced` (users, courses, enrollments, userProgress, costs, certificateTemplates, certificates)
@@ -226,11 +228,13 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - Reintentos en sync: hasta 3 intentos con backoff (1s, 2s) al fallar upsert a Supabase
 
 ### DÍA 5: Habilitar validaciones de build
+
 - `next.config`: `ignoreBuildErrors: false`, `ignoreDuringBuilds: false`
 - Fix TS: `api-settings.tsx` — "Project Settings > API" → `&gt;` (evitar JSX)
 - ESLint: `eslint-config-next`, `.eslintrc.json` (next/core-web-vitals)
 
 ### DÍA 2: JWT + sesiones seguras ✓
+
 - `src/lib/auth/jwt.ts`: `signSessionToken`, `verifySessionToken`, `isJwtConfigured` (jose, HS256, JWT_SECRET ≥ 32 chars)
 - API: `POST /api/auth/login`, `GET /api/auth/session`, `POST /api/auth/logout`
 - Cookie `auth-token` httpOnly, secure en prod, sameSite lax, 7 días
@@ -240,6 +244,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - `jose` en `package.json`; `JWT_SECRET` documentado en `SETUP_GUIDE.md`
 
 ### DÍA 3: Gestión segura de secretos ✓
+
 - Eliminado guardado de API keys en cookies (deprecated)
 - Prioridad: env vars → cookies (solo lectura, con warnings de deprecación)
 - UI actualizada: `api-settings.tsx` y `ai-settings.tsx` muestran variables de entorno necesarias
@@ -248,6 +253,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - Warnings en consola cuando se usan cookies (compatibilidad temporal)
 
 ### NextAuth + Authentik SSO (empresarial) ✓
+
 - **NextAuth** con basePath `/api/nextauth` (no conflictúa con `/api/auth/*`)
 - **Authentik** como proveedor OIDC cuando `AUTHENTIK_ISSUER`, `AUTHENTIK_ID`, `AUTHENTIK_SECRET` y `NEXT_PUBLIC_AUTHENTIK_ENABLED` están configurados
 - Login: email/contraseña (actual) + opción **Cuenta empresarial (Google / Microsoft)** vía Authentik
@@ -260,6 +266,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 ## ⏳ Pendiente (orden sugerido)
 
 ### Verificaciones finales (Pruebas en navegador)
+
 1. ✅ **JWT_SECRET configurado** - `.env.local` con JWT_SECRET, NEXTAUTH_URL, NEXTAUTH_SECRET
 2. ✅ **Menú hamburguesa implementado** - Responsive, animado, funcional
 3. ✅ **Página de cursos corregida** - Paginación, filtros y búsqueda funcionando
@@ -274,11 +281,13 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 **📖 Guía de pruebas**: Ver `docs/TESTING_GUIDE.md` para instrucciones detalladas paso a paso
 
 ### Plan original (auditoría)
+
 - **DÍA 1-5:** Completados ✓
 - **FASE 1-4:** Completadas ✓
 - **Firebase:** Eliminado (enero 2026) - Reemplazado por Web Notifications API nativa
 
 ### Paginación en listados ✓ (Día 15, FASE 4)
+
 - Componente `Pagination` reutilizable (`src/components/ui/pagination.tsx`)
 - Paginación aplicada a:
   - **Usuarios** (20 por página) - con filtros de rol/departamento
@@ -291,6 +300,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - Contador "Mostrando X - Y de Z"
 
 ### Plan 4 fases (Certificaciones, PDI, etc.)
+
 - **PDI** – Planes de Desarrollo Individual ✓ (FASE 2)
 - **Compliance y normativas** ✓ (FASE 3) - Completo
   - Tipos: `Regulation`, `RegulationCompliance`, `ComplianceAudit`
@@ -321,19 +331,19 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 
 ## Archivos relevantes tocados recientemente
 
-| Área            | Archivos                                                                 |
-|-----------------|---------------------------------------------------------------------------|
-| JWT + API auth  | `src/lib/auth/jwt.ts`, `src/app/api/auth/login/route.ts`, `session/route.ts`, `logout/route.ts` |
-| Auth contexto   | `src/contexts/auth.tsx`                                                  |
-| Sync            | `src/lib/supabase-sync.ts`, `src/lib/db-providers/dexie.ts`              |
-| Build/lint      | `next.config.ts`, `src/components/settings/api-settings.tsx`, `.eslintrc.json`, `package.json` |
-| Secretos (DÍA 3) | `src/app/dashboard/settings/actions.ts`, `src/lib/notification-service.tsx`, `src/ai/provider.ts`, `src/components/settings/api-settings.tsx`, `src/components/settings/ai-settings.tsx` |
-| Paginación      | `src/components/ui/pagination.tsx`, `src/app/dashboard/users/page.tsx`, `src/app/dashboard/courses/page.tsx`, `src/app/dashboard/certificates/page.tsx`, `src/app/dashboard/learning-paths/page.tsx`, `src/components/enrollments/admin-view.tsx` |
-| PDI             | `src/lib/types.ts` (tipos), `src/lib/db-providers/dexie.ts` (v43, CRUD), `src/app/dashboard/pdi/page.tsx`, `new/page.tsx`, `[id]/page.tsx`, `[id]/edit/page.tsx`, `src/lib/nav.ts` |
-| Compliance      | `src/lib/types.ts` (Regulation, RegulationCompliance, ComplianceAudit), `src/lib/db-providers/dexie.ts` (v44, CRUD), `src/app/dashboard/compliance/page.tsx`, `new/page.tsx`, `src/lib/nav.ts` |
-| Backups         | `src/lib/backup-service.ts`, `src/components/settings/backup-manager.tsx`, `src/app/dashboard/settings/page.tsx` |
-| Monitoreo       | `src/lib/db-monitoring.ts`, `src/lib/db-providers/dexie.ts` (v45 índices optimizados) |
-| Docs            | `docs/SETUP_GUIDE.md` (JWT_SECRET), `docs/PLAN_PROGRESS.md` (este archivo)|
+| Área             | Archivos                                                                                                                                                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JWT + API auth   | `src/lib/auth/jwt.ts`, `src/app/api/auth/login/route.ts`, `session/route.ts`, `logout/route.ts`                                                                                                                                                   |
+| Auth contexto    | `src/contexts/auth.tsx`                                                                                                                                                                                                                           |
+| Sync             | `src/lib/supabase-sync.ts`, `src/lib/db-providers/dexie.ts`                                                                                                                                                                                       |
+| Build/lint       | `next.config.ts`, `src/components/settings/api-settings.tsx`, `.eslintrc.json`, `package.json`                                                                                                                                                    |
+| Secretos (DÍA 3) | `src/app/dashboard/settings/actions.ts`, `src/lib/notification-service.tsx`, `src/ai/provider.ts`, `src/components/settings/api-settings.tsx`, `src/components/settings/ai-settings.tsx`                                                          |
+| Paginación       | `src/components/ui/pagination.tsx`, `src/app/dashboard/users/page.tsx`, `src/app/dashboard/courses/page.tsx`, `src/app/dashboard/certificates/page.tsx`, `src/app/dashboard/learning-paths/page.tsx`, `src/components/enrollments/admin-view.tsx` |
+| PDI              | `src/lib/types.ts` (tipos), `src/lib/db-providers/dexie.ts` (v43, CRUD), `src/app/dashboard/pdi/page.tsx`, `new/page.tsx`, `[id]/page.tsx`, `[id]/edit/page.tsx`, `src/lib/nav.ts`                                                                |
+| Compliance       | `src/lib/types.ts` (Regulation, RegulationCompliance, ComplianceAudit), `src/lib/db-providers/dexie.ts` (v44, CRUD), `src/app/dashboard/compliance/page.tsx`, `new/page.tsx`, `src/lib/nav.ts`                                                    |
+| Backups          | `src/lib/backup-service.ts`, `src/components/settings/backup-manager.tsx`, `src/app/dashboard/settings/page.tsx`                                                                                                                                  |
+| Monitoreo        | `src/lib/db-monitoring.ts`, `src/lib/db-providers/dexie.ts` (v45 índices optimizados)                                                                                                                                                             |
+| Docs             | `docs/SETUP_GUIDE.md` (JWT_SECRET), `docs/PLAN_PROGRESS.md` (este archivo)                                                                                                                                                                        |
 
 ---
 
@@ -380,6 +390,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Archivo: `src/styles/design-tokens.css`
 
 **Colores Frappe**:
+
 - Sidebar: `--frappe-sidebar-bg` (oscuro), `--frappe-sidebar-fg` (texto claro)
 - Topbar: `--frappe-topbar-bg` (claro), `--frappe-topbar-border`
 - Primary: `--frappe-primary` (azul #2490ef)
@@ -387,25 +398,30 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Escala de grises: `--frappe-gray-50` a `--frappe-gray-900`
 
 **Tipografía**:
+
 - Fuente: Inter (ya configurada)
 - Tamaños: `--frappe-text-xs` a `--frappe-text-2xl`
 - Pesos: medium (500), semibold (600), bold (700)
 
 **Spacing** (grid 8px):
+
 - `--frappe-space-1` (4px) a `--frappe-space-16` (64px)
 
 **Radii**:
+
 - `--frappe-radius-sm`: 4px
 - `--frappe-radius-md`: 6px (default)
 - `--frappe-radius-lg`: 8px
 
 **Shadows**:
+
 - `--frappe-shadow-sm`: sombra sutil
 - `--frappe-shadow`: sombra estándar
 - `--frappe-shadow-md`: sombra media
 - `--frappe-shadow-lg`: sombra grande
 
 **Transiciones**:
+
 - `--frappe-transition-fast`: 150ms
 - `--frappe-transition`: 200ms
 - `--frappe-transition-slow`: 300ms
@@ -419,6 +435,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `src/components/ui/sidebar.tsx`
 
 **Características**:
+
 - Fondo oscuro (`frappe-sidebar`)
 - Texto claro
 - Hover con fondo `--frappe-sidebar-hover`
@@ -429,6 +446,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Transiciones suaves: `duration-frappe-slow`
 
 **Componentes**:
+
 - `SidebarHeader`: Logo + título (h-14, border-b)
 - `SidebarContent`: Menú principal (px-2 py-3)
 - `SidebarMenu`: Lista de items (space-y-0.5)
@@ -440,6 +458,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `src/components/dashboard-header.tsx`
 
 **Características**:
+
 - Fondo claro (`frappe-topbar`)
 - Altura: `h-14` (56px)
 - Border bottom sutil
@@ -447,6 +466,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Padding: `px-4 md:px-6`
 
 **Elementos**:
+
 - SidebarTrigger (hamburger menu)
 - Título de página (text-lg md:text-xl)
 - GlobalSearch
@@ -461,6 +481,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Button (`src/components/ui/button.tsx`)
 
 **Mejoras Frappe**:
+
 - Border radius: `rounded-frappe-sm` (4px)
 - Transiciones: `duration-frappe`
 - Shadow en variant `default`: `shadow-frappe-sm` → `shadow-frappe` en hover
@@ -468,6 +489,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Hover mejorado en `outline` y `ghost`
 
 **Variants**:
+
 - `default`: Primary con shadow
 - `destructive`: Rojo con shadow
 - `outline`: Border con hover muted
@@ -478,6 +500,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Input (`src/components/ui/input.tsx`)
 
 **Mejoras Frappe**:
+
 - Border radius: `rounded-frappe-sm` (4px)
 - Transiciones: `duration-frappe`
 - Tamaño de texto: `text-sm` (14px)
@@ -486,6 +509,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Card (`src/components/ui/card.tsx`)
 
 **Mejoras Frappe**:
+
 - Clase `frappe-card` aplicada (shadow + radius)
 - `CardHeader`: Fondo `bg-muted/30`, border-b, padding `px-5 py-4`
 - `CardTitle`: Tamaño `text-lg` (18px), font-semibold
@@ -495,6 +519,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Table (`src/components/ui/table.tsx`)
 
 **Mejoras Frappe**:
+
 - Wrapper con `rounded-frappe`, `border`, `shadow-frappe-sm`
 - `TableHeader`: Fondo `bg-muted/50`, border `border-border/60`
 - `TableHead`: Altura `h-11`, texto `text-xs`, `uppercase`, `tracking-wider`
@@ -504,6 +529,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Dialog/Modal (`src/components/ui/dialog.tsx`)
 
 **Mejoras Frappe**:
+
 - Overlay: `bg-black/60`, `backdrop-blur-sm`
 - Content: `rounded-frappe`, `shadow-frappe-lg`
 - Transiciones: `duration-frappe-slow`
@@ -511,6 +537,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Skeleton (`src/components/ui/skeleton.tsx`)
 
 **Mejoras Frappe**:
+
 - Border radius: `rounded-frappe-sm`
 - Fondo: `bg-muted/80` (más sutil)
 
@@ -521,12 +548,14 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Dashboard (`src/app/dashboard/dashboard/page.tsx`)
 
 **Características**:
+
 - Grid de StatCards (4 columnas en desktop)
 - Cards con `shadow-frappe` y hover `shadow-frappe-md`
 - Transiciones suaves
 - Layout responsive
 
 **StatCard** (`src/components/stat-card.tsx`):
+
 - Shadow: `shadow-frappe` → `shadow-frappe-md` en hover
 - Transiciones: `duration-frappe`
 - Tamaño de valor: `text-2xl` (24px)
@@ -534,6 +563,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Empleados (`src/app/dashboard/users/page.tsx`)
 
 **Características**:
+
 - Tabla con estilo Frappe (bordes sutiles, header con fondo)
 - Filtros con dropdowns
 - Paginación
@@ -544,6 +574,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Nómina (`src/app/dashboard/nomina/page.tsx`) ✨ NUEVO
 
 **Características**:
+
 - Página ejemplo completa estilo Frappe
 - Grid de StatCards (total bruto, neto, pagadas, pendientes)
 - Tabla con datos de ejemplo (mock)
@@ -561,6 +592,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `src/components/page-transition.tsx`
 
 **Características**:
+
 - Transición fade entre páginas
 - Duración: `duration-frappe-slow` (300ms)
 - Opacity: 0 → 100
@@ -571,6 +603,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Responsive
 
 **Mejoras**:
+
 - Sidebar: Colapsa en móvil (drawer)
 - Topbar: Padding adaptativo (`px-4 md:px-6`)
 - Cards: Grid responsive (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`)
@@ -582,6 +615,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Skeletons
 
 **Mejoras**:
+
 - Border radius Frappe
 - Fondo más sutil (`bg-muted/80`)
 - Animación pulse mejorada
@@ -589,6 +623,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Toasts y Confirmaciones
 
 **Ya implementados**:
+
 - `Toaster` de shadcn/ui
 - `AlertDialog` para confirmaciones
 - Estilos consistentes con Frappe
@@ -600,6 +635,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Manifest (`public/manifest.json`)
 
 **Actualizado con**:
+
 - `name` y `short_name` completos
 - `categories`: business, education, productivity
 - `lang`: es
@@ -609,6 +645,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Service Worker (`public/sw.js`)
 
 **Características**:
+
 - ✅ Cachea recursos estáticos (HTML, JS, CSS, imágenes)
 - ✅ Estrategia network-first para HTML
 - ✅ Estrategia cache-first para assets estáticos
@@ -618,6 +655,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - ✅ Manejo de errores robusto
 
 **Registro**: `src/components/pwa-register.tsx`
+
 - Registra SW después de `load`
 - Logs informativos
 - Manejo de errores
@@ -625,6 +663,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Meta Tags (`src/app/layout.tsx`)
 
 **Añadidos**:
+
 - `theme-color`: #2E9AFE
 - `apple-mobile-web-app-capable`: yes
 - `apple-mobile-web-app-status-bar-style`: default
@@ -637,23 +676,29 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Clases Frappe (`src/app/globals.css`)
 
 **`.frappe-sidebar`**:
+
 - Fondo y color del sidebar
 - Hover automático en links/buttons
 
 **`.frappe-topbar`**:
+
 - Fondo y border del topbar
 
 **`.frappe-card`**:
+
 - Shadow y border radius estándar
 
 **`.frappe-page`**:
+
 - Padding adaptativo
 - Min-height calculado
 
 **`.frappe-skeleton`**:
+
 - Estilo mejorado para skeletons
 
 **`.frappe-interactive`**:
+
 - Transiciones suaves
 - Hover más rápido
 
@@ -664,6 +709,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 **Archivo**: `tailwind.config.ts`
 
 **Añadido**:
+
 - `boxShadow`: `frappe-sm`, `frappe`, `frappe-md`, `frappe-lg`
 - `borderRadius`: `frappe-sm`, `frappe`, `frappe-lg`
 - `transitionDuration`: `frappe-fast`, `frappe`, `frappe-slow`
@@ -744,6 +790,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### Sin Cambios en Lógica
 
 ✅ **No modificado**:
+
 - Lógica de autenticación
 - Lógica de base de datos (Dexie)
 - Lógica de sincronización
@@ -752,6 +799,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - Contextos y hooks de negocio
 
 ✅ **Solo modificado**:
+
 - Estilos CSS/Tailwind
 - Estructura visual (HTML/JSX)
 - Clases de componentes
@@ -769,6 +817,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ## 🎉 Resultado Final
 
 **TalentOS ahora tiene**:
+
 - ✅ Look & feel idéntico a Frappe HRMS
 - ✅ Sidebar oscuro profesional
 - ✅ Topbar claro y limpio
@@ -800,6 +849,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 ### 1. **Keycloak** (Recomendado) ⭐
 
 **Características**:
+
 - ✅ Open Source completo
 - ✅ Soporte OIDC, SAML, OAuth 2.0
 - ✅ Gestión completa de usuarios
@@ -809,6 +859,7 @@ Se ha implementado completamente el look & feel de **Frappe HRMS** en TalentOS, 
 - ✅ 2FA/MFA integrado
 
 **Docker Compose**:
+
 ```yaml
 version: '3'
 
@@ -848,6 +899,7 @@ volumes:
 ```
 
 **Configuración en TalentOS**:
+
 ```env
 # .env.local
 KEYCLOAK_URL=http://localhost:8080
@@ -858,9 +910,10 @@ KEYCLOAK_CLIENT_SECRET=tu-secret-aqui
 
 ---
 
-### 2. **Authentik** 
+### 2. **Authentik**
 
 **Características**:
+
 - ✅ Open Source (Python/Django)
 - ✅ UI moderna y fácil de usar
 - ✅ Soporte OAuth2, OIDC, SAML
@@ -869,6 +922,7 @@ KEYCLOAK_CLIENT_SECRET=tu-secret-aqui
 - ✅ Branding personalizable
 
 **Docker Compose**:
+
 ```yaml
 version: '3'
 
@@ -877,7 +931,7 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: ['CMD-SHELL', 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}']
       start_period: 20s
       interval: 30s
       retries: 5
@@ -893,7 +947,7 @@ services:
     image: redis:alpine
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
       start_period: 20s
       interval: 30s
       retries: 5
@@ -941,6 +995,7 @@ volumes:
 ### 3. **Ory Hydra + Ory Kratos**
 
 **Características**:
+
 - ✅ Open Source (Go)
 - ✅ Cloud-native
 - ✅ Alta performance
@@ -948,6 +1003,7 @@ volumes:
 - ✅ Headless (API-first)
 
 **Docker Compose**:
+
 ```yaml
 version: '3'
 
@@ -955,8 +1011,8 @@ services:
   hydra:
     image: oryd/hydra:latest
     ports:
-      - "4444:4444" # Public port
-      - "4445:4445" # Admin port
+      - '4444:4444' # Public port
+      - '4445:4445' # Admin port
     command: serve all --dev
     environment:
       DSN: postgres://hydra:secret@postgresd:5432/hydra?sslmode=disable
@@ -989,22 +1045,25 @@ services:
 ### Opción A: NextAuth.js con Proveedores Personalizados
 
 **Ventajas**:
+
 - ✅ Integración nativa con Next.js
 - ✅ Soporte para múltiples proveedores
 - ✅ Session handling automático
 - ✅ Callbacks personalizables
 
 **Instalación**:
+
 ```bash
 npm install next-auth @auth/core
 ```
 
 **Configuración**:
+
 ```typescript
 // src/app/api/auth/[...nextauth]/route.ts
-import NextAuth from "next-auth"
-import type { AuthOptions } from "next-auth"
-import KeycloakProvider from "next-auth/providers/keycloak"
+import NextAuth from 'next-auth';
+import type { AuthOptions } from 'next-auth';
+import KeycloakProvider from 'next-auth/providers/keycloak';
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -1015,22 +1074,22 @@ export const authOptions: AuthOptions = {
     }),
     // Proveedor personalizado
     {
-      id: "custom-oidc",
-      name: "Mi Sistema SSO",
-      type: "oauth",
+      id: 'custom-oidc',
+      name: 'Mi Sistema SSO',
+      type: 'oauth',
       wellKnown: `${process.env.OIDC_ISSUER}/.well-known/openid-configuration`,
-      authorization: { params: { scope: "openid email profile" } },
+      authorization: { params: { scope: 'openid email profile' } },
       idToken: true,
-      checks: ["pkce", "state"],
+      checks: ['pkce', 'state'],
       profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-        }
+        };
       },
-    }
+    },
   ],
   callbacks: {
     async jwt({ token, user, account }) {
@@ -1041,14 +1100,14 @@ export const authOptions: AuthOptions = {
           refreshToken: account.refresh_token,
           accessTokenExpires: account.expires_at,
           user,
-        }
+        };
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      session.user = token.user as any
-      session.accessToken = token.accessToken as string
-      return session
+      session.user = token.user as any;
+      session.accessToken = token.accessToken as string;
+      return session;
     },
   },
   pages: {
@@ -1056,10 +1115,10 @@ export const authOptions: AuthOptions = {
     signOut: '/auth/signout',
     error: '/auth/error',
   },
-}
+};
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
 ```
 
 ---
@@ -1067,16 +1126,19 @@ export { handler as GET, handler as POST }
 ### Opción B: Implementación Custom con `openid-client`
 
 **Ventajas**:
+
 - ✅ Control total
 - ✅ Sin dependencias pesadas
 - ✅ Más flexible
 
 **Instalación**:
+
 ```bash
 npm install openid-client
 ```
 
 **Implementación**:
+
 ```typescript
 // src/lib/auth/oidc.ts
 import { Issuer, generators } from 'openid-client';
@@ -1088,7 +1150,7 @@ export class OIDCProvider {
   async initialize() {
     // Descubrir configuración OIDC
     this.issuer = await Issuer.discover(process.env.OIDC_ISSUER!);
-    
+
     this.client = new this.issuer.Client({
       client_id: process.env.OIDC_CLIENT_ID!,
       client_secret: process.env.OIDC_CLIENT_SECRET,
@@ -1100,7 +1162,7 @@ export class OIDCProvider {
   generateAuthUrl() {
     const code_verifier = generators.codeVerifier();
     const code_challenge = generators.codeChallenge(code_verifier);
-    
+
     const authUrl = this.client.authorizationUrl({
       scope: 'openid email profile',
       code_challenge,
@@ -1118,7 +1180,7 @@ export class OIDCProvider {
     );
 
     const userinfo = await this.client.userinfo(tokenSet.access_token);
-    
+
     return {
       user: userinfo,
       tokens: tokenSet,
@@ -1137,6 +1199,7 @@ export class OIDCProvider {
 ```
 
 **API Routes**:
+
 ```typescript
 // src/app/api/auth/login/route.ts
 import { NextResponse } from 'next/server';
@@ -1146,9 +1209,9 @@ import { cookies } from 'next/headers';
 export async function GET() {
   const provider = new OIDCProvider();
   await provider.initialize();
-  
+
   const { authUrl, code_verifier } = provider.generateAuthUrl();
-  
+
   // Guardar code_verifier en cookie segura
   cookies().set('code_verifier', code_verifier, {
     httpOnly: true,
@@ -1156,7 +1219,7 @@ export async function GET() {
     sameSite: 'lax',
     maxAge: 60 * 10, // 10 minutos
   });
-  
+
   return NextResponse.redirect(authUrl);
 }
 ```
@@ -1172,20 +1235,17 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
   const code_verifier = cookies().get('code_verifier')?.value;
-  
+
   if (!code || !code_verifier) {
     return NextResponse.redirect(new URL('/auth/error', request.url));
   }
-  
+
   try {
     const provider = new OIDCProvider();
     await provider.initialize();
-    
-    const { user, tokens } = await provider.handleCallback(
-      { code },
-      code_verifier
-    );
-    
+
+    const { user, tokens } = await provider.handleCallback({ code }, code_verifier);
+
     // Crear o actualizar usuario en tu BD
     const dbUser = await createOrUpdateUser({
       id: user.sub,
@@ -1193,14 +1253,14 @@ export async function GET(request: NextRequest) {
       name: user.name,
       avatar: user.picture,
     });
-    
+
     // Crear sesión JWT
     const sessionToken = await signSessionToken({
       userId: dbUser.id,
       email: dbUser.email,
       role: dbUser.role,
     });
-    
+
     // Guardar tokens
     cookies().set('auth-token', sessionToken, {
       httpOnly: true,
@@ -1208,17 +1268,17 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 días
     });
-    
+
     cookies().set('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 30, // 30 días
     });
-    
+
     // Limpiar code_verifier
     cookies().delete('code_verifier');
-    
+
     return NextResponse.redirect(new URL('/dashboard', request.url));
   } catch (error) {
     console.error('Auth callback error:', error);
@@ -1273,7 +1333,7 @@ export default function LoginPage() {
               <Key className="mr-2 h-4 w-4" />
               Iniciar con SSO Corporativo
             </Button>
-            
+
             <Button
               variant="outline"
               className="w-full"
@@ -1357,7 +1417,7 @@ interface OIDCUser {
 export async function createOrUpdateUser(oidcUser: OIDCUser): Promise<User> {
   // Buscar usuario existente por email o ID externo
   let user = await db.getUserByEmail(oidcUser.email);
-  
+
   if (!user) {
     // Crear nuevo usuario
     const newUser: Partial<User> = {
@@ -1371,7 +1431,7 @@ export async function createOrUpdateUser(oidcUser: OIDCUser): Promise<User> {
       authProvider: 'oidc',
       createdAt: new Date().toISOString(),
     };
-    
+
     const userId = await db.createUser(newUser as User);
     user = await db.getUser(userId);
   } else {
@@ -1385,36 +1445,36 @@ export async function createOrUpdateUser(oidcUser: OIDCUser): Promise<User> {
     });
     user = await db.getUser(user.id!);
   }
-  
+
   return user!;
 }
 
 function mapRoleFromOIDC(groups: string[]): User['role'] {
   // Mapear grupos/roles de OIDC a roles internos
   const roleMap: Record<string, User['role']> = {
-    'admin': 'Administrador General',
+    admin: 'Administrador General',
     'hr-manager': 'Gestor de RRHH',
     'training-manager': 'Jefe de Formación',
-    'instructor': 'Formador',
-    'external': 'Personal Externo',
-    'employee': 'Trabajador',
+    instructor: 'Formador',
+    external: 'Personal Externo',
+    employee: 'Trabajador',
   };
-  
+
   // Buscar el rol más alto
   for (const [oidcRole, appRole] of Object.entries(roleMap)) {
     if (groups.some(g => g.toLowerCase().includes(oidcRole))) {
       return appRole;
     }
   }
-  
+
   return 'Trabajador'; // Default
 }
 
 function extractDepartment(oidcUser: OIDCUser): string | undefined {
   // Extraer departamento de los claims
-  return (oidcUser as any).department || 
-         (oidcUser as any).ou || 
-         (oidcUser as any).organizationalUnit;
+  return (
+    (oidcUser as any).department || (oidcUser as any).ou || (oidcUser as any).organizationalUnit
+  );
 }
 ```
 
@@ -1431,21 +1491,21 @@ import { verifySessionToken } from '@/lib/auth/jwt';
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
-  
+
   // Rutas públicas
   const publicPaths = ['/login', '/auth', '/api/auth', '/certificates/verify'];
   if (publicPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
   }
-  
+
   // Verificar token
   if (!token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-  
+
   try {
     const session = await verifySessionToken(token);
-    
+
     // Verificar expiración del token OIDC y renovar si es necesario
     const refreshToken = request.cookies.get('refresh_token')?.value;
     if (refreshToken && shouldRefreshToken(session)) {
@@ -1456,7 +1516,7 @@ export async function middleware(request: NextRequest) {
         body: JSON.stringify({ refreshToken }),
       });
     }
-    
+
     return NextResponse.next();
   } catch (error) {
     // Token inválido, redirigir a login
@@ -1471,9 +1531,7 @@ function shouldRefreshToken(session: any): boolean {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)'],
 };
 ```
 
@@ -1481,15 +1539,15 @@ export const config = {
 
 ## 📊 Comparativa de Proveedores
 
-| Característica | Keycloak | Authentik | Ory Hydra |
-|---------------|----------|-----------|-----------|
-| **Facilidad de uso** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **Documentación** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Performance** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Comunidad** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Funcionalidades** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **UI Admin** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ |
-| **Recursos** | Alto | Medio | Bajo |
+| Característica       | Keycloak   | Authentik  | Ory Hydra  |
+| -------------------- | ---------- | ---------- | ---------- |
+| **Facilidad de uso** | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     |
+| **Documentación**    | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐   | ⭐⭐⭐⭐   |
+| **Performance**      | ⭐⭐⭐     | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ |
+| **Comunidad**        | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     | ⭐⭐⭐⭐   |
+| **Funcionalidades**  | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐   | ⭐⭐⭐     |
+| **UI Admin**         | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ | ⭐⭐       |
+| **Recursos**         | Alto       | Medio      | Bajo       |
 
 ---
 
@@ -1552,6 +1610,7 @@ cd ~/Documentos/00_Organizacion/01_Proyectos/01_Apps/2_Aplicaciones_Gestion/saas
 ```
 
 Este script generará:
+
 - `JWT_SECRET` - Para firmar tokens de sesión
 - `NEXTAUTH_SECRET` - Para NextAuth.js (SSO)
 
@@ -1584,6 +1643,7 @@ git commit -m "Ready for production deployment"
 ## 🌐 Opción 1: Vercel (Recomendado)
 
 **Ventajas:**
+
 - ✅ Despliegue automático desde Git
 - ✅ HTTPS incluido
 - ✅ CDN global
@@ -1643,6 +1703,7 @@ NEXT_PUBLIC_AUTHENTIK_ENABLED=true
 ### Paso 4: Configurar Build Settings
 
 Vercel debería detectar automáticamente:
+
 - **Framework Preset:** Next.js
 - **Build Command:** `npm run build`
 - **Output Directory:** `.next`
@@ -1659,6 +1720,7 @@ Si no, configúralo manualmente.
 ### Paso 6: Actualizar NEXTAUTH_URL
 
 Después del primer deploy, actualiza `NEXTAUTH_URL` en Vercel con la URL real:
+
 ```
 NEXTAUTH_URL=https://tu-proyecto-real.vercel.app
 ```
@@ -1862,6 +1924,7 @@ Verifica que todas las variables requeridas estén configuradas.
 ### Error: Build falla en Vercel
 
 **Posibles causas:**
+
 1. Dependencias no instaladas → Verifica `package.json`
 2. Errores TypeScript → Ejecuta `npm run typecheck` localmente
 3. Errores ESLint → Ejecuta `npm run lint` localmente
@@ -1871,6 +1934,7 @@ Verifica que todas las variables requeridas estén configuradas.
 ### Error: La aplicación no carga después del deploy
 
 **Verificar:**
+
 1. Logs del servidor (Vercel: Deployments → View Function Logs)
 2. Variables de entorno configuradas correctamente
 3. `NEXTAUTH_URL` coincide con la URL real
@@ -1895,9 +1959,11 @@ Verifica que todas las variables requeridas estén configuradas.
 Para actualizar la aplicación después del despliegue:
 
 ### Vercel:
+
 - Simplemente haz `git push` → Deploy automático
 
 ### Docker:
+
 ```bash
 git pull
 docker-compose build
@@ -1905,6 +1971,7 @@ docker-compose up -d
 ```
 
 ### Linux:
+
 ```bash
 git pull
 npm install --production --legacy-peer-deps
@@ -1917,6 +1984,7 @@ pm2 restart talentos
 ## 📞 Soporte
 
 Si tienes problemas:
+
 1. Revisa los logs del servidor
 2. Verifica las variables de entorno
 3. Consulta `docs/DEPLOYMENT_GUIDE.md` para más detalles
@@ -1961,11 +2029,13 @@ Si tienes problemas:
 ## 📊 Tiempos Esperados
 
 ### Desarrollo (npm run dev)
+
 - **Primera carga:** ~2-3 segundos (compilación inicial)
 - **Hot reload:** ~1-2 segundos
 - **Navegación:** <500ms
 
 ### Producción (npm run build && npm start)
+
 - **Primera carga:** ~1-2 segundos
 - **Navegación:** <300ms
 - **API responses:** <200ms
@@ -2089,7 +2159,6 @@ npm run build
 
 ## SETUP_GUIDE.md
 
-
 # Guía de Configuración del Entorno de Desarrollo
 
 Esta guía te llevará paso a paso a través del proceso de configuración de TalentOS en tu máquina local para el desarrollo.
@@ -2099,9 +2168,10 @@ Esta guía te llevará paso a paso a través del proceso de configuración de Ta
 ### Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalado lo siguiente:
--   **Node.js:** Versión 20.x o superior.
--   **npm:** Generalmente se instala junto con Node.js.
--   **Git:** Para clonar el repositorio.
+
+- **Node.js:** Versión 20.x o superior.
+- **npm:** Generalmente se instala junto con Node.js.
+- **Git:** Para clonar el repositorio.
 
 ---
 
@@ -2123,6 +2193,7 @@ Una vez dentro de la carpeta del proyecto, instala todas las dependencias necesa
 ```bash
 npm install
 ```
+
 Este comando leerá el archivo `package.json` y descargará todas las librerías requeridas.
 
 ---
@@ -2133,11 +2204,11 @@ TalentOS utiliza una base de datos local (Dexie.js) para funcionar, pero para la
 
 1.  **Configura tu proyecto de Supabase:** Si aún no lo has hecho, necesitarás una cuenta de Supabase y crear un nuevo proyecto.
 2.  **Crea las Tablas:** Dentro de tu proyecto en Supabase, crea todas las tablas y campos exactamente como se especifica en nuestra guía del esquema.
-    -   🔗 **Referencia Obligatoria:** [**Guía del Esquema de Supabase**](./supabase_schema.md)
+    - 🔗 **Referencia Obligatoria:** [**Guía del Esquema de Supabase**](./supabase_schema.md)
 3.  **Obtén tus Credenciales:** Necesitarás tres credenciales de la sección `Project Settings > API` de tu proyecto de Supabase.
-    -   **Project URL**
-    -   **Project API Keys -> `anon` `public`**
-    -   **Project API Keys -> `service_role` `secret`**
+    - **Project URL**
+    - **Project API Keys -> `anon` `public`**
+    - **Project API Keys -> `service_role` `secret`**
 
 Guarda estas tres credenciales, las usarás en el siguiente paso.
 
@@ -2167,7 +2238,7 @@ La aplicación necesita claves secretas para conectarse a servicios externos. Es
     # Clave de API para Google Gemini (para las funciones de IA)
     # Obtenla desde Google AI Studio
     GOOGLE_API_KEY="TU_CLAVE_API_DE_GOOGLE_AI"
-    
+
     # --- Configuración de Email (Opcional pero Recomendado) ---
     # Clave de API de Resend para enviar emails
     RESEND_API_KEY="TU_CLAVE_API_DE_RESEND"
@@ -2199,11 +2270,11 @@ La aplicación debería estar disponible en `http://localhost:3000` (o el puerto
 
 La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) estará vacía. Para facilitar el desarrollo, el sistema la poblará automáticamente con datos de ejemplo.
 
--   **¿Cómo funciona?:** El archivo `src/lib/db-providers/dexie.ts` contiene una función `populateDatabase()` que se ejecuta al inicio. Si no detecta un usuario administrador (`user_1`), borra todas las tablas y las llena con los datos definidos en `src/lib/data.ts`.
--   **Inicio de Sesión:** Puedes usar cualquiera de las cuentas de prueba definidas en `src/app/login/page.tsx` para acceder. Por ejemplo, el usuario administrador:
-    -   **Email:** `elena.vargas@example.com`
-    -   **Contraseña:** `password123`
--   **Sincronización:** Recuerda que estos datos iniciales solo existen en tu navegador. Para subirlos a Supabase, ve a `Ajustes > Sincronización` y ejecuta el proceso de sincronización manual.
+- **¿Cómo funciona?:** El archivo `src/lib/db-providers/dexie.ts` contiene una función `populateDatabase()` que se ejecuta al inicio. Si no detecta un usuario administrador (`user_1`), borra todas las tablas y las llena con los datos definidos en `src/lib/data.ts`.
+- **Inicio de Sesión:** Puedes usar cualquiera de las cuentas de prueba definidas en `src/app/login/page.tsx` para acceder. Por ejemplo, el usuario administrador:
+  - **Email:** `elena.vargas@example.com`
+  - **Contraseña:** `password123`
+- **Sincronización:** Recuerda que estos datos iniciales solo existen en tu navegador. Para subirlos a Supabase, ve a `Ajustes > Sincronización` y ejecuta el proceso de sincronización manual.
 
 ¡Y eso es todo! Ahora tienes un entorno de desarrollo de TalentOS completamente funcional.
 
@@ -2221,6 +2292,7 @@ La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) es
 ## ✅ Configuración Completada
 
 ### 1. Entorno de Desarrollo
+
 ```bash
 ✅ Node.js y npm instalados
 ✅ Dependencias instaladas (npm install)
@@ -2231,11 +2303,13 @@ La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) es
 ### 2. Arquitectura Técnica
 
 #### Base de Datos
+
 - **Local**: Dexie.js (IndexedDB) - v45 con índices optimizados
 - **Sincronización**: Supabase (opcional, configuración disponible)
 - **Modo**: Offline-first (funciona sin internet)
 
 #### Autenticación
+
 - **JWT**: Tokens de sesión con `jose` (HS256)
 - **Passwords**: Argon2id para hashing seguro
   - Servidor: `argon2` (nativo)
@@ -2243,6 +2317,7 @@ La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) es
 - **Sesiones**: Cookies httpOnly, secure en producción
 
 #### Notificaciones
+
 - **Push**: Web Notifications API nativa (sin Firebase)
 - **Email**: Resend API (opcional)
 - **WhatsApp**: Twilio API (opcional)
@@ -2250,17 +2325,19 @@ La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) es
 ### 3. Configuración de Build
 
 #### next.config.ts
+
 ```typescript
 serverExternalPackages: [
   'argon2-browser',
   'argon2',
   'twilio',
   '@sendgrid/mail',
-  'google-auth-library'
-]
+  'google-auth-library',
+];
 ```
 
 #### Webpack
+
 - Soporte para WebAssembly (`asyncWebAssembly: true`)
 - `.wasm` files como `asset/resource`
 - Externalización de paquetes de servidor
@@ -2268,6 +2345,7 @@ serverExternalPackages: [
 ### 4. Características Eliminadas/Simplificadas
 
 #### Firebase ❌
+
 - **Eliminado**: 24 enero 2026
 - **Razón**: Dependencia innecesaria, complejidad adicional
 - **Reemplazo**: Web Notifications API nativa
@@ -2277,6 +2355,7 @@ serverExternalPackages: [
   - Paquete `firebase` (53 dependencias)
 
 #### Service Workers ❌
+
 - **Estado**: Deshabilitados
 - **Razón**: Conflictos con desarrollo, errores de caching
 - **Implementación**: Script inline bloquea registros
@@ -2288,28 +2367,29 @@ serverExternalPackages: [
 
 ### ✅ Completados y Funcionales
 
-| Módulo | Estado | Archivos | Pruebas |
-|--------|--------|----------|---------|
-| **Autenticación** | ✅ Completo | `src/lib/auth/*`, `src/app/api/auth/*` | ⏳ Pendiente |
-| **Cursos** | ✅ Completo | `src/app/dashboard/courses/*` | ✅ Funcional |
-| **Usuarios** | ✅ Completo | `src/app/dashboard/users/*` | ✅ Funcional |
-| **Certificados** | ✅ Completo | `src/app/dashboard/certificates/*` | ⏳ Pendiente |
-| **PDI** | ✅ Completo | `src/app/dashboard/pdi/*` | ⏳ Pendiente |
-| **Compliance** | ✅ Completo | `src/app/dashboard/compliance/*` | ⏳ Pendiente |
-| **Backups** | ✅ Completo | `src/lib/backup-service.ts`, `src/components/settings/backup-manager.tsx` | ⏳ Pendiente |
-| **Monitoreo** | ✅ Completo | `src/lib/db-monitoring.ts` | ⏳ Pendiente |
-| **IA (Genkit)** | ✅ Completo | `src/ai/*` | ⏳ Pendiente |
-| **Gamificación** | ✅ Completo | `src/lib/db-providers/dexie.ts` (badges, points) | ✅ Funcional |
-| **Chat** | ✅ Completo | `src/app/dashboard/chat/*` | ✅ Funcional |
-| **Calendario** | ✅ Completo | `src/app/dashboard/calendar/*` | ✅ Funcional |
-| **Planes de Carrera** | ✅ Completo | `src/app/dashboard/learning-paths/*` | ✅ Funcional |
-| **Análisis** | ✅ Completo | `src/app/dashboard/analytics/*` | ✅ Funcional |
+| Módulo                | Estado      | Archivos                                                                  | Pruebas      |
+| --------------------- | ----------- | ------------------------------------------------------------------------- | ------------ |
+| **Autenticación**     | ✅ Completo | `src/lib/auth/*`, `src/app/api/auth/*`                                    | ⏳ Pendiente |
+| **Cursos**            | ✅ Completo | `src/app/dashboard/courses/*`                                             | ✅ Funcional |
+| **Usuarios**          | ✅ Completo | `src/app/dashboard/users/*`                                               | ✅ Funcional |
+| **Certificados**      | ✅ Completo | `src/app/dashboard/certificates/*`                                        | ⏳ Pendiente |
+| **PDI**               | ✅ Completo | `src/app/dashboard/pdi/*`                                                 | ⏳ Pendiente |
+| **Compliance**        | ✅ Completo | `src/app/dashboard/compliance/*`                                          | ⏳ Pendiente |
+| **Backups**           | ✅ Completo | `src/lib/backup-service.ts`, `src/components/settings/backup-manager.tsx` | ⏳ Pendiente |
+| **Monitoreo**         | ✅ Completo | `src/lib/db-monitoring.ts`                                                | ⏳ Pendiente |
+| **IA (Genkit)**       | ✅ Completo | `src/ai/*`                                                                | ⏳ Pendiente |
+| **Gamificación**      | ✅ Completo | `src/lib/db-providers/dexie.ts` (badges, points)                          | ✅ Funcional |
+| **Chat**              | ✅ Completo | `src/app/dashboard/chat/*`                                                | ✅ Funcional |
+| **Calendario**        | ✅ Completo | `src/app/dashboard/calendar/*`                                            | ✅ Funcional |
+| **Planes de Carrera** | ✅ Completo | `src/app/dashboard/learning-paths/*`                                      | ✅ Funcional |
+| **Análisis**          | ✅ Completo | `src/app/dashboard/analytics/*`                                           | ✅ Funcional |
 
 ---
 
 ## 🚀 Cómo Empezar
 
 ### 1. Servidor ya está corriendo
+
 ```bash
 # El servidor está activo en:
 http://localhost:3000
@@ -2317,6 +2397,7 @@ http://192.168.1.137:3000 (red local)
 ```
 
 ### 2. Primer acceso
+
 ```
 Usuario de prueba (Admin):
 - Email: elena.vargas@example.com
@@ -2324,6 +2405,7 @@ Usuario de prueba (Admin):
 ```
 
 ### 3. Verificaciones recomendadas
+
 1. **Login** → Probar autenticación JWT
 2. **Dashboard** → Ver métricas generales
 3. **Usuarios** → Verificar listado con paginación
@@ -2338,6 +2420,7 @@ Usuario de prueba (Admin):
 ## 🔧 Troubleshooting
 
 ### Compilación lenta inicial
+
 - **Primera compilación**: ~2 minutos (1398 módulos, WebAssembly)
 - **Siguientes compilaciones**: ~6-10 segundos (caché)
 - **Normal**: La primera carga es lenta por argon2-browser WASM
@@ -2345,6 +2428,7 @@ Usuario de prueba (Admin):
 ### Errores comunes
 
 #### "Cannot find module 'argon2'"
+
 ```bash
 # Solución: Limpiar cache
 rm -rf .next node_modules/.cache
@@ -2352,12 +2436,14 @@ npm run dev
 ```
 
 #### "Module not found: Can't resolve './vendor-chunks/twilio.js'"
+
 ```bash
 # Ya solucionado en next.config.ts
 # serverExternalPackages incluye twilio
 ```
 
 #### Service Worker errors
+
 ```bash
 # Ya solucionado: Service workers completamente deshabilitados
 # Si persiste: Limpiar cache del navegador (Ctrl+Shift+Delete)
@@ -2368,6 +2454,7 @@ npm run dev
 ## 📝 Próximos Pasos
 
 ### Pruebas de Usuario
+
 - [ ] Probar flujo completo de autenticación
 - [ ] Crear curso con contenido
 - [ ] Inscribir usuario y completar curso
@@ -2377,6 +2464,7 @@ npm run dev
 - [ ] Exportar/importar backup
 
 ### Configuración Producción (Opcional)
+
 - [ ] Configurar Supabase para sincronización
 - [ ] Configurar Resend para emails
 - [ ] Configurar Twilio para WhatsApp
@@ -2384,6 +2472,7 @@ npm run dev
 - [ ] Revisar `docs/DEPLOYMENT.md`
 
 ### Optimizaciones Futuras
+
 - [ ] Re-habilitar PWA con service worker mejorado (opcional)
 - [ ] Implementar cola de notificaciones del lado del servidor
 - [ ] Cache de contenido estático con CDN
@@ -2393,14 +2482,14 @@ npm run dev
 
 ## 📚 Documentación Adicional
 
-| Documento | Descripción |
-|-----------|-------------|
-| [APP_OVERVIEW.md](./APP_OVERVIEW.md) | Arquitectura y funcionalidades completas |
-| [SETUP_GUIDE.md](./SETUP_GUIDE.md) | Guía de instalación paso a paso |
-| [FEATURES_SUMMARY.md](./FEATURES_SUMMARY.md) | Lista de todas las funcionalidades |
-| [PLAN_PROGRESS.md](./PLAN_PROGRESS.md) | Estado del plan de desarrollo |
-| [CHANGELOG.md](./CHANGELOG.md) | Historial de cambios |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | Guía de despliegue en producción |
+| Documento                                    | Descripción                              |
+| -------------------------------------------- | ---------------------------------------- |
+| [APP_OVERVIEW.md](./APP_OVERVIEW.md)         | Arquitectura y funcionalidades completas |
+| [SETUP_GUIDE.md](./SETUP_GUIDE.md)           | Guía de instalación paso a paso          |
+| [FEATURES_SUMMARY.md](./FEATURES_SUMMARY.md) | Lista de todas las funcionalidades       |
+| [PLAN_PROGRESS.md](./PLAN_PROGRESS.md)       | Estado del plan de desarrollo            |
+| [CHANGELOG.md](./CHANGELOG.md)               | Historial de cambios                     |
+| [DEPLOYMENT.md](./DEPLOYMENT.md)             | Guía de despliegue en producción         |
 
 ---
 
@@ -2473,6 +2562,7 @@ npm run dev
 **Qué hemos hecho:** El registro del Service Worker de la PWA se retrasa 1 segundo para no coincidir con el arranque de las extensiones.
 
 **Si siguen saliendo:** Son de las extensiones, no de TalentOS. Puedes:
+
 - Probar en ventana de incógnito (menos extensiones)
 - Desactivar extensiones una a una para localizar cuál lo provoca
 - Ignorarlas; no afectan al funcionamiento de la app
@@ -2523,6 +2613,7 @@ docker-compose -f docker-compose.authentik.yml logs -f
 ```
 
 Esperar ~30-60 segundos hasta ver:
+
 ```
 authentik_server | Successfully booted authentik
 ```
@@ -2641,6 +2732,7 @@ AUTHENTIK_ISSUER=http://localhost:9000/application/o/talentos/
 Ver: `docs/AUTHENTIK_SETUP.md` secciones "Paso 6 a 10" para código completo.
 
 Archivos a crear:
+
 - `src/app/api/auth/[...nextauth]/route.ts`
 - `src/types/next-auth.d.ts`
 - `src/app/auth/signin/page.tsx`
@@ -2688,18 +2780,21 @@ docker-compose -f docker-compose.authentik.yml down -v
 ## 🆘 Ayuda Rápida
 
 **Problema**: Puerto 9000 ocupado
+
 ```bash
 sudo lsof -i :9000
 # Detener el proceso o cambiar puerto en .env.authentik
 ```
 
 **Problema**: No inicia PostgreSQL
+
 ```bash
 docker-compose -f docker-compose.authentik.yml logs postgresql
 # Verificar que PG_PASS esté configurado en .env.authentik
 ```
 
 **Problema**: Redirect URI mismatch
+
 - Verificar URIs exactas (incluir `/` final)
 - Deben coincidir en Google/Microsoft/Authentik
 
@@ -2738,15 +2833,15 @@ docker-compose -f docker-compose.authentik.yml logs postgresql
 
 ### Comparación con Keycloak
 
-| Característica | Authentik | Keycloak |
-|----------------|-----------|----------|
-| **Facilidad** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐☆☆ |
-| **UI Moderna** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐☆☆ |
-| **Recursos** | 512MB RAM | 1-2GB RAM |
-| **Configuración** | UI intuitiva | Más complejo |
-| **Documentación** | Excelente | Buena pero densa |
-| **Comunidad** | Creciendo | Muy grande |
-| **Empresarial** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Característica    | Authentik    | Keycloak         |
+| ----------------- | ------------ | ---------------- |
+| **Facilidad**     | ⭐⭐⭐⭐⭐   | ⭐⭐⭐☆☆         |
+| **UI Moderna**    | ⭐⭐⭐⭐⭐   | ⭐⭐⭐☆☆         |
+| **Recursos**      | 512MB RAM    | 1-2GB RAM        |
+| **Configuración** | UI intuitiva | Más complejo     |
+| **Documentación** | Excelente    | Buena pero densa |
+| **Comunidad**     | Creciendo    | Muy grande       |
+| **Empresarial**   | ⭐⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐       |
 
 **Conclusión**: Para tu caso, Authentik es mejor porque es más fácil y tiene todo lo que necesitas.
 
@@ -2755,16 +2850,19 @@ docker-compose -f docker-compose.authentik.yml logs postgresql
 ## 📦 Requisitos
 
 ### Software
+
 - ✅ Docker (>= 20.10)
 - ✅ Docker Compose (>= 2.0)
 - ✅ Node.js (>= 18) - ya lo tienes
 - ✅ Navegador moderno
 
 ### Accesos Externos
+
 - 🔑 Cuenta de Google Cloud Console (para Google OAuth)
 - 🔑 Cuenta de Microsoft Azure Portal (para Microsoft OAuth)
 
 ### Puertos Necesarios
+
 - `9000` - Authentik Web UI
 - `9443` - Authentik HTTPS (opcional)
 - `3000` - TalentOS (Next.js)
@@ -2795,6 +2893,7 @@ cat .env
 ```
 
 **Resultado esperado**:
+
 ```env
 AUTHENTIK_SECRET_KEY=tu-secret-key-generado-aqui
 PG_PASS=tu-postgres-password-generado-aqui
@@ -3006,8 +3105,8 @@ docker-compose logs -f
 
 ```
 Nombre: TalentOS SSO
-Tipos de cuenta soportados: 
-  ✅ Cuentas en cualquier directorio organizacional 
+Tipos de cuenta soportados:
+  ✅ Cuentas en cualquier directorio organizacional
      y cuentas personales de Microsoft
 Redirect URI:
   Web: http://localhost:9000/source/oauth/callback/microsoft/
@@ -3059,6 +3158,7 @@ Click **Register**
      "tenant": "common"
    }
    ```
+
    - `"common"` = cualquier cuenta Microsoft
    - `"tu-tenant-id"` = solo tu organización
 5. **Save**
@@ -3091,19 +3191,21 @@ Click **Register**
 1. Authentik Admin: **Applications** > **Providers**
 2. Click: **Create** > **OAuth2/OpenID Provider**
 3. Configurar:
+
    ```
    Name: TalentOS Provider
    Authorization flow: default-provider-authorization-implicit-consent
-   
+
    Client type: Confidential
    Client ID: talentos-client
    Client Secret: [GENERAR NUEVO - copiar este valor]
-   
+
    Redirect URIs:
      http://localhost:3000/api/auth/callback/authentik
-   
+
    Signing Key: authentik Self-signed Certificate
    ```
+
 4. **Save** y **copiar Client Secret**
 
 ### Paso 3: Vincular Provider con Aplicación
@@ -3139,6 +3241,7 @@ EOF
 ```
 
 **Generar NEXTAUTH_SECRET**:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -3275,7 +3378,7 @@ export default function SignInPage() {
           {/* Botones directos (opcional) */}
           <div className="grid grid-cols-2 gap-4">
             <Button
-              onClick={() => signIn('authentik', { 
+              onClick={() => signIn('authentik', {
                 callbackUrl: '/dashboard',
                 // Forzar Google (si configuraste múltiples IDPs en Authentik)
               })}
@@ -3304,7 +3407,7 @@ export default function SignInPage() {
             </Button>
 
             <Button
-              onClick={() => signIn('authentik', { 
+              onClick={() => signIn('authentik', {
                 callbackUrl: '/dashboard',
               })}
               variant="outline"
@@ -3383,10 +3486,7 @@ Crear: `src/middleware.ts` (en la raíz de `src/`)
 export { default } from 'next-auth/middleware';
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/api/:path*',
-  ],
+  matcher: ['/dashboard/:path*', '/api/:path*'],
 };
 ```
 
@@ -3432,12 +3532,14 @@ import { signOut } from 'next-auth/react';
 ### Problema: "Redirect URI mismatch"
 
 **Solución**:
+
 - Verificar que las URIs en Google/Microsoft/Authentik sean **exactamente iguales**
 - Incluir la `/` final en: `http://localhost:9000/source/oauth/callback/google/`
 
 ### Problema: "Invalid client secret"
 
 **Solución**:
+
 - Regenerar Client Secret en Authentik
 - Actualizar `.env.local` con el nuevo valor
 - Reiniciar Next.js: `npm run dev`
@@ -3445,22 +3547,24 @@ import { signOut } from 'next-auth/react';
 ### Problema: "CORS error"
 
 **Solución**:
+
 - Authentik debe estar en `http://localhost:9000` (mismo dominio que desarrollo)
 - O configurar CORS en Authentik: **System** > **Settings** > **CORS allowed origins**: `http://localhost:3000`
 
 ### Problema: "User not found in database"
 
 **Solución**:
+
 - Implementar sincronización automática en callback `signIn`:
 
 ```typescript
 async signIn({ user, account, profile }) {
   // Conectar a Dexie
   const { createUser } = await import('@/lib/db');
-  
+
   // Verificar si usuario existe
   const existingUser = await db.users.where('email').equals(user.email!).first();
-  
+
   if (!existingUser) {
     // Crear usuario automáticamente
     await createUser({
@@ -3471,7 +3575,7 @@ async signIn({ user, account, profile }) {
       status: 'pending', // requiere aprobación de admin
     });
   }
-  
+
   return true;
 }
 ```
@@ -3519,6 +3623,7 @@ docker-compose logs -f server
 ## 🎉 ¡Listo!
 
 Tu TalentOS ahora tiene:
+
 - ✅ SSO empresarial autoalojado (Authentik)
 - ✅ Login con Google
 - ✅ Login con Microsoft/Outlook
@@ -3538,7 +3643,6 @@ Tu TalentOS ahora tiene:
 
 ## DEPLOYMENT.md
 
-
 # Guía de Despliegue
 
 Esta aplicación es un proyecto estándar de Next.js y puede ser desplegada en cualquier plataforma que soporte Node.js. A continuación, se detallan los pasos para desplegar en Vercel (la opción recomendada) y en un servidor Node.js genérico.
@@ -3555,37 +3659,40 @@ Antes de desplegar, necesitas configurar las variables de entorno. Estas son cla
 
 Tu aplicación necesita conectarse a tu base de Supabase para la sincronización de datos y la autenticación.
 
--   `NEXT_PUBLIC_SUPABASE_URL`: La URL de tu proyecto Supabase.
--   `NEXT_PUBLIC_SUPABASE_ANON_KEY`: La clave anónima (public) de tu proyecto.
--   `SUPABASE_SERVICE_ROLE_KEY`: Tu clave de 'service_role'. **Es secreta y nunca debe ser expuesta en el lado del cliente.** Se usa en el servidor para la sincronización.
+- `NEXT_PUBLIC_SUPABASE_URL`: La URL de tu proyecto Supabase.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: La clave anónima (public) de tu proyecto.
+- `SUPABASE_SERVICE_ROLE_KEY`: Tu clave de 'service_role'. **Es secreta y nunca debe ser expuesta en el lado del cliente.** Se usa en el servidor para la sincronización.
 
 ### Configuración del Proveedor de Autenticación (Opcional, por defecto Dexie)
+
 La aplicación está preparada para usar diferentes sistemas de autenticación.
--   `NEXT_PUBLIC_AUTH_PROVIDER`: Define qué sistema usar. Opciones: `dexie`, `supabase`.
-    -   `dexie`: Usa el sistema de login local (por defecto).
-    -   `supabase`: Usa Supabase Auth.
+
+- `NEXT_PUBLIC_AUTH_PROVIDER`: Define qué sistema usar. Opciones: `dexie`, `supabase`.
+  - `dexie`: Usa el sistema de login local (por defecto).
+  - `supabase`: Usa Supabase Auth.
 
 ---
 
 ### Variables de IA (Obligatorio para funciones de IA)
+
 Para que las funcionalidades de Inteligencia Artificial funcionen, debes proporcionar al menos una clave API.
 
--   `GOOGLE_API_KEY`: Tu clave API de Google AI Studio para usar Gemini.
+- `GOOGLE_API_KEY`: Tu clave API de Google AI Studio para usar Gemini.
 
 ---
 
 ### Variables de Notificaciones (Opcional)
+
 Si deseas que el envío de notificaciones por email o WhatsApp funcione, configura estas variables.
 
--   `RESEND_API_KEY`: Tu clave API de Resend para el envío de correos transaccionales.
--   `TWILIO_ACCOUNT_SID`: El SID de tu cuenta de Twilio.
--   `TWILIO_AUTH_TOKEN`: El token de autenticación de tu cuenta de Twilio.
--   `TWILIO_WHATSAPP_FROM`: Tu número de teléfono de WhatsApp de Twilio (formato: `+14155238886`).
--   `TWILIO_WHATSAPP_TO_TEST`: Un número de teléfono para pruebas (formato: `+34123456789`).
--   `NEXT_PUBLIC_FIREBASE_VAPID_KEY`: La clave VAPID de Cloud Messaging para notificaciones push.
--   `FIREBASE_CLIENT_EMAIL`: Email de la cuenta de servicio (para notificaciones del servidor).
--   `FIREBASE_PRIVATE_KEY`: Clave privada de la cuenta de servicio (para notificaciones del servidor).
-
+- `RESEND_API_KEY`: Tu clave API de Resend para el envío de correos transaccionales.
+- `TWILIO_ACCOUNT_SID`: El SID de tu cuenta de Twilio.
+- `TWILIO_AUTH_TOKEN`: El token de autenticación de tu cuenta de Twilio.
+- `TWILIO_WHATSAPP_FROM`: Tu número de teléfono de WhatsApp de Twilio (formato: `+14155238886`).
+- `TWILIO_WHATSAPP_TO_TEST`: Un número de teléfono para pruebas (formato: `+34123456789`).
+- `NEXT_PUBLIC_FIREBASE_VAPID_KEY`: La clave VAPID de Cloud Messaging para notificaciones push.
+- `FIREBASE_CLIENT_EMAIL`: Email de la cuenta de servicio (para notificaciones del servidor).
+- `FIREBASE_PRIVATE_KEY`: Clave privada de la cuenta de servicio (para notificaciones del servidor).
 
 ---
 
@@ -3595,8 +3702,8 @@ Esta aplicación es una **Progressive Web App (PWA)**, lo que significa que los 
 
 Para que las funcionalidades de PWA (como el aviso de instalación o el funcionamiento offline) se activen, **es obligatorio que la aplicación se sirva a través de una conexión segura (HTTPS)**.
 
--   Plataformas como **Vercel** gestionan esto automáticamente.
--   Si despliegas en tu **propio servidor**, deberás configurar un certificado SSL (se recomienda usar Let's Encrypt).
+- Plataformas como **Vercel** gestionan esto automáticamente.
+- Si despliegas en tu **propio servidor**, deberás configurar un certificado SSL (se recomienda usar Let's Encrypt).
 
 ---
 
@@ -3608,8 +3715,8 @@ Vercel son los creadores de Next.js, por lo que el despliegue es increíblemente
 2.  **Regístrate en Vercel** usando tu cuenta de Git.
 3.  **Importa tu proyecto**: En el dashboard de Vercel, haz clic en "Add New... -> Project" y selecciona el repositorio de tu aplicación.
 4.  **Configura el Proyecto**: Vercel detectará automáticamente que es un proyecto de Next.js y preconfigurará todo por ti.
-    -   Ve a la sección "Environment Variables" y añade todas las variables mencionadas en el paso 1.
-    -   Vercel proporciona automáticamente un certificado SSL, cumpliendo con el requisito de HTTPS para la PWA.
+    - Ve a la sección "Environment Variables" y añade todas las variables mencionadas en el paso 1.
+    - Vercel proporciona automáticamente un certificado SSL, cumpliendo con el requisito de HTTPS para la PWA.
 5.  **Despliega**: Haz clic en el botón "Deploy". Vercel construirá y desplegará tu aplicación.
 
 Cada vez que hagas `git push` a tu rama principal, Vercel redesplegará automáticamente los cambios.
@@ -3623,6 +3730,7 @@ Cada vez que hagas `git push` a tu rama principal, Vercel redesplegará automát
 ## 📋 Resumen
 
 TalentOS incluye un sistema completo de registro y aprobación de usuarios que permite:
+
 - **Registro público** de nuevos usuarios
 - **Aprobación manual** para roles de gestión
 - **Activación automática** para roles básicos
@@ -3637,6 +3745,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Ruta:** `/register`
 
 **Proceso:**
+
 1. El usuario completa el formulario con:
    - Nombre completo
    - Email
@@ -3669,6 +3778,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Ruta:** `/pending-approval`
 
 **Contenido:**
+
 - Mensaje informativo explicando que la cuenta está pendiente
 - Botón para volver al login
 - El usuario **NO puede iniciar sesión** hasta ser aprobado
@@ -3680,6 +3790,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Ruta:** `/dashboard/users`
 
 **Acceso:** Solo para roles:
+
 - `Gestor de RRHH`
 - `Jefe de Formación`
 - `Administrador General`
@@ -3687,6 +3798,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Funcionalidades:**
 
 #### A. Sección de Solicitudes Pendientes
+
 - **Ubicación:** Parte superior de la página
 - **Diseño:** Card destacado con fondo ámbar
 - **Información mostrada:**
@@ -3700,6 +3812,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 #### B. Acciones Disponibles
 
 **Aprobar Usuario:**
+
 - Click en botón "Aprobar" (verde)
 - Confirmación mediante diálogo
 - **Efectos:**
@@ -3709,6 +3822,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
   - El usuario puede iniciar sesión inmediatamente
 
 **Rechazar Usuario:**
+
 - Click en botón "Rechazar" (rojo)
 - Confirmación mediante diálogo
 - **Efectos:**
@@ -3723,6 +3837,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Sección:** Tabla principal de usuarios
 
 **Funcionalidades:**
+
 - **Filtros:**
   - Por rol (múltiple selección)
   - Por departamento (múltiple selección)
@@ -3772,6 +3887,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Tipo:** `enrollment_approved`
 
 **Mensaje:**
+
 ```
 ¡Tu cuenta ha sido aprobada! Ya puedes acceder a todas las funcionalidades de la plataforma.
 ```
@@ -3787,6 +3903,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 ### Página de Registro (`/register`)
 
 **Características:**
+
 - Formulario limpio y claro
 - Validación en tiempo real
 - Mensajes de ayuda contextuales
@@ -3796,6 +3913,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 ### Página de Gestión (`/dashboard/users`)
 
 **Características:**
+
 - **Card destacado** para usuarios pendientes (fondo ámbar)
 - **Tabla principal** para usuarios activos
 - **Filtros avanzados** por rol y departamento
@@ -3812,6 +3930,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Tabla:** `users`
 
 **Campos relevantes:**
+
 - `status`: `'pending_approval' | 'approved' | 'suspended'`
 - `role`: Rol del usuario
 - `email`: Email único
@@ -3820,22 +3939,25 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 ### Funciones Clave
 
 **Registro:**
+
 ```typescript
 db.addUser({
   name: string,
   email: string,
   password: string,
   role: Role,
-  department: Department
-})
+  department: Department,
+});
 ```
 
 **Aprobación:**
+
 ```typescript
 db.updateUserStatus(userId: string, 'approved')
 ```
 
 **Rechazo:**
+
 ```typescript
 db.deleteUser(userId: string)
 ```
@@ -3846,19 +3968,19 @@ db.deleteUser(userId: string)
 
 ### Roles que Requieren Aprobación
 
-| Rol | Requiere Aprobación | Razón |
-|-----|---------------------|-------|
-| Formador | ✅ Sí | Acceso a crear/editar cursos |
-| Jefe de Formación | ✅ Sí | Gestión completa de formación |
-| Gestor de RRHH | ✅ Sí | Acceso a datos de empleados |
-| Administrador General | ✅ Sí | Acceso completo al sistema |
+| Rol                   | Requiere Aprobación | Razón                         |
+| --------------------- | ------------------- | ----------------------------- |
+| Formador              | ✅ Sí               | Acceso a crear/editar cursos  |
+| Jefe de Formación     | ✅ Sí               | Gestión completa de formación |
+| Gestor de RRHH        | ✅ Sí               | Acceso a datos de empleados   |
+| Administrador General | ✅ Sí               | Acceso completo al sistema    |
 
 ### Roles con Activación Automática
 
-| Rol | Activación | Razón |
-|-----|------------|-------|
-| Trabajador | ✅ Automática | Usuario básico, sin permisos especiales |
-| Personal Externo | ✅ Automática | Usuario temporal, acceso limitado |
+| Rol              | Activación    | Razón                                   |
+| ---------------- | ------------- | --------------------------------------- |
+| Trabajador       | ✅ Automática | Usuario básico, sin permisos especiales |
+| Personal Externo | ✅ Automática | Usuario temporal, acceso limitado       |
 
 ---
 
@@ -3937,6 +4059,7 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 ## 🎨 Cambios Visuales Principales
 
 ### 1. **Sidebar Oscuro** (Estilo Frappe)
+
 - Fondo oscuro profesional
 - Texto claro
 - Hover suave
@@ -3945,12 +4068,14 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 - Drawer en móvil
 
 ### 2. **Topbar Claro**
+
 - Fondo blanco/claro
 - Border sutil
 - Shadow ligero
 - Altura compacta (56px)
 
 ### 3. **Componentes Estilo Frappe**
+
 - **Cards**: Sombras sutiles, bordes redondeados (6px)
 - **Botones**: Bordes redondeados (4px), sombras en primary
 - **Tablas**: Header con fondo, bordes sutiles, hover suave
@@ -3958,6 +4083,7 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 - **Modales**: Overlay con blur, sombras grandes
 
 ### 4. **Transiciones Suaves**
+
 - Fade entre páginas (300ms)
 - Hover con transiciones rápidas (150ms)
 - Animaciones consistentes
@@ -3984,16 +4110,19 @@ TalentOS ahora tiene el look & feel completo de **Frappe HRMS** sin cambiar ning
 ## 🎯 Páginas Ejemplo
 
 ### Dashboard
+
 - Grid de StatCards (4 columnas)
 - Cards con hover suave
 - Layout responsive
 
 ### Empleados (`/dashboard/users`)
+
 - Tabla estilo Frappe
 - Filtros y paginación
 - Badges de estado
 
 ### Nómina (`/dashboard/nomina`) ✨ NUEVO
+
 - Página ejemplo completa
 - StatCards de resumen
 - Tabla con datos mock
@@ -4038,6 +4167,7 @@ duration-frappe-slow /* 300ms */
 **Archivo**: `src/styles/design-tokens.css`
 
 Todos los tokens están disponibles como variables CSS:
+
 - `--frappe-sidebar-bg`
 - `--frappe-primary`
 - `--frappe-shadow`
@@ -4049,6 +4179,7 @@ Todos los tokens están disponibles como variables CSS:
 ## 🚀 Verificación Rápida
 
 ### 1. Sidebar Oscuro
+
 ```
 ✅ Abre /dashboard
 ✅ Sidebar debe tener fondo oscuro
@@ -4057,6 +4188,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 2. Topbar Claro
+
 ```
 ✅ Header debe tener fondo claro
 ✅ Border bottom sutil
@@ -4064,6 +4196,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 3. Cards
+
 ```
 ✅ Cards deben tener sombra sutil
 ✅ Bordes redondeados (6px)
@@ -4071,6 +4204,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 4. Tablas
+
 ```
 ✅ Header con fondo gris claro
 ✅ Bordes sutiles entre filas
@@ -4078,6 +4212,7 @@ Todos los tokens están disponibles como variables CSS:
 ```
 
 ### 5. PWA
+
 ```
 ✅ Abre DevTools → Application → Service Workers
 ✅ Debe estar registrado "talentos-v1"
@@ -4129,6 +4264,7 @@ Ver `docs/FRAPPE_UI_IMPLEMENTATION.md` para detalles técnicos completos.
 ### 1. Verificar que el servidor está corriendo
 
 El servidor de desarrollo debería estar iniciándose. Verifica en tu terminal que veas:
+
 ```
 ✓ Ready in X seconds
 ○ Local: http://localhost:3000
@@ -4143,10 +4279,12 @@ Abre tu navegador y ve a: **http://localhost:3000**
 ## 🔑 Credenciales de Prueba
 
 ### Usuario Administrador
+
 - **Email**: `elena.vargas@example.com`
 - **Password**: `password123`
 
 ### Otros usuarios disponibles
+
 Revisa `src/lib/data.ts` para ver todos los usuarios de prueba con el mismo password.
 
 ---
@@ -4154,16 +4292,19 @@ Revisa `src/lib/data.ts` para ver todos los usuarios de prueba con el mismo pass
 ## ✅ Funcionalidades para Probar
 
 ### 1. Autenticación
+
 - ✅ Login con JWT (si `JWT_SECRET` está configurado)
 - ✅ Fallback a Dexie si no hay JWT
 - ✅ Sesión persistente
 
 ### 2. Certificados
+
 - **Ruta**: `/dashboard/certificates`
 - ✅ Ver certificados con paginación
 - ✅ Verificar certificados públicamente
 
 ### 3. PDI (Planes de Desarrollo Individual)
+
 - **Ruta**: `/dashboard/pdi`
 - ✅ Ver listado de PDIs
 - ✅ Crear nuevo PDI (como manager/admin)
@@ -4171,6 +4312,7 @@ Revisa `src/lib/data.ts` para ver todos los usuarios de prueba con el mismo pass
 - ✅ Añadir revisiones y marcar hitos
 
 ### 4. Compliance y Normativas
+
 - **Ruta**: `/dashboard/compliance`
 - ✅ Ver normativas activas
 - ✅ Crear nueva normativa
@@ -4179,6 +4321,7 @@ Revisa `src/lib/data.ts` para ver todos los usuarios de prueba con el mismo pass
 - ✅ Ver alertas de vencimiento
 
 ### 5. Backups y Monitoreo
+
 - **Ruta**: `/dashboard/settings` > Tab "Backups y Mantenimiento"
 - ✅ Ver estadísticas de la BD
 - ✅ Exportar backup
@@ -4187,7 +4330,9 @@ Revisa `src/lib/data.ts` para ver todos los usuarios de prueba con el mismo pass
 - ✅ Ejecutar limpieza de datos antiguos
 
 ### 6. Paginación
+
 Prueba la paginación en:
+
 - `/dashboard/users` (20 por página)
 - `/dashboard/courses` (12 por página)
 - `/dashboard/certificates` (15 por página)
@@ -4199,6 +4344,7 @@ Prueba la paginación en:
 ## 🧪 Casos de Prueba Sugeridos
 
 ### Caso 1: Crear un PDI
+
 1. Login como administrador
 2. Ir a `/dashboard/pdi`
 3. Click en "Crear PDI"
@@ -4207,6 +4353,7 @@ Prueba la paginación en:
 6. Guardar y ver el detalle
 
 ### Caso 2: Registrar una Normativa
+
 1. Login como administrador
 2. Ir a `/dashboard/compliance`
 3. Click en "Nueva Normativa"
@@ -4215,6 +4362,7 @@ Prueba la paginación en:
 6. Guardar y ver el cumplimiento
 
 ### Caso 3: Exportar Backup
+
 1. Login como administrador
 2. Ir a `/dashboard/settings`
 3. Tab "Backups y Mantenimiento"
@@ -4223,6 +4371,7 @@ Prueba la paginación en:
 6. Descargar el archivo JSON
 
 ### Caso 4: Ver Monitoreo
+
 1. Login como administrador
 2. Ir a `/dashboard/settings` > "Backups y Mantenimiento"
 3. Revisar:
@@ -4236,6 +4385,7 @@ Prueba la paginación en:
 ## ⚠️ Solución de Problemas
 
 ### El servidor no inicia
+
 ```bash
 # Verificar que no hay otro proceso en el puerto 3000
 lsof -ti:3000 | xargs kill -9
@@ -4249,12 +4399,16 @@ npm run dev
 ```
 
 ### Error de JWT
+
 Si ves errores relacionados con JWT:
+
 - Crea `.env.local` con `JWT_SECRET` (mínimo 32 caracteres)
 - O simplemente no lo configures y usará autenticación local
 
 ### Error de base de datos
+
 Si hay problemas con IndexedDB:
+
 - Abre DevTools (F12)
 - Application > Storage > IndexedDB
 - Elimina la base de datos "TalentOSDB"
@@ -4280,17 +4434,20 @@ Si hay problemas con IndexedDB:
 ## 🔍 Inspeccionar en DevTools
 
 ### Ver la Base de Datos
+
 1. Abre DevTools (F12)
 2. Ve a **Application** > **Storage** > **IndexedDB**
 3. Expande **TalentOSDB**
 4. Explora las tablas y sus datos
 
 ### Ver Logs del Sistema
+
 1. Login como administrador
 2. Ve a `/dashboard/logs`
 3. Revisa los logs del sistema
 
 ### Verificar Autenticación
+
 1. DevTools > Application > Cookies
 2. Busca `auth-token` (si JWT está configurado)
 3. O verifica `localStorage` para `loggedInUserId`
@@ -4346,6 +4503,7 @@ Acceso a: TODO (gestión completa)
 ```
 
 **Permisos especiales:**
+
 - ✅ Gestión de usuarios
 - ✅ Configuración del sistema
 - ✅ Logs del sistema
@@ -4367,6 +4525,7 @@ Acceso a: Gestión de formación
 ```
 
 **Permisos:**
+
 - ✅ Crear/editar cursos
 - ✅ Gestión de inscripciones
 - ✅ Planes de Carrera
@@ -4391,6 +4550,7 @@ Acceso a: Gestión de personal
 ```
 
 **Permisos:**
+
 - ✅ Gestión de usuarios
 - ✅ Formadores
 - ✅ PDI
@@ -4413,6 +4573,7 @@ Acceso a: Impartir cursos
 ```
 
 **Permisos:**
+
 - ✅ Ver cursos asignados
 - ✅ Gestionar contenido de sus cursos
 - ✅ Responder en foros
@@ -4434,6 +4595,7 @@ Acceso a: Realizar cursos
 ```
 
 **Permisos:**
+
 - ✅ Ver catálogo de cursos
 - ✅ Inscribirse a cursos
 - ✅ Realizar cursos
@@ -4458,6 +4620,7 @@ Acceso a: Realizar cursos
 ```
 
 **Características:**
+
 - 🔕 **Notificaciones desactivadas** (para probar ese flujo)
 - 🏆 Mayor puntuación (210 puntos)
 - ✅ Mismos permisos que trabajador 1
@@ -4466,42 +4629,48 @@ Acceso a: Realizar cursos
 
 ## 📊 Resumen de Cuentas
 
-| # | Nombre | Email | Rol | Departamento | Puntos |
-|---|--------|-------|-----|--------------|--------|
-| 1 | Elena Vargas | elena.vargas@example.com | **Admin General** | Administración | 120 |
-| 2 | Lucía Fernández | lucia.fernandez@example.com | **Jefe Formación** | Formación | 300 |
-| 3 | Marcos Solís | marcos.solis@example.com | **Gestor RRHH** | Administración | 15 |
-| 4 | Dr. Alejandro Torres | alejandro.torres@example.com | **Formador** | Formación | 0 |
-| 5 | Carlos Ruiz | carlos.ruiz@example.com | **Trabajador** | Técnicos Emergencias | 50 |
-| 6 | Ana Gómez | ana.gomez@example.com | **Trabajador** | Teleoperadores | 210 |
+| #   | Nombre               | Email                        | Rol                | Departamento         | Puntos |
+| --- | -------------------- | ---------------------------- | ------------------ | -------------------- | ------ |
+| 1   | Elena Vargas         | elena.vargas@example.com     | **Admin General**  | Administración       | 120    |
+| 2   | Lucía Fernández      | lucia.fernandez@example.com  | **Jefe Formación** | Formación            | 300    |
+| 3   | Marcos Solís         | marcos.solis@example.com     | **Gestor RRHH**    | Administración       | 15     |
+| 4   | Dr. Alejandro Torres | alejandro.torres@example.com | **Formador**       | Formación            | 0      |
+| 5   | Carlos Ruiz          | carlos.ruiz@example.com      | **Trabajador**     | Técnicos Emergencias | 50     |
+| 6   | Ana Gómez            | ana.gomez@example.com        | **Trabajador**     | Teleoperadores       | 210    |
 
 ---
 
 ## 🎯 Cuentas Recomendadas para Pruebas
 
 ### Para Pruebas Generales
+
 ```
 elena.vargas@example.com
 password123
 ```
+
 **Por qué:** Acceso completo a todas las funcionalidades
 
 ---
 
 ### Para Probar Vista de Estudiante
+
 ```
 carlos.ruiz@example.com
 password123
 ```
+
 **Por qué:** Vista limitada, experiencia de usuario final
 
 ---
 
 ### Para Probar Gestión de Formación
+
 ```
 lucia.fernandez@example.com
 password123
 ```
+
 **Por qué:** Puede crear cursos, gestionar PDI y Compliance
 
 ---
@@ -4532,12 +4701,14 @@ password123
 ## 🔑 Hash de Contraseña
 
 El hash almacenado para `password123` es:
+
 ```
 $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0g1AYoRxTTZLBkd8ko
 ```
 
 **Algoritmo:** Argon2id  
 **Parámetros:**
+
 - Time cost: 3
 - Memory cost: 19456 KiB (~19 MB)
 - Parallelism: 1
@@ -4574,6 +4745,7 @@ $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0
 ## 🧪 Escenarios de Prueba Sugeridos
 
 ### Escenario 1: Flujo Completo de Estudiante
+
 ```
 1. Login: carlos.ruiz@example.com
 2. Navegar a Cursos
@@ -4584,6 +4756,7 @@ $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0
 ```
 
 ### Escenario 2: Gestión de Formación
+
 ```
 1. Login: lucia.fernandez@example.com
 2. Crear un nuevo curso
@@ -4594,6 +4767,7 @@ $argon2id$v=19$m=19456,t=3,p=1$fWWuu4iwZ3Dwpsyz4e8xTg$Rx5npDlr/O4dH2W7Ktb2eR6uF0
 ```
 
 ### Escenario 3: Administración Completa
+
 ```
 1. Login: elena.vargas@example.com
 2. Gestionar usuarios
@@ -4617,11 +4791,12 @@ console.log(newHash);
 ```
 
 O desde la consola del navegador después de login como admin:
+
 ```javascript
 // Ejecutar en DevTools Console
 const db = await import('/src/lib/db');
-await db.updateUser('user_1', { 
-  passwordHash: 'nuevo-hash-aqui' 
+await db.updateUser('user_1', {
+  passwordHash: 'nuevo-hash-aqui',
 });
 ```
 
@@ -4630,15 +4805,18 @@ await db.updateUser('user_1', {
 ## 📝 Notas Adicionales
 
 ### Notificaciones
+
 - **Elena, Carlos, Alejandro, Marcos**: Tienen notificaciones habilitadas
 - **Ana**: Notificaciones desactivadas (para probar ese flujo)
 - **Lucía**: Todas las notificaciones activadas (email, WhatsApp, app)
 
 ### Avatares
+
 - Todos usan avatares de https://i.pravatar.cc
 - Se generan automáticamente basados en el ID de usuario
 
 ### Datos Adicionales
+
 - Todos los usuarios tienen estado `approved`
 - Algunos usuarios tienen puntos de gamificación pre-asignados
 - Ana Gómez tiene la mayor puntuación (210) para probar clasificación
@@ -4648,6 +4826,7 @@ await db.updateUser('user_1', {
 ## 🚀 Inicio Rápido
 
 ### Login Rápido como Admin:
+
 ```bash
 1. Abrir http://localhost:3000
 2. Email: elena.vargas@example.com
@@ -4656,6 +4835,7 @@ await db.updateUser('user_1', {
 ```
 
 ### Probar Diferentes Roles:
+
 ```bash
 # Cerrar sesión (menú usuario > Cerrar Sesión)
 # Login con diferente cuenta
@@ -4684,6 +4864,7 @@ await db.updateUser('user_1', {
 # Resumen de Sesión - 24 Enero 2026
 
 ## 🎯 Objetivo de la Sesión
+
 Continuar con el plan de desarrollo y preparar TalentOS para pruebas funcionales completas.
 
 ---
@@ -4691,15 +4872,18 @@ Continuar con el plan de desarrollo y preparar TalentOS para pruebas funcionales
 ## ✅ Logros de esta Sesión
 
 ### 1. Configuración Inicial
+
 - ✅ **`.env.local` creado** con JWT_SECRET generado (64 caracteres)
 - ✅ **Variables de entorno documentadas** - Todas las configuraciones opcionales listadas
 - ✅ **Servidor Next.js funcionando** - http://localhost:3000
 - ✅ **Compilación exitosa** - 1398 módulos, primera carga ~2 minutos
 
 ### 2. Implementación del Menú Hamburguesa
+
 **Problema**: No había menú hamburguesa visible en desktop
 
 **Solución implementada**:
+
 ```typescript
 // src/components/ui/sidebar.tsx
 // Botón hamburguesa ahora visible en todas las pantallas
@@ -4724,6 +4908,7 @@ export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
 ```
 
 **Características**:
+
 - ☰ Visible en desktop y móvil
 - Animación suave (300ms)
 - Desktop: Colapsa a 72px (solo íconos)
@@ -4732,22 +4917,25 @@ export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
 - Tooltips en modo colapsado
 
 **Archivos modificados**:
+
 - `src/components/ui/sidebar.tsx` - Lógica del menú
 - `src/components/dashboard-header.tsx` - Eliminada restricción `md:hidden`
 
 ### 3. Corrección de Errores
 
 #### Error 1: `ReferenceError: X is not defined`
+
 **Causa**: Intento de usar ícono `X` de lucide-react sin importarlo
 
 **Solución**:
+
 ```typescript
 // Antes (ERROR):
-import { Menu, X } from "lucide-react"
+import { Menu, X } from 'lucide-react';
 // Ícono X usado pero no disponible
 
 // Después (CORRECTO):
-import { Menu } from "lucide-react"
+import { Menu } from 'lucide-react';
 // Solo Menu, animación simplificada
 ```
 
@@ -4756,9 +4944,11 @@ import { Menu } from "lucide-react"
 ---
 
 #### Error 2: `ReferenceError: totalPages is not defined`
+
 **Causa**: Página de cursos (`/dashboard/courses`) tenía paginación incompleta
 
 **Código faltante**:
+
 ```typescript
 // Variables ausentes:
 const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
@@ -4775,6 +4965,7 @@ useEffect(() => {
 ```
 
 **Solución implementada**:
+
 - ✅ Cálculo de `totalPages` y `paginatedCourses`
 - ✅ Handlers para filtros y cambio de página
 - ✅ Reset automático a página 1 al filtrar/buscar
@@ -4783,11 +4974,13 @@ useEffect(() => {
 **Resultado**: ✅ Paginación completamente funcional
 
 **Archivos modificados**:
+
 - `src/app/dashboard/courses/page.tsx`
 
 ### 4. Documentación Creada/Actualizada
 
 #### Nuevos Documentos:
+
 1. **`docs/TESTING_GUIDE.md`** (NUEVO - 400+ líneas)
    - Guía completa de pruebas funcionales
    - 6 fases de testing
@@ -4815,6 +5008,7 @@ useEffect(() => {
    - Estado final
 
 #### Documentos Actualizados:
+
 1. **`docs/CHANGELOG.md`**
    - Sección de argon2 y WebAssembly
    - Detalles de Service Workers
@@ -4833,6 +5027,7 @@ useEffect(() => {
 ## 📊 Estado Actual del Proyecto
 
 ### Módulos Implementados (100%)
+
 ```
 ✅ Autenticación (JWT + Argon2)
 ✅ Gestión de Cursos
@@ -4852,6 +5047,7 @@ useEffect(() => {
 ```
 
 ### Errores Corregidos en esta Sesión
+
 ```
 ✅ Menú hamburguesa no visible en desktop → Implementado
 ✅ ReferenceError: X is not defined → Corregido
@@ -4860,6 +5056,7 @@ useEffect(() => {
 ```
 
 ### Configuración Técnica
+
 ```
 ✅ .env.local creado con JWT_SECRET
 ✅ Servidor Next.js funcionando (localhost:3000)
@@ -4878,6 +5075,7 @@ useEffect(() => {
 Las siguientes tareas necesitan **interacción manual en el navegador**:
 
 ### Prioritarias (Fase 1)
+
 1. **Login y Dashboard**
    - Abrir http://localhost:3000
    - Login con `elena.vargas@example.com` / `password123`
@@ -4889,6 +5087,7 @@ Las siguientes tareas necesitan **interacción manual en el navegador**:
    - Verificar que no hay errores
 
 ### Módulos Específicos (Fase 2-5)
+
 3. **Gestión de Cursos**
    - Listar cursos con paginación
    - Crear nuevo curso
@@ -4914,6 +5113,7 @@ Las siguientes tareas necesitan **interacción manual en el navegador**:
    - (Opcional) Importar backup
 
 ### Flujo Completo (Fase 6)
+
 7. **End-to-End Test**
    - Crear curso
    - Inscribirse
@@ -4926,18 +5126,21 @@ Las siguientes tareas necesitan **interacción manual en el navegador**:
 ## 🔧 Comandos Útiles
 
 ### Ver estado del servidor
+
 ```bash
 tail -50 /tmp/nextjs-final.log
 ps aux | grep "next dev"
 ```
 
 ### Limpiar cache si hay problemas
+
 ```bash
 rm -rf .next node_modules/.cache
 npm run dev
 ```
 
 ### Verificar compilación
+
 ```bash
 curl -s http://localhost:3000 | head -20
 ```
@@ -4947,12 +5150,14 @@ curl -s http://localhost:3000 | head -20
 ## 📝 Notas Técnicas
 
 ### Primera Compilación
+
 - **Tiempo**: ~120 segundos (2 minutos)
 - **Módulos**: 1398
 - **Razón**: WebAssembly (argon2-browser) + muchas dependencias
 - **Siguientes compilaciones**: ~6-10 segundos (caché)
 
 ### Errores Normales en Consola
+
 ```
 ✅ React DevTools message - Solo info, no error
 ✅ Message channel closed - Extensiones del navegador, ignorar
@@ -4960,6 +5165,7 @@ curl -s http://localhost:3000 | head -20
 ```
 
 ### Mensajes que SÍ indican problemas
+
 ```
 ❌ "Cannot find module..." - Problema de dependencias
 ❌ "TypeError: ... is not a function" - Error de código
@@ -4972,10 +5178,12 @@ curl -s http://localhost:3000 | head -20
 ## 🎯 Próximos Pasos Inmediatos
 
 ### 1. Pruebas Funcionales (Usuario)
+
 **Tiempo estimado**: 90 minutos  
 **Guía**: `docs/TESTING_GUIDE.md`
 
 Empezar con:
+
 ```
 1. Abrir http://localhost:3000
 2. Login (elena.vargas@example.com / password123)
@@ -4984,20 +5192,26 @@ Empezar con:
 ```
 
 ### 2. Reporte de Resultados
+
 Documentar:
+
 - ✅ Funcionalidades que funcionan correctamente
 - ❌ Errores encontrados (con pasos para reproducir)
 - ⚠️ Advertencias o comportamientos extraños
 - 💡 Sugerencias de mejora
 
 ### 3. Correcciones si Necesario
+
 Según resultados de las pruebas:
+
 - Corregir errores críticos
 - Ajustar comportamientos
 - Mejorar UX donde sea necesario
 
 ### 4. Preparación para Producción
+
 Una vez validado todo:
+
 - Revisar `docs/DEPLOYMENT.md`
 - Configurar variables de producción
 - Preparar base de datos PostgreSQL (Supabase)
@@ -5024,17 +5238,19 @@ Una vez validado todo:
 **TalentOS está completamente funcional y listo para pruebas funcionales exhaustivas.**
 
 ### Lo que funciona:
+
 ✅ **Servidor**: Next.js corriendo sin errores  
 ✅ **Base de datos**: Dexie.js (IndexedDB) completamente configurada  
 ✅ **Autenticación**: JWT + Argon2 funcionando  
 ✅ **UI**: Menú hamburguesa responsive implementado  
 ✅ **Paginación**: Cursos, usuarios, certificados funcionando  
-✅ **Todos los módulos**: 15 módulos implementados al 100%  
+✅ **Todos los módulos**: 15 módulos implementados al 100%
 
 ### Lo que falta:
+
 ⏳ **Validación funcional**: Pruebas manuales en navegador  
 ⏳ **Testing E2E**: Flujo completo curso → certificado  
-⏳ **Correcciones menores**: Si se encuentran durante pruebas  
+⏳ **Correcciones menores**: Si se encuentran durante pruebas
 
 ---
 
@@ -5069,6 +5285,7 @@ Esta guía te llevará paso a paso por todas las funcionalidades principales de 
 ## ⚙️ Pre-requisitos
 
 ✅ **Completado**:
+
 - [x] Servidor Next.js corriendo en http://localhost:3000
 - [x] .env.local configurado con JWT_SECRET, NEXTAUTH_URL, NEXTAUTH_SECRET
 - [x] Menú hamburguesa implementado
@@ -5082,23 +5299,27 @@ Esta guía te llevará paso a paso por todas las funcionalidades principales de 
 ### FASE 1: Autenticación y Navegación (15 min)
 
 #### 1.1 Login y Dashboard Principal
+
 ```
 URL: http://localhost:3000
 ```
 
 **Pasos:**
+
 1. Abre http://localhost:3000 en el navegador
 2. Deberías ver la página de login
 3. Opción A – **Cuentas de prueba**: haz clic en **Elena Vargas** (o cualquier usuario); se rellenan email y contraseña. Pulsa "Iniciar Sesión".
 4. Opción B – **Manual**: Email `elena.vargas@example.com`, Password `password123`, luego "Iniciar Sesión"
 
 **Resultado esperado:**
+
 - ✅ Redirección a `/dashboard`
 - ✅ Ver panel principal con estadísticas
 - ✅ Sidebar visible con menú de navegación
 - ✅ Avatar y nombre de usuario en header
 
 **Puntos a verificar:**
+
 - [ ] Dashboard carga sin errores
 - [ ] Estadísticas se muestran correctamente
 - [ ] No hay errores rojos en consola (F12)
@@ -5106,17 +5327,21 @@ URL: http://localhost:3000
 ---
 
 #### 1.2 Menú Hamburguesa
+
 **Pasos:**
+
 1. Click en el ícono ☰ (esquina superior izquierda)
 2. Observa la animación del sidebar
 
 **Resultado esperado:**
+
 - ✅ Sidebar se colapsa/expande suavemente
 - ✅ En desktop: sidebar se reduce a solo íconos (72px)
 - ✅ En móvil: sidebar se oculta completamente
 - ✅ Transición suave de 300ms
 
 **Puntos a verificar:**
+
 - [ ] Animación funciona correctamente
 - [ ] Íconos permanecen visibles cuando colapsado
 - [ ] Tooltips aparecen al pasar sobre íconos
@@ -5125,7 +5350,9 @@ URL: http://localhost:3000
 ---
 
 #### 1.3 Navegación General
+
 **Pasos:**
+
 1. Click en cada ítem del sidebar:
    - Dashboard
    - Cursos
@@ -5137,11 +5364,13 @@ URL: http://localhost:3000
    - Configuración
 
 **Resultado esperado:**
+
 - ✅ Cada página carga correctamente
 - ✅ URL cambia en el navegador
 - ✅ Título del header se actualiza
 
 **Puntos a verificar:**
+
 - [ ] Todas las rutas funcionan
 - [ ] No hay páginas en blanco
 - [ ] No hay errores 404
@@ -5151,15 +5380,18 @@ URL: http://localhost:3000
 ### FASE 2: Gestión de Cursos (20 min)
 
 #### 2.1 Listado de Cursos
+
 ```
 URL: http://localhost:3000/dashboard/courses
 ```
 
 **Pasos:**
+
 1. Navega a "Cursos"
 2. Observa el catálogo de cursos
 
 **Resultado esperado:**
+
 - ✅ Grid de cursos (4 columnas en desktop)
 - ✅ Cards con imagen, título, descripción
 - ✅ Paginación funcionando (12 cursos por página)
@@ -5167,6 +5399,7 @@ URL: http://localhost:3000/dashboard/courses
 - ✅ Barra de búsqueda funcional
 
 **Pruebas específicas:**
+
 ```
 Búsqueda:
 1. Escribe "JavaScript" en la búsqueda
@@ -5185,6 +5418,7 @@ Paginación:
 ```
 
 **Puntos a verificar:**
+
 - [ ] Cursos cargan correctamente
 - [ ] Búsqueda funciona en tiempo real
 - [ ] Filtros se aplican correctamente
@@ -5194,7 +5428,9 @@ Paginación:
 ---
 
 #### 2.2 Crear Nuevo Curso (Solo Admin)
+
 **Pasos:**
+
 1. Click en "Crear Curso" (botón azul)
 2. Rellena el formulario:
    - **Título**: "Curso de Prueba"
@@ -5209,12 +5445,14 @@ Paginación:
 4. Click en "Crear Curso"
 
 **Resultado esperado:**
+
 - ✅ Curso creado exitosamente
 - ✅ Redirección al listado de cursos
 - ✅ Nuevo curso aparece en el catálogo
 - ✅ Toast notification de éxito
 
 **Puntos a verificar:**
+
 - [ ] Formulario valida campos requeridos
 - [ ] Se pueden añadir múltiples módulos
 - [ ] Curso aparece en el listado
@@ -5223,11 +5461,14 @@ Paginación:
 ---
 
 #### 2.3 Ver Detalle de Curso
+
 **Pasos:**
+
 1. Click en cualquier curso del catálogo
 2. Revisa la página de detalle
 
 **Resultado esperado:**
+
 - ✅ Información completa del curso
 - ✅ Lista de módulos
 - ✅ Botón "Inscribirme" o "Continuar" (según estado)
@@ -5235,6 +5476,7 @@ Paginación:
 - ✅ Instructor y categoría mostrados
 
 **Puntos a verificar:**
+
 - [ ] Toda la información se muestra correctamente
 - [ ] Botones de acción visibles
 - [ ] Descripción formateada correctamente
@@ -5245,20 +5487,24 @@ Paginación:
 ### FASE 3: PDI - Planes de Desarrollo Individual (15 min)
 
 #### 3.1 Acceder a PDI
+
 ```
 URL: http://localhost:3000/dashboard/pdi
 ```
 
 **Pasos:**
+
 1. Navega a "PDI" en el sidebar
 2. Observa el listado de planes
 
 **Resultado esperado:**
+
 - ✅ Listado de PDIs existentes (si hay)
 - ✅ Filtros por estado (Draft, Active, Completed)
 - ✅ Botón "Crear PDI" visible (si eres manager/admin)
 
 **Puntos a verificar:**
+
 - [ ] Página carga sin errores
 - [ ] PDIs se muestran en formato tabla/cards
 - [ ] Estados se visualizan con badges de colores
@@ -5266,7 +5512,9 @@ URL: http://localhost:3000/dashboard/pdi
 ---
 
 #### 3.2 Crear Nuevo PDI (Manager/Admin)
+
 **Pasos:**
+
 1. Click en "Crear PDI"
 2. Rellena el formulario:
    - **Usuario**: Selecciona un usuario
@@ -5282,11 +5530,13 @@ URL: http://localhost:3000/dashboard/pdi
 5. Click en "Crear PDI"
 
 **Resultado esperado:**
+
 - ✅ PDI creado exitosamente
 - ✅ Aparece en el listado con estado "Draft"
 - ✅ Usuario asignado puede verlo
 
 **Puntos a verificar:**
+
 - [ ] Formulario valida campos requeridos
 - [ ] Se pueden añadir múltiples objetivos
 - [ ] Cursos se asignan correctamente
@@ -5295,7 +5545,9 @@ URL: http://localhost:3000/dashboard/pdi
 ---
 
 #### 3.3 Ver Detalle y Editar PDI
+
 **Pasos:**
+
 1. Click en un PDI existente
 2. Revisa los tabs:
    - Resumen
@@ -5308,12 +5560,14 @@ URL: http://localhost:3000/dashboard/pdi
 5. Guarda cambios
 
 **Resultado esperado:**
+
 - ✅ Toda la información del PDI visible
 - ✅ Tabs funcionan correctamente
 - ✅ Edición actualiza los datos
 - ✅ Estado cambia visualmente
 
 **Puntos a verificar:**
+
 - [ ] Navegación entre tabs funciona
 - [ ] Datos se cargan en cada tab
 - [ ] Edición persiste los cambios
@@ -5324,21 +5578,25 @@ URL: http://localhost:3000/dashboard/pdi
 ### FASE 4: Compliance y Normativas (15 min)
 
 #### 4.1 Acceder a Compliance
+
 ```
 URL: http://localhost:3000/dashboard/compliance
 ```
 
 **Pasos:**
+
 1. Navega a "Compliance" en el sidebar
 2. Observa el dashboard de cumplimiento
 
 **Resultado esperado:**
+
 - ✅ Dashboard con métricas de cumplimiento
 - ✅ Gráficos de estado (compliant, expirado, pendiente)
 - ✅ Tabla de normativas
 - ✅ Filtros por tipo y estado
 
 **Puntos a verificar:**
+
 - [ ] Dashboard carga correctamente
 - [ ] Métricas se calculan correctamente
 - [ ] Tabla de normativas visible
@@ -5347,7 +5605,9 @@ URL: http://localhost:3000/dashboard/compliance
 ---
 
 #### 4.2 Crear Nueva Normativa
+
 **Pasos:**
+
 1. Click en "Crear Normativa"
 2. Rellena el formulario:
    - **Nombre**: "ISO 27001"
@@ -5359,11 +5619,13 @@ URL: http://localhost:3000/dashboard/compliance
 4. Click en "Crear"
 
 **Resultado esperado:**
+
 - ✅ Normativa creada exitosamente
 - ✅ Aparece en la tabla del dashboard
 - ✅ Usuarios pueden registrar cumplimiento
 
 **Puntos a verificar:**
+
 - [ ] Formulario valida correctamente
 - [ ] Normativa aparece en el listado
 - [ ] Tipo se muestra con badge correcto
@@ -5372,7 +5634,9 @@ URL: http://localhost:3000/dashboard/compliance
 ---
 
 #### 4.3 Registrar Cumplimiento
+
 **Pasos:**
+
 1. Click en una normativa existente
 2. Navega a la tab "Cumplimiento"
 3. Click en "Registrar Cumplimiento"
@@ -5381,12 +5645,14 @@ URL: http://localhost:3000/dashboard/compliance
 6. Click en "Guardar"
 
 **Resultado esperado:**
+
 - ✅ Cumplimiento registrado
 - ✅ Fecha de vencimiento calculada automáticamente
 - ✅ Usuario aparece en la lista de cumplimiento
 - ✅ Métricas del dashboard se actualizan
 
 **Puntos a verificar:**
+
 - [ ] Usuario puede registrar cumplimiento
 - [ ] Fecha de vencimiento se calcula correctamente
 - [ ] Alertas se configuran si está cerca del vencimiento
@@ -5397,21 +5663,25 @@ URL: http://localhost:3000/dashboard/compliance
 ### FASE 5: Backups y Monitoreo (10 min)
 
 #### 5.1 Acceder a Configuración
+
 ```
 URL: http://localhost:3000/dashboard/settings
 ```
 
 **Pasos:**
+
 1. Navega a "Configuración"
 2. Busca la sección "Backups y Mantenimiento"
 
 **Resultado esperado:**
+
 - ✅ Panel de backups visible
 - ✅ Estadísticas de la base de datos
 - ✅ Estado de salud del sistema
 - ✅ Botones de acción (Exportar, Importar, Limpiar)
 
 **Puntos a verificar:**
+
 - [ ] Panel carga correctamente
 - [ ] Estadísticas muestran números reales
 - [ ] Estado de salud visible (Healthy/Warning/Critical)
@@ -5419,17 +5689,21 @@ URL: http://localhost:3000/dashboard/settings
 ---
 
 #### 5.2 Exportar Backup
+
 **Pasos:**
+
 1. Click en "Exportar Backup"
 2. Espera la descarga
 
 **Resultado esperado:**
+
 - ✅ Archivo JSON se descarga
 - ✅ Nombre: `talentos-backup-YYYY-MM-DD.json`
 - ✅ Contiene todas las tablas de la BD
 - ✅ Datos sensibles excluidos (passwordHash)
 
 **Pruebas adicionales:**
+
 ```
 Verificar contenido del backup:
 1. Abre el archivo JSON en un editor
@@ -5447,6 +5721,7 @@ Verificar contenido del backup:
 ```
 
 **Puntos a verificar:**
+
 - [ ] Backup se descarga correctamente
 - [ ] JSON es válido
 - [ ] Contiene todas las tablas
@@ -5456,24 +5731,29 @@ Verificar contenido del backup:
 ---
 
 #### 5.3 Importar Backup
+
 **Pasos:**
+
 1. Click en "Importar Backup"
 2. Selecciona el archivo descargado anteriormente
 3. Confirma la importación
 
 **Resultado esperado:**
+
 - ✅ Backup se importa exitosamente
 - ✅ Datos se restauran correctamente
 - ✅ Toast notification de éxito
 - ✅ Contador de registros importados
 
-**⚠️ ADVERTENCIA**: 
+**⚠️ ADVERTENCIA**:
+
 ```
 La importación sobrescribirá datos existentes.
 Solo hacer esto en un entorno de pruebas.
 ```
 
 **Puntos a verificar:**
+
 - [ ] Importación completa sin errores
 - [ ] Datos se restauran correctamente
 - [ ] No hay pérdida de información
@@ -5482,7 +5762,9 @@ Solo hacer esto en un entorno de pruebas.
 ---
 
 #### 5.4 Monitoreo de Base de Datos
+
 **Pasos:**
+
 1. Observa las métricas del sistema:
    - Actividad últimas 24h
    - Tasa de errores
@@ -5490,17 +5772,20 @@ Solo hacer esto en un entorno de pruebas.
    - Recomendaciones
 
 **Resultado esperado:**
+
 - ✅ Métricas actualizadas en tiempo real
 - ✅ Gráficos/indicadores visuales
 - ✅ Recomendaciones específicas si hay problemas
 - ✅ Estado de salud con código de color
 
 **Estados posibles:**
+
 - 🟢 **Healthy**: Todo funciona correctamente
 - 🟡 **Warning**: Advertencias menores (ej: muchos logs sin limpiar)
 - 🔴 **Critical**: Problemas graves (muchos errores, BD corrupta)
 
 **Puntos a verificar:**
+
 - [ ] Métricas son precisas
 - [ ] Estado de salud correcto
 - [ ] Recomendaciones útiles
@@ -5513,6 +5798,7 @@ Solo hacer esto en un entorno de pruebas.
 #### 6.1 Flujo: Crear → Inscribir → Completar → Certificar
 
 **Paso 1: Crear curso**
+
 ```
 1. Dashboard > Cursos > Crear Curso
 2. Título: "Curso E2E Test"
@@ -5522,6 +5808,7 @@ Solo hacer esto en un entorno de pruebas.
 ```
 
 **Paso 2: Inscribirse**
+
 ```
 1. Ir al detalle del curso creado
 2. Click en "Inscribirme"
@@ -5530,6 +5817,7 @@ Solo hacer esto en un entorno de pruebas.
 ```
 
 **Paso 3: Completar módulos**
+
 ```
 1. Entrar al curso desde "Mis Cursos"
 2. Marcar módulo 1 como completado
@@ -5538,6 +5826,7 @@ Solo hacer esto en un entorno de pruebas.
 ```
 
 **Paso 4: Obtener certificado**
+
 ```
 1. Al completar 100%, debería generarse certificado automáticamente
 2. Ir a Dashboard > Certificados
@@ -5547,12 +5836,14 @@ Solo hacer esto en un entorno de pruebas.
 ```
 
 **Resultado esperado:**
+
 - ✅ Flujo completo funciona sin interrupciones
 - ✅ Progreso se trackea correctamente
 - ✅ Certificado se genera automáticamente
 - ✅ PDF descargable con información correcta
 
 **Puntos a verificar:**
+
 - [ ] Cada paso se completa exitosamente
 - [ ] Datos persisten entre pasos
 - [ ] Notificaciones aparecen en cada acción
@@ -5564,12 +5855,14 @@ Solo hacer esto en un entorno de pruebas.
 ## 🔍 Checklist Final
 
 ### Funcionalidades Core
+
 - [ ] ✅ Login y autenticación JWT
 - [ ] ✅ Dashboard principal con estadísticas
 - [ ] ✅ Menú hamburguesa responsive
 - [ ] ✅ Navegación entre secciones
 
 ### Cursos
+
 - [ ] ✅ Listado con paginación (12/página)
 - [ ] ✅ Búsqueda y filtros funcionan
 - [ ] ✅ Crear nuevo curso (admin)
@@ -5579,6 +5872,7 @@ Solo hacer esto en un entorno de pruebas.
 - [ ] ✅ Tracking de progreso
 
 ### PDI
+
 - [ ] ✅ Listado de PDIs
 - [ ] ✅ Crear nuevo PDI (manager/admin)
 - [ ] ✅ Ver detalle con tabs
@@ -5587,6 +5881,7 @@ Solo hacer esto en un entorno de pruebas.
 - [ ] ✅ Asignar cursos y objetivos
 
 ### Compliance
+
 - [ ] ✅ Dashboard de cumplimiento
 - [ ] ✅ Crear normativas
 - [ ] ✅ Registrar cumplimiento
@@ -5594,6 +5889,7 @@ Solo hacer esto en un entorno de pruebas.
 - [ ] ✅ Auditorías de cumplimiento
 
 ### Backups y Monitoreo
+
 - [ ] ✅ Exportar backup completo
 - [ ] ✅ Importar backup
 - [ ] ✅ Ver estadísticas de BD
@@ -5602,6 +5898,7 @@ Solo hacer esto en un entorno de pruebas.
 - [ ] ✅ Limpieza de datos antiguos
 
 ### Otros Módulos
+
 - [ ] ✅ Gestión de usuarios
 - [ ] ✅ Chat y mensajería
 - [ ] ✅ Calendario de eventos
@@ -5631,6 +5928,7 @@ Si encuentras algún error durante las pruebas, documéntalo con:
 ## ✅ Resultados Esperados
 
 Al completar todas las pruebas:
+
 - ✅ **Todas las funcionalidades core funcionan**
 - ✅ **Sin errores críticos en consola**
 - ✅ **Navegación fluida sin interrupciones**
@@ -5643,6 +5941,7 @@ Al completar todas las pruebas:
 ## 📞 Siguiente Paso
 
 Una vez completadas todas las pruebas:
+
 1. Revisar cualquier error encontrado
 2. Corregir problemas críticos
 3. Documentar bugs menores para futuras mejoras
@@ -5667,6 +5966,7 @@ Una vez completadas todas las pruebas:
 ## 📍 Estado Actual
 
 ### Verificación Local
+
 - **Puerto 3000:** No está activo actualmente
 - **Proceso Node.js:** No se detecta servidor Next.js corriendo
 - **Estado:** La aplicación **NO está desplegada localmente** en este momento
@@ -5696,6 +5996,7 @@ npm run dev
 ### 2. **Despliegue en Vercel (Recomendado para Producción)**
 
 **Ventajas:**
+
 - ✅ Despliegue automático desde Git
 - ✅ HTTPS incluido
 - ✅ CDN global
@@ -5705,6 +6006,7 @@ npm run dev
 **Pasos:**
 
 1. **Push a Git:**
+
 ```bash
 git add .
 git commit -m "Ready for deployment"
@@ -5718,6 +6020,7 @@ git push origin main
    - Click **Deploy**
 
 **Variables de entorno requeridas:**
+
 ```
 JWT_SECRET=tu-secret-generado
 NEXTAUTH_URL=https://tu-proyecto.vercel.app
@@ -5816,6 +6119,7 @@ Después de desplegar, verifica:
 ## 📝 Variables de Entorno Requeridas
 
 ### Mínimas (para funcionamiento básico):
+
 ```env
 JWT_SECRET=tu-secret-generado
 NEXTAUTH_URL=https://tu-dominio.com
@@ -5823,6 +6127,7 @@ NEXTAUTH_SECRET=tu-secret-generado
 ```
 
 ### Opcionales (para funcionalidades avanzadas):
+
 ```env
 # Supabase (sincronización en la nube)
 NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
@@ -5853,16 +6158,19 @@ NEXT_PUBLIC_AUTHENTIK_ENABLED=true
 ### La aplicación no inicia
 
 1. **Verificar Node.js:**
+
 ```bash
 node --version  # Debe ser >= 18
 ```
 
 2. **Verificar dependencias:**
+
 ```bash
 npm install --legacy-peer-deps
 ```
 
 3. **Verificar build:**
+
 ```bash
 npm run build
 ```
@@ -5897,6 +6205,7 @@ PORT=3001 npm run dev
 ## 🔄 Próximos Pasos
 
 1. **Si quieres desplegar localmente:**
+
    ```bash
    npm run dev
    ```
@@ -5933,11 +6242,11 @@ PORT=3001 npm run dev
 
 ### 1.1 Modelo de tenencia
 
-| Pregunta | Respuesta |
-|----------|-----------|
-| **¿Base compartida con discriminación por filas?** | No. No existe columna `tenant_id` ni ningún mecanismo de multi-tenant por filas. |
-| **¿Esquemas separados por inquilino?** | No. IndexedDB no usa esquemas; hay una sola base `TalentOSDB` por origen. |
-| **¿Bases de datos dedicadas por inquilino?** | En la práctica **sí**, pero por limitación del navegador: cada origen (dominio) tiene su propia IndexedDB. No hay concepto explícito de “inquilino”: es **single-tenant por despliegue** (un despliegue = una organización que usa la app en su dominio). |
+| Pregunta                                           | Respuesta                                                                                                                                                                                                                                                 |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **¿Base compartida con discriminación por filas?** | No. No existe columna `tenant_id` ni ningún mecanismo de multi-tenant por filas.                                                                                                                                                                          |
+| **¿Esquemas separados por inquilino?**             | No. IndexedDB no usa esquemas; hay una sola base `TalentOSDB` por origen.                                                                                                                                                                                 |
+| **¿Bases de datos dedicadas por inquilino?**       | En la práctica **sí**, pero por limitación del navegador: cada origen (dominio) tiene su propia IndexedDB. No hay concepto explícito de “inquilino”: es **single-tenant por despliegue** (un despliegue = una organización que usa la app en su dominio). |
 
 **Conclusión:** El modelo actual es **single-tenant implícito** (una BD por origen). Para SaaS multi-tenant con varios clientes en la misma instalación habría que introducir **tenant_id** o pasar a esquema/BD por inquilino cuando se use un servidor de datos.
 
@@ -5945,16 +6254,17 @@ PORT=3001 npm run dev
 
 ### 1.2 Identificadores
 
-| Tipo de tabla | Cantidad | Formato del ID | ¿UUID v4? |
-|---------------|----------|----------------|-----------|
-| **Clave primaria string** | 10 tablas | Prefijo + timestamp + aleatorio, ej. `user_${Date.now()}_${Math.random().toString(36).substring(2,9)}` | **No** |
-| **Clave primaria numérica (++id)** | 18 tablas | Auto-increment Dexie | N/A (no UUID) |
-| **Singletons / por rol** | 2 (aiConfig, rolePermissions) | `id: 'singleton'` o `role` | N/A |
+| Tipo de tabla                      | Cantidad                      | Formato del ID                                                                                         | ¿UUID v4?     |
+| ---------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------ | ------------- |
+| **Clave primaria string**          | 10 tablas                     | Prefijo + timestamp + aleatorio, ej. `user_${Date.now()}_${Math.random().toString(36).substring(2,9)}` | **No**        |
+| **Clave primaria numérica (++id)** | 18 tablas                     | Auto-increment Dexie                                                                                   | N/A (no UUID) |
+| **Singletons / por rol**           | 2 (aiConfig, rolePermissions) | `id: 'singleton'` o `role`                                                                             | N/A           |
 
 **Tablas con PK string (no UUID v4):**  
 users, courses, chatChannels, badges, certificates, certificateTemplates, individualDevelopmentPlans, regulations, regulationCompliance, complianceAudits.
 
 **Generación actual de IDs string (en `dexie.ts`):**
+
 - Usuario: `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 - Curso: `course_${Date.now()}_...`
 - Certificado: `cert_${Date.now()}_...` (verificationCode sí usa `crypto.randomUUID()` en un caso)
@@ -5969,10 +6279,10 @@ Los IDs son predecibles (timestamp + poco entropía), lo que facilita **ataques 
 
 ### 1.3 Aislamiento de datos (tenant_id)
 
-| Pregunta | Respuesta |
-|----------|-----------|
-| **¿Existe columna `tenant_id` en tablas con datos de clientes?** | **No.** No hay ninguna referencia a `tenant_id` ni `tenantId` en el repositorio. |
-| **Tablas que contendrían datos por inquilino** | users, courses, enrollments, userProgress, forumMessages, notifications, certificates, individualDevelopmentPlans, regulations, regulationCompliance, complianceAudits, costs, calendarEvents, chatChannels, chatMessages, announcements, learningPaths, userLearningPathProgress, courseRatings, userBadges, externalTrainings, resources, courseResources, rolePermissions, systemLogs, aiConfig, aiUsageLog, certificateTemplates, badges, costCategories. |
+| Pregunta                                                         | Respuesta                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **¿Existe columna `tenant_id` en tablas con datos de clientes?** | **No.** No hay ninguna referencia a `tenant_id` ni `tenantId` en el repositorio.                                                                                                                                                                                                                                                                                                                                                                              |
+| **Tablas que contendrían datos por inquilino**                   | users, courses, enrollments, userProgress, forumMessages, notifications, certificates, individualDevelopmentPlans, regulations, regulationCompliance, complianceAudits, costs, calendarEvents, chatChannels, chatMessages, announcements, learningPaths, userLearningPathProgress, courseRatings, userBadges, externalTrainings, resources, courseResources, rolePermissions, systemLogs, aiConfig, aiUsageLog, certificateTemplates, badges, costCategories. |
 
 **Conclusión:** Con el modelo actual no se puede ofrecer **multi-tenant seguro** en una misma base: no hay aislamiento por inquilino. Para SaaS multi-tenant habría que añadir `tenant_id` (o equivalente) en todas las tablas que almacenan datos de clientes.
 
@@ -5980,16 +6290,16 @@ Los IDs son predecibles (timestamp + poco entropía), lo que facilita **ataques 
 
 ### 1.4 Resumen del análisis
 
-| Criterio | Estado actual | Observación |
-|----------|----------------|-------------|
-| **Tenencia** | Single-tenant implícito (1 BD por origen) | Sin soporte multi-tenant explícito. |
-| **UUID v4** | 0% de tablas con PK string usan UUID v4 | Riesgo IDOR; no alineado con LTI. |
-| **tenant_id** | 0% de tablas con datos de cliente tienen tenant_id | Sin aislamiento por inquilino. |
-| **Auditoría (created_at, updated_at, deleted_at)** | Parcial | Varias tablas tienen `updatedAt`; no todas tienen `createdAt`; ninguna tiene `deleted_at` (soft delete). |
-| **Formato de fechas** | ISO 8601 en comentarios | No hay exigencia explícita de UTC en tipos. |
-| **PII en reposo** | Sin encriptación | name, email, phone, etc. en claro (OWASP ASVS). |
-| **LTI 1.3** | No implementado | No hay `resource_link_id`, `deployment_id` ni modelo LTI. |
-| **SCORM RTE** | Parcial | Hay `scormPackage`/Blob; no hay modelo explícito para `cmi.score.scaled`, `cmi.location` (string 1000) como en SCORM 2004. |
+| Criterio                                           | Estado actual                                      | Observación                                                                                                                |
+| -------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Tenencia**                                       | Single-tenant implícito (1 BD por origen)          | Sin soporte multi-tenant explícito.                                                                                        |
+| **UUID v4**                                        | 0% de tablas con PK string usan UUID v4            | Riesgo IDOR; no alineado con LTI.                                                                                          |
+| **tenant_id**                                      | 0% de tablas con datos de cliente tienen tenant_id | Sin aislamiento por inquilino.                                                                                             |
+| **Auditoría (created_at, updated_at, deleted_at)** | Parcial                                            | Varias tablas tienen `updatedAt`; no todas tienen `createdAt`; ninguna tiene `deleted_at` (soft delete).                   |
+| **Formato de fechas**                              | ISO 8601 en comentarios                            | No hay exigencia explícita de UTC en tipos.                                                                                |
+| **PII en reposo**                                  | Sin encriptación                                   | name, email, phone, etc. en claro (OWASP ASVS).                                                                            |
+| **LTI 1.3**                                        | No implementado                                    | No hay `resource_link_id`, `deployment_id` ni modelo LTI.                                                                  |
+| **SCORM RTE**                                      | Parcial                                            | Hay `scormPackage`/Blob; no hay modelo explícito para `cmi.score.scaled`, `cmi.location` (string 1000) como en SCORM 2004. |
 
 ---
 
@@ -6074,7 +6384,7 @@ Tras aprobar este plan se puede:
 3. **Generar IDs con UUID v4:**  
    Reemplazar en `dexie.ts` las generaciones `user_${Date.now()}_...` por `crypto.randomUUID()` (o helper centralizado).
 
-4. **Backend futuro (PostgreSQL/SQLite):**  
+4. **Backend futuro (PostgreSQL/SQLite):**
    - Scripts de migración (Alembic si Python, o Knex/Drizzle/Prisma si Node) para crear tablas con tenant_id, UUIDs y auditoría.
    - Si se usa **PostgreSQL**, implementar **Row-Level Security (RLS)** por `tenant_id` para filtrar automáticamente en la capa de BD.
 
@@ -6085,13 +6395,13 @@ Tras aprobar este plan se puede:
 
 ## Referencia rápida de estándares
 
-| Estándar | Punto relevante |
-|----------|------------------|
-| **LTI 1.3** | Identificadores inmutables, ASCII ≤255 caracteres; uso de IDs aleatorios/pseudoaleatorios. |
-| **SCORM 2004 4.ª ed.** | RTE: `cmi.score.scaled` (10,7), `cmi.location` (string 1000). |
-| **RGPD** | Derecho al olvido, minimización de datos, trazabilidad de tratamientos. |
-| **OWASP ASVS v4.0.3** | Encriptación de PII en reposo; controles de acceso; prevención de IDOR (identificadores no predecibles). |
-| **SaaS multi-tenant** | Aislamiento por tenant_id; estrategias: fila, esquema o BD dedicada según nivel de aislamiento requerido. |
+| Estándar               | Punto relevante                                                                                           |
+| ---------------------- | --------------------------------------------------------------------------------------------------------- |
+| **LTI 1.3**            | Identificadores inmutables, ASCII ≤255 caracteres; uso de IDs aleatorios/pseudoaleatorios.                |
+| **SCORM 2004 4.ª ed.** | RTE: `cmi.score.scaled` (10,7), `cmi.location` (string 1000).                                             |
+| **RGPD**               | Derecho al olvido, minimización de datos, trazabilidad de tratamientos.                                   |
+| **OWASP ASVS v4.0.3**  | Encriptación de PII en reposo; controles de acceso; prevención de IDOR (identificadores no predecibles).  |
+| **SaaS multi-tenant**  | Aislamiento por tenant_id; estrategias: fila, esquema o BD dedicada según nivel de aislamiento requerido. |
 
 ---
 
@@ -6101,7 +6411,7 @@ Tras aprobar este plan se puede:
 
 Para la ejecución ordenada de la migración se ha definido un **sistema de tickets tipo JIRA** por Epics (Multi-Tenant, Security, LTI, SCORM, Audit, Migration, Documentación, QA). Ver **[MIGRATION_PLAN_TICKETS.md](./MIGRATION_PLAN_TICKETS.md)** para el desglose completo (TT-101 a TT-113), criterios de aceptación, dependencias y Story Points.
 
-*Documento generado como Paso 1 (Análisis) y Paso 2 (Plan) del proceso de estandarización. La ejecución concreta (Paso 3) se realiza siguiendo el plan de tickets en MIGRATION_PLAN_TICKETS.md.*
+_Documento generado como Paso 1 (Análisis) y Paso 2 (Plan) del proceso de estandarización. La ejecución concreta (Paso 3) se realiza siguiendo el plan de tickets en MIGRATION_PLAN_TICKETS.md._
 
 ---
 
@@ -6119,6 +6429,7 @@ Para la ejecución ordenada de la migración se ha definido un **sistema de tick
 TalentOS es una plataforma LMS (Learning Management System) corporativa completamente funcional, con un stack tecnológico moderno y todas las funcionalidades core implementadas. La aplicación está lista para pruebas funcionales en navegador.
 
 ### Logros Principales
+
 - ✅ **4 fases del plan completadas** (Seguridad, PDI, Compliance, Optimización)
 - ✅ **Firebase eliminado** → Web Notifications API nativa
 - ✅ **Argon2 configurado** → Hashing seguro de contraseñas
@@ -6130,17 +6441,20 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 ## 📊 Métricas del Proyecto
 
 ### Código
+
 - **Archivos TypeScript**: ~150+
 - **Componentes React**: ~100+
 - **Rutas de API**: 15+
 - **Módulos principales**: 15
 
 ### Base de Datos (Dexie v45)
+
 - **Tablas**: 32
 - **Índices optimizados**: 45+
 - **Esquema versión**: 45
 
 ### Dependencias
+
 ```json
 {
   "next": "15.3.3",
@@ -6158,6 +6472,7 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 ## ✅ Funcionalidades Implementadas (100%)
 
 ### Core LMS
+
 - [x] **Gestión de Cursos** (crear, editar, eliminar, importar SCORM)
 - [x] **Gestión de Usuarios** (roles, permisos, aprobación, importación CSV)
 - [x] **Inscripciones** (manual, automática, flujo completo)
@@ -6166,12 +6481,14 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 - [x] **Recursos** (adjuntar archivos a cursos)
 
 ### Formación Avanzada
+
 - [x] **Planes de Carrera** (learning paths secuenciales)
 - [x] **PDI** (Planes de Desarrollo Individual) - FASE 2
 - [x] **Compliance** (normativas, cumplimiento, auditorías) - FASE 3
 - [x] **Formación Externa** (registro de cursos externos)
 
 ### Comunicación
+
 - [x] **Foros** (por curso, con respuestas anidadas)
 - [x] **Chat** (canales, mensajes directos)
 - [x] **Anuncios** (sistema de noticias)
@@ -6179,11 +6496,13 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 - [x] **Calendario** (eventos formativos)
 
 ### Gamificación
+
 - [x] **Sistema de Puntos** (por actividades)
 - [x] **Insignias** (logros y badges)
 - [x] **Clasificación** (ranking de usuarios)
 
 ### IA y Automatización
+
 - [x] **Genkit** (Google AI / OpenAI)
 - [x] **Generador de Cursos** (IA crea contenido)
 - [x] **Tutor Virtual** (respuestas contextuales)
@@ -6191,12 +6510,14 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 - [x] **Análisis de Sentimiento** (feedback)
 
 ### Análisis y Reportes
+
 - [x] **Dashboard Analytics** (métricas generales)
 - [x] **Reportes de Progreso** (por usuario/curso/departamento)
 - [x] **Gestión de Costos** (tracking de gastos formativos)
 - [x] **Reportes de Compliance** (cumplimiento normativo)
 
 ### Administración
+
 - [x] **Sincronización Supabase** (opcional, para multi-dispositivo)
 - [x] **Backups** (export/import completo) - FASE 4
 - [x] **Monitoreo BD** (métricas de salud) - FASE 4
@@ -6205,6 +6526,7 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 - [x] **Gestión de Roles y Permisos** (granular)
 
 ### Seguridad - FASE 1
+
 - [x] **JWT + Sesiones Seguras** (DÍA 2)
 - [x] **Argon2id Password Hashing** (DÍA 1)
 - [x] **Variables de Entorno** (DÍA 3)
@@ -6217,6 +6539,7 @@ TalentOS es una plataforma LMS (Learning Management System) corporativa completa
 ## 🏗️ Arquitectura
 
 ### Frontend
+
 ```
 Next.js 15 (App Router)
 ├── TypeScript
@@ -6226,6 +6549,7 @@ Next.js 15 (App Router)
 ```
 
 ### Base de Datos
+
 ```
 Dexie.js (IndexedDB)
 ├── Offline-first
@@ -6235,6 +6559,7 @@ Dexie.js (IndexedDB)
 ```
 
 ### Backend (Opcional)
+
 ```
 Supabase
 ├── PostgreSQL
@@ -6243,6 +6568,7 @@ Supabase
 ```
 
 ### IA
+
 ```
 Genkit
 ├── Google Gemini
@@ -6254,17 +6580,20 @@ Genkit
 ## 🔧 Últimos Cambios (24 enero 2026)
 
 ### Eliminaciones
+
 - ❌ Firebase (53 dependencias)
 - ❌ Firebase Cloud Messaging
 - ❌ Service Workers problemáticos
 
 ### Adiciones
+
 - ✅ Web Notifications API nativa
 - ✅ Configuración argon2 completa (WASM)
 - ✅ .env.local con JWT_SECRET
 - ✅ Documentación exhaustiva (7 docs)
 
 ### Correcciones
+
 - ✅ Webpack config para WebAssembly
 - ✅ Externalización de paquetes de servidor
 - ✅ Eliminación de importaciones circulares
@@ -6275,11 +6604,13 @@ Genkit
 ## 📈 Rendimiento
 
 ### Compilación
+
 - **Primera vez**: ~120 segundos (1398 módulos)
 - **Hot reload**: ~6-10 segundos
 - **Build producción**: No testeado aún
 
 ### Base de Datos
+
 - **Inicialización**: ~500ms (datos de prueba)
 - **Queries**: <50ms (con índices)
 - **Sincronización**: Bajo demanda
@@ -6289,6 +6620,7 @@ Genkit
 ## 🔐 Seguridad
 
 ### Implementado
+
 - [x] JWT con HS256 (jose)
 - [x] Argon2id para passwords (tiempo: 3, memoria: 19MB)
 - [x] Cookies httpOnly + secure + sameSite
@@ -6298,6 +6630,7 @@ Genkit
 - [x] Rate limiting (pendiente en producción)
 
 ### Pendiente (Producción)
+
 - [ ] HTTPS obligatorio
 - [ ] CSP headers
 - [ ] Rate limiting en APIs
@@ -6309,11 +6642,13 @@ Genkit
 ## 🚀 Despliegue
 
 ### Estado Actual
+
 - **Entorno**: Desarrollo (local)
 - **Puerto**: 3000
 - **Base de datos**: IndexedDB (navegador)
 
 ### Opciones de Producción
+
 - **Vercel** (recomendado para Next.js)
 - **Netlify** (alternativa)
 - **Docker** (autoalojado)
@@ -6326,6 +6661,7 @@ Ver: `docs/DEPLOYMENT.md`
 ## ⏳ Pendiente (Pruebas)
 
 ### Próximos Pasos Inmediatos
+
 1. [ ] Abrir http://localhost:3000 en navegador
 2. [ ] Login con elena.vargas@example.com / password123
 3. [ ] Probar flujo: crear curso → inscribir → completar → certificar
@@ -6335,6 +6671,7 @@ Ver: `docs/DEPLOYMENT.md`
 7. [ ] Verificar monitoreo de BD
 
 ### Pruebas Funcionales Completas
+
 - [ ] Autenticación (login, logout, sesiones)
 - [ ] CRUD de todos los módulos
 - [ ] Sincronización con Supabase (si configurado)
@@ -6349,23 +6686,23 @@ Ver: `docs/DEPLOYMENT.md`
 
 ## 📚 Documentación
 
-| Documento | Estado | Última actualización |
-|-----------|--------|---------------------|
-| [README.md](../README.md) | ✅ | 24 ene 2026 |
-| [APP_OVERVIEW.md](./APP_OVERVIEW.md) | ✅ | Anterior |
-| [SETUP_GUIDE.md](./SETUP_GUIDE.md) | ✅ | Anterior |
-| [SETUP_COMPLETE.md](./SETUP_COMPLETE.md) | ✅ | 24 ene 2026 |
-| [FEATURES_SUMMARY.md](./FEATURES_SUMMARY.md) | ✅ | Anterior |
-| [PLAN_PROGRESS.md](./PLAN_PROGRESS.md) | ✅ | 24 ene 2026 |
-| [CHANGELOG.md](./CHANGELOG.md) | ✅ | 24 ene 2026 |
-| [STATUS.md](./STATUS.md) | ✅ | 24 ene 2026 (este) |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | ✅ | Anterior |
+| Documento                                    | Estado | Última actualización |
+| -------------------------------------------- | ------ | -------------------- |
+| [README.md](../README.md)                    | ✅     | 24 ene 2026          |
+| [APP_OVERVIEW.md](./APP_OVERVIEW.md)         | ✅     | Anterior             |
+| [SETUP_GUIDE.md](./SETUP_GUIDE.md)           | ✅     | Anterior             |
+| [SETUP_COMPLETE.md](./SETUP_COMPLETE.md)     | ✅     | 24 ene 2026          |
+| [FEATURES_SUMMARY.md](./FEATURES_SUMMARY.md) | ✅     | Anterior             |
+| [PLAN_PROGRESS.md](./PLAN_PROGRESS.md)       | ✅     | 24 ene 2026          |
+| [CHANGELOG.md](./CHANGELOG.md)               | ✅     | 24 ene 2026          |
+| [STATUS.md](./STATUS.md)                     | ✅     | 24 ene 2026 (este)   |
+| [DEPLOYMENT.md](./DEPLOYMENT.md)             | ✅     | Anterior             |
 
 ---
 
 ## 🎯 Conclusión
 
-**TalentOS está completo y funcionando**. La aplicación tiene todas las funcionalidades planificadas implementadas, la arquitectura es sólida y la documentación es exhaustiva. 
+**TalentOS está completo y funcionando**. La aplicación tiene todas las funcionalidades planificadas implementadas, la arquitectura es sólida y la documentación es exhaustiva.
 
 El único paso pendiente es realizar **pruebas funcionales en el navegador** para verificar que todo funciona correctamente en un entorno real de usuario.
 
@@ -6376,6 +6713,7 @@ El único paso pendiente es realizar **pruebas funcionales en el navegador** par
 ## 📞 Soporte
 
 Para problemas técnicos, consultar:
+
 1. `docs/SETUP_COMPLETE.md` → Troubleshooting
 2. `docs/CHANGELOG.md` → Cambios recientes
 3. Logs del servidor en `/tmp/nextjs-final.log`
@@ -6520,7 +6858,6 @@ Este documento resume las funcionalidades y requisitos técnicos necesarios para
 - Soporta configuración por rol y por organización.
 - Soporta escalado de contenidos y usuarios.
 
-
 ---
 
 ## blueprint.md
@@ -6546,6 +6883,7 @@ Este documento resume las funcionalidades y requisitos técnicos necesarios para
 - Use minimalist, clear icons to represent different courses and tools.
 - Maintain a consistent, card-based design across dashboards for ease of navigation.
 - Incorporate subtle transitions for loading new content and interactive elements.
+
 ---
 
 ## DATABASE_AND_SUPERADMIN.md
@@ -6556,12 +6894,12 @@ Este documento resume las funcionalidades y requisitos técnicos necesarios para
 
 Para una app seria multi-usuario y autoalojada se recomienda **SQLite** como primera opción:
 
-| Criterio | SQLite | PostgreSQL |
-|----------|--------|------------|
-| **Despliegue** | Un solo archivo, sin proceso extra | Requiere servidor/contenedor Postgres |
-| **Backup** | Copiar el archivo `.sqlite` | `pg_dump` o replicas |
-| **Docker** | Muy simple (volumen con un archivo) | Imagen oficial, más recursos |
-| **Escala** | Ideal 1 nodo, hasta miles de usuarios | Multi-nodo, réplicas |
+| Criterio       | SQLite                                | PostgreSQL                            |
+| -------------- | ------------------------------------- | ------------------------------------- |
+| **Despliegue** | Un solo archivo, sin proceso extra    | Requiere servidor/contenedor Postgres |
+| **Backup**     | Copiar el archivo `.sqlite`           | `pg_dump` o replicas                  |
+| **Docker**     | Muy simple (volumen con un archivo)   | Imagen oficial, más recursos          |
+| **Escala**     | Ideal 1 nodo, hasta miles de usuarios | Multi-nodo, réplicas                  |
 
 **Recomendación:** Empezar con **SQLite** (por ejemplo con `better-sqlite3` o **libsql/Turso** en Node). Si más adelante necesitas réplicas o equipo que ya usa Postgres, se puede migrar a PostgreSQL.
 
@@ -6597,7 +6935,7 @@ NEXT_PUBLIC_SUPERADMIN_EMAILS=admin@empresa.com
 NEXT_PUBLIC_SUPERADMIN_EMAILS=admin@empresa.com,superadmin@empresa.com,otro@empresa.com
 ```
 
-- La variable es **NEXT_PUBLIC_** para que la comprobación funcione en cliente y servidor.
+- La variable es **NEXT*PUBLIC*** para que la comprobación funcione en cliente y servidor.
 - Los emails se comparan en **minúsculas** y sin espacios; los espacios alrededor de las comas se ignoran.
 - Quien inicie sesión con uno de esos emails tendrá permisos de superadmin aunque su rol en la app sea otro (por ejemplo Trabajador).
 
@@ -6628,12 +6966,12 @@ La app usa la base de datos **solo en el cliente**: todo se guarda en el navegad
 
 ### Cómo se elige el proveedor
 
-- **`src/lib/db-providers/index.ts`**  
-  - Variable de entorno: `DB_PROVIDER` (por defecto `dexie`).  
+- **`src/lib/db-providers/index.ts`**
+  - Variable de entorno: `DB_PROVIDER` (por defecto `dexie`).
   - Si `DB_PROVIDER` no existe o no está implementado, se usa siempre Dexie.
 
-- **`src/lib/db.ts`**  
-  - Fachada que reexporta todas las funciones del proveedor activo.  
+- **`src/lib/db.ts`**
+  - Fachada que reexporta todas las funciones del proveedor activo.
   - El resto de la app importa desde `@/lib/db`; así se puede cambiar de proveedor (p. ej. a una API) sin tocar componentes.
 
 ---
@@ -6645,40 +6983,41 @@ Versión actual del esquema: **45** (Dexie usa versionado para migraciones).
 
 ### Tablas e índices (versión 45)
 
-| Tabla | Clave primaria | Índices |
-|-------|----------------|---------|
-| **courses** | `id` | instructor, status, isScorm, isSynced, *mandatoryForRoles, [instructor+status] |
-| **users** | `id` | &email, status, points, isSynced, [status+role], [department+status] |
-| **enrollments** | ++id | studentId, courseId, status, isSynced, [studentId+status], [courseId+status], [studentId+courseId] |
-| **userProgress** | ++id | [userId+courseId], userId, courseId, isSynced, [courseId+userId] |
-| **forumMessages** | ++id | courseId, parentId, timestamp, [courseId+timestamp] |
-| **notifications** | ++id | userId, isRead, timestamp, [userId+timestamp], [userId+type+relatedUrl], [userId+isRead] |
-| **resources** | ++id | name |
-| **courseResources** | ++id | [courseId+resourceId] |
-| **announcements** | ++id | timestamp |
-| **chatChannels** | id | name, type, *participantIds |
-| **chatMessages** | ++id | channelId, timestamp, [channelId+timestamp], [channelId+timestamp+id] |
-| **calendarEvents** | ++id | courseId, start, end, isSynced, [courseId+start] |
-| **externalTrainings** | ++id | userId |
-| **costs** | ++id | category, courseId, date, isSynced, [category+date], [courseId+date] |
-| **aiConfig** | id | (singleton) |
-| **aiUsageLog** | ++id | timestamp |
-| **badges** | id | — |
-| **userBadges** | ++id | [userId+badgeId] |
-| **costCategories** | ++id | &name |
-| **learningPaths** | ++id | targetRole |
-| **userLearningPathProgress** | ++id | [userId+learningPathId] |
-| **courseRatings** | ++id | [courseId+userId], courseId, instructorName, [instructorName+timestamp] |
-| **rolePermissions** | &role | — |
-| **systemLogs** | ++id | timestamp, level, [level+timestamp] |
-| **certificates** | id | userId, courseId, status, issuedAt, expiresAt, verificationCode, isSynced, [userId+courseId], [status+expiresAt], [expiresAt+status] |
-| **certificateTemplates** | id | type, isActive, isSynced |
-| **individualDevelopmentPlans** | id | userId, managerId, status, startDate, endDate, [userId+status], [managerId+status], isSynced |
-| **regulations** | id | code, type, isActive, *applicableRoles, isSynced |
-| **regulationCompliance** | id | userId, regulationId, complianceDate, expirationDate, [userId+regulationId], [regulationId+expirationDate], isSynced |
-| **complianceAudits** | id | regulationId, auditDate, auditorId, status, isSynced |
+| Tabla                          | Clave primaria | Índices                                                                                                                              |
+| ------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **courses**                    | `id`           | instructor, status, isScorm, isSynced, \*mandatoryForRoles, [instructor+status]                                                      |
+| **users**                      | `id`           | &email, status, points, isSynced, [status+role], [department+status]                                                                 |
+| **enrollments**                | ++id           | studentId, courseId, status, isSynced, [studentId+status], [courseId+status], [studentId+courseId]                                   |
+| **userProgress**               | ++id           | [userId+courseId], userId, courseId, isSynced, [courseId+userId]                                                                     |
+| **forumMessages**              | ++id           | courseId, parentId, timestamp, [courseId+timestamp]                                                                                  |
+| **notifications**              | ++id           | userId, isRead, timestamp, [userId+timestamp], [userId+type+relatedUrl], [userId+isRead]                                             |
+| **resources**                  | ++id           | name                                                                                                                                 |
+| **courseResources**            | ++id           | [courseId+resourceId]                                                                                                                |
+| **announcements**              | ++id           | timestamp                                                                                                                            |
+| **chatChannels**               | id             | name, type, \*participantIds                                                                                                         |
+| **chatMessages**               | ++id           | channelId, timestamp, [channelId+timestamp], [channelId+timestamp+id]                                                                |
+| **calendarEvents**             | ++id           | courseId, start, end, isSynced, [courseId+start]                                                                                     |
+| **externalTrainings**          | ++id           | userId                                                                                                                               |
+| **costs**                      | ++id           | category, courseId, date, isSynced, [category+date], [courseId+date]                                                                 |
+| **aiConfig**                   | id             | (singleton)                                                                                                                          |
+| **aiUsageLog**                 | ++id           | timestamp                                                                                                                            |
+| **badges**                     | id             | —                                                                                                                                    |
+| **userBadges**                 | ++id           | [userId+badgeId]                                                                                                                     |
+| **costCategories**             | ++id           | &name                                                                                                                                |
+| **learningPaths**              | ++id           | targetRole                                                                                                                           |
+| **userLearningPathProgress**   | ++id           | [userId+learningPathId]                                                                                                              |
+| **courseRatings**              | ++id           | [courseId+userId], courseId, instructorName, [instructorName+timestamp]                                                              |
+| **rolePermissions**            | &role          | —                                                                                                                                    |
+| **systemLogs**                 | ++id           | timestamp, level, [level+timestamp]                                                                                                  |
+| **certificates**               | id             | userId, courseId, status, issuedAt, expiresAt, verificationCode, isSynced, [userId+courseId], [status+expiresAt], [expiresAt+status] |
+| **certificateTemplates**       | id             | type, isActive, isSynced                                                                                                             |
+| **individualDevelopmentPlans** | id             | userId, managerId, status, startDate, endDate, [userId+status], [managerId+status], isSynced                                         |
+| **regulations**                | id             | code, type, isActive, \*applicableRoles, isSynced                                                                                    |
+| **regulationCompliance**       | id             | userId, regulationId, complianceDate, expirationDate, [userId+regulationId], [regulationId+expirationDate], isSynced                 |
+| **complianceAudits**           | id             | regulationId, auditDate, auditorId, status, isSynced                                                                                 |
 
 Leyenda Dexie:
+
 - `++id`: clave auto-incremental.
 - `&campo`: índice único.
 - `*campo`: índice multi-entrada (arrays).
@@ -6688,13 +7027,13 @@ Leyenda Dexie:
 
 ## Dónde está definido cada cosa
 
-| Qué | Dónde |
-|-----|--------|
+| Qué                                  | Dónde                                                                                         |
+| ------------------------------------ | --------------------------------------------------------------------------------------------- |
 | **Esquema Dexie (tablas e índices)** | `src/lib/db-providers/dexie.ts` (clase `TalentOSDB`, `this.version(41)` … `this.version(45)`) |
-| **Tipos TypeScript (entidades)** | `src/lib/types.ts` (`User`, `Course`, `Enrollment`, etc.) |
-| **API de acceso (facade)** | `src/lib/db.ts` (reexporta todo del proveedor activo) |
-| **Implementación por almacén** | `src/lib/db-providers/dexie.ts` (objeto que implementa la interfaz `DBProvider`) |
-| **Contrato del proveedor** | `src/lib/db-providers/types.ts` (interfaz `DBProvider`) |
+| **Tipos TypeScript (entidades)**     | `src/lib/types.ts` (`User`, `Course`, `Enrollment`, etc.)                                     |
+| **API de acceso (facade)**           | `src/lib/db.ts` (reexporta todo del proveedor activo)                                         |
+| **Implementación por almacén**       | `src/lib/db-providers/dexie.ts` (objeto que implementa la interfaz `DBProvider`)              |
+| **Contrato del proveedor**           | `src/lib/db-providers/types.ts` (interfaz `DBProvider`)                                       |
 
 ---
 
@@ -6712,7 +7051,6 @@ Varios tipos tienen `isSynced` y `updatedAt`. La lógica de sincronización con 
 
 ## SETUP_GUIDE.md
 
-
 # Guía de Configuración del Entorno de Desarrollo
 
 Esta guía te llevará paso a paso a través del proceso de configuración de TalentOS en tu máquina local para el desarrollo.
@@ -6722,9 +7060,10 @@ Esta guía te llevará paso a paso a través del proceso de configuración de Ta
 ### Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalado lo siguiente:
--   **Node.js:** Versión 20.x o superior.
--   **npm:** Generalmente se instala junto con Node.js.
--   **Git:** Para clonar el repositorio.
+
+- **Node.js:** Versión 20.x o superior.
+- **npm:** Generalmente se instala junto con Node.js.
+- **Git:** Para clonar el repositorio.
 
 ---
 
@@ -6746,6 +7085,7 @@ Una vez dentro de la carpeta del proyecto, instala todas las dependencias necesa
 ```bash
 npm install
 ```
+
 Este comando leerá el archivo `package.json` y descargará todas las librerías requeridas.
 
 ---
@@ -6756,11 +7096,11 @@ TalentOS utiliza una base de datos local (Dexie.js) para funcionar, pero para la
 
 1.  **Configura tu proyecto de Supabase:** Si aún no lo has hecho, necesitarás una cuenta de Supabase y crear un nuevo proyecto.
 2.  **Crea las Tablas:** Dentro de tu proyecto en Supabase, crea todas las tablas y campos exactamente como se especifica en nuestra guía del esquema.
-    -   🔗 **Referencia Obligatoria:** [**Guía del Esquema de Supabase**](./supabase_schema.md)
+    - 🔗 **Referencia Obligatoria:** [**Guía del Esquema de Supabase**](./supabase_schema.md)
 3.  **Obtén tus Credenciales:** Necesitarás tres credenciales de la sección `Project Settings > API` de tu proyecto de Supabase.
-    -   **Project URL**
-    -   **Project API Keys -> `anon` `public`**
-    -   **Project API Keys -> `service_role` `secret`**
+    - **Project URL**
+    - **Project API Keys -> `anon` `public`**
+    - **Project API Keys -> `service_role` `secret`**
 
 Guarda estas tres credenciales, las usarás en el siguiente paso.
 
@@ -6785,7 +7125,7 @@ La aplicación necesita claves secretas para conectarse a servicios externos. Es
     # Clave de API para Google Gemini (para las funciones de IA)
     # Obtenla desde Google AI Studio
     GOOGLE_API_KEY="TU_CLAVE_API_DE_GOOGLE_AI"
-    
+
     # --- Configuración de Email (Opcional pero Recomendado) ---
     # Clave de API de Resend para enviar emails
     RESEND_API_KEY="TU_CLAVE_API_DE_RESEND"
@@ -6817,18 +7157,17 @@ La aplicación debería estar disponible en `http://localhost:3000` (o el puerto
 
 La primera vez que ejecutes la aplicación, la base de datos local (Dexie.js) estará vacía. Para facilitar el desarrollo, el sistema la poblará automáticamente con datos de ejemplo.
 
--   **¿Cómo funciona?:** El archivo `src/lib/db-providers/dexie.ts` contiene una función `populateDatabase()` que se ejecuta al inicio. Si no detecta un usuario administrador (`user_1`), borra todas las tablas y las llena con los datos definidos en `src/lib/data.ts`.
--   **Inicio de Sesión:** Puedes usar cualquiera de las cuentas de prueba definidas en `src/app/login/page.tsx` para acceder. Por ejemplo, el usuario administrador:
-    -   **Email:** `elena.vargas@example.com`
-    -   **Contraseña:** `password123`
--   **Sincronización:** Recuerda que estos datos iniciales solo existen en tu navegador. Para subirlos a Supabase, ve a `Ajustes > Sincronización` y ejecuta el proceso de sincronización manual.
+- **¿Cómo funciona?:** El archivo `src/lib/db-providers/dexie.ts` contiene una función `populateDatabase()` que se ejecuta al inicio. Si no detecta un usuario administrador (`user_1`), borra todas las tablas y las llena con los datos definidos en `src/lib/data.ts`.
+- **Inicio de Sesión:** Puedes usar cualquiera de las cuentas de prueba definidas en `src/app/login/page.tsx` para acceder. Por ejemplo, el usuario administrador:
+  - **Email:** `elena.vargas@example.com`
+  - **Contraseña:** `password123`
+- **Sincronización:** Recuerda que estos datos iniciales solo existen en tu navegador. Para subirlos a Supabase, ve a `Ajustes > Sincronización` y ejecuta el proceso de sincronización manual.
 
 ¡Y eso es todo! Ahora tienes un entorno de desarrollo de TalentOS completamente funcional.
 
 ---
 
 ## DEPLOYMENT.md
-
 
 # Guía de Despliegue
 
@@ -6846,37 +7185,40 @@ Antes de desplegar, necesitas configurar las variables de entorno. Estas son cla
 
 Tu aplicación necesita conectarse a tu base de Supabase para la sincronización de datos y la autenticación.
 
--   `NEXT_PUBLIC_SUPABASE_URL`: La URL de tu proyecto Supabase.
--   `NEXT_PUBLIC_SUPABASE_ANON_KEY`: La clave anónima (public) de tu proyecto.
--   `SUPABASE_SERVICE_ROLE_KEY`: Tu clave de 'service_role'. **Es secreta y nunca debe ser expuesta en el lado del cliente.** Se usa en el servidor para la sincronización.
+- `NEXT_PUBLIC_SUPABASE_URL`: La URL de tu proyecto Supabase.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: La clave anónima (public) de tu proyecto.
+- `SUPABASE_SERVICE_ROLE_KEY`: Tu clave de 'service_role'. **Es secreta y nunca debe ser expuesta en el lado del cliente.** Se usa en el servidor para la sincronización.
 
 ### Configuración del Proveedor de Autenticación (Opcional, por defecto Dexie)
+
 La aplicación está preparada para usar diferentes sistemas de autenticación.
--   `NEXT_PUBLIC_AUTH_PROVIDER`: Define qué sistema usar. Opciones: `dexie`, `supabase`.
-    -   `dexie`: Usa el sistema de login local (por defecto).
-    -   `supabase`: Usa Supabase Auth.
+
+- `NEXT_PUBLIC_AUTH_PROVIDER`: Define qué sistema usar. Opciones: `dexie`, `supabase`.
+  - `dexie`: Usa el sistema de login local (por defecto).
+  - `supabase`: Usa Supabase Auth.
 
 ---
 
 ### Variables de IA (Obligatorio para funciones de IA)
+
 Para que las funcionalidades de Inteligencia Artificial funcionen, debes proporcionar al menos una clave API.
 
--   `GOOGLE_API_KEY`: Tu clave API de Google AI Studio para usar Gemini.
+- `GOOGLE_API_KEY`: Tu clave API de Google AI Studio para usar Gemini.
 
 ---
 
 ### Variables de Notificaciones (Opcional)
+
 Si deseas que el envío de notificaciones por email o WhatsApp funcione, configura estas variables.
 
--   `RESEND_API_KEY`: Tu clave API de Resend para el envío de correos transaccionales.
--   `TWILIO_ACCOUNT_SID`: El SID de tu cuenta de Twilio.
--   `TWILIO_AUTH_TOKEN`: El token de autenticación de tu cuenta de Twilio.
--   `TWILIO_WHATSAPP_FROM`: Tu número de teléfono de WhatsApp de Twilio (formato: `+14155238886`).
--   `TWILIO_WHATSAPP_TO_TEST`: Un número de teléfono para pruebas (formato: `+34123456789`).
--   `NEXT_PUBLIC_FIREBASE_VAPID_KEY`: La clave VAPID de Cloud Messaging para notificaciones push.
--   `FIREBASE_CLIENT_EMAIL`: Email de la cuenta de servicio (para notificaciones del servidor).
--   `FIREBASE_PRIVATE_KEY`: Clave privada de la cuenta de servicio (para notificaciones del servidor).
-
+- `RESEND_API_KEY`: Tu clave API de Resend para el envío de correos transaccionales.
+- `TWILIO_ACCOUNT_SID`: El SID de tu cuenta de Twilio.
+- `TWILIO_AUTH_TOKEN`: El token de autenticación de tu cuenta de Twilio.
+- `TWILIO_WHATSAPP_FROM`: Tu número de teléfono de WhatsApp de Twilio (formato: `+14155238886`).
+- `TWILIO_WHATSAPP_TO_TEST`: Un número de teléfono para pruebas (formato: `+34123456789`).
+- `NEXT_PUBLIC_FIREBASE_VAPID_KEY`: La clave VAPID de Cloud Messaging para notificaciones push.
+- `FIREBASE_CLIENT_EMAIL`: Email de la cuenta de servicio (para notificaciones del servidor).
+- `FIREBASE_PRIVATE_KEY`: Clave privada de la cuenta de servicio (para notificaciones del servidor).
 
 ---
 
@@ -6886,8 +7228,8 @@ Esta aplicación es una **Progressive Web App (PWA)**, lo que significa que los 
 
 Para que las funcionalidades de PWA (como el aviso de instalación o el funcionamiento offline) se activen, **es obligatorio que la aplicación se sirva a través de una conexión segura (HTTPS)**.
 
--   Plataformas como **Vercel** gestionan esto automáticamente.
--   Si despliegas en tu **propio servidor**, deberás configurar un certificado SSL (se recomienda usar Let's Encrypt).
+- Plataformas como **Vercel** gestionan esto automáticamente.
+- Si despliegas en tu **propio servidor**, deberás configurar un certificado SSL (se recomienda usar Let's Encrypt).
 
 ---
 
@@ -6899,8 +7241,8 @@ Vercel son los creadores de Next.js, por lo que el despliegue es increíblemente
 2.  **Regístrate en Vercel** usando tu cuenta de Git.
 3.  **Importa tu proyecto**: En el dashboard de Vercel, haz clic en "Add New... -> Project" y selecciona el repositorio de tu aplicación.
 4.  **Configura el Proyecto**: Vercel detectará automáticamente que es un proyecto de Next.js y preconfigurará todo por ti.
-    -   Ve a la sección "Environment Variables" y añade todas las variables mencionadas en el paso 1.
-    -   Vercel proporciona automáticamente un certificado SSL, cumpliendo con el requisito de HTTPS para la PWA.
+    - Ve a la sección "Environment Variables" y añade todas las variables mencionadas en el paso 1.
+    - Vercel proporciona automáticamente un certificado SSL, cumpliendo con el requisito de HTTPS para la PWA.
 5.  **Despliega**: Haz clic en el botón "Deploy". Vercel construirá y desplegará tu aplicación.
 
 Cada vez que hagas `git push` a tu rama principal, Vercel redesplegará automáticamente los cambios.
@@ -6931,6 +7273,7 @@ npm run dev
 ## 🌐 Opción B: Deploy en Vercel (5 minutos)
 
 ### 1. Push a Git
+
 ```bash
 git add .
 git commit -m "Ready for deployment"
@@ -6938,6 +7281,7 @@ git push origin main
 ```
 
 ### 2. Vercel
+
 - Ir a: https://vercel.com
 - **New Project** → Importar tu repo
 - Variables de entorno:

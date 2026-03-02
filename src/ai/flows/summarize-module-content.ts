@@ -17,16 +17,17 @@ import {
   SummarizeModuleContentOutputSchema,
 } from '@/lib/types';
 
-
-export async function summarizeModuleContent(input: SummarizeModuleContentInput): Promise<SummarizeModuleContentOutput> {
+export async function summarizeModuleContent(
+  input: SummarizeModuleContentInput
+): Promise<SummarizeModuleContentOutput> {
   return summarizeModuleContentFlow(input);
 }
 
 const prompt = ai.definePrompt({
-    name: 'summarizeModuleContentPrompt',
-    inputSchema: SummarizeModuleContentInputSchema,
-    outputSchema: SummarizeModuleContentOutputSchema,
-    prompt: `You are an expert AI assistant specializing in creating educational materials for emergency medical personnel.
+  name: 'summarizeModuleContentPrompt',
+  inputSchema: SummarizeModuleContentInputSchema,
+  outputSchema: SummarizeModuleContentOutputSchema,
+  prompt: `You are an expert AI assistant specializing in creating educational materials for emergency medical personnel.
       Your task is to summarize the following course module content. The summary should be concise, clear, and focus on the most critical learning objectives and key takeaways for a student.
 
       Keep the tone professional and direct.
@@ -45,7 +46,7 @@ const summarizeModuleContentFlow = ai.defineFlow(
     outputSchema: SummarizeModuleContentOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

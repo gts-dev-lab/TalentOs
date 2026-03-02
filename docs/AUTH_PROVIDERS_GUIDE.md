@@ -10,6 +10,7 @@
 ### 1. **Keycloak** (Recomendado) ⭐
 
 **Características**:
+
 - ✅ Open Source completo
 - ✅ Soporte OIDC, SAML, OAuth 2.0
 - ✅ Gestión completa de usuarios
@@ -19,6 +20,7 @@
 - ✅ 2FA/MFA integrado
 
 **Docker Compose**:
+
 ```yaml
 version: '3'
 
@@ -58,6 +60,7 @@ volumes:
 ```
 
 **Configuración en TalentOS**:
+
 ```env
 # .env.local
 KEYCLOAK_URL=http://localhost:8080
@@ -68,9 +71,10 @@ KEYCLOAK_CLIENT_SECRET=tu-secret-aqui
 
 ---
 
-### 2. **Authentik** 
+### 2. **Authentik**
 
 **Características**:
+
 - ✅ Open Source (Python/Django)
 - ✅ UI moderna y fácil de usar
 - ✅ Soporte OAuth2, OIDC, SAML
@@ -79,6 +83,7 @@ KEYCLOAK_CLIENT_SECRET=tu-secret-aqui
 - ✅ Branding personalizable
 
 **Docker Compose**:
+
 ```yaml
 version: '3'
 
@@ -87,7 +92,7 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: ['CMD-SHELL', 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}']
       start_period: 20s
       interval: 30s
       retries: 5
@@ -103,7 +108,7 @@ services:
     image: redis:alpine
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
       start_period: 20s
       interval: 30s
       retries: 5
@@ -151,6 +156,7 @@ volumes:
 ### 3. **Ory Hydra + Ory Kratos**
 
 **Características**:
+
 - ✅ Open Source (Go)
 - ✅ Cloud-native
 - ✅ Alta performance
@@ -158,6 +164,7 @@ volumes:
 - ✅ Headless (API-first)
 
 **Docker Compose**:
+
 ```yaml
 version: '3'
 
@@ -165,8 +172,8 @@ services:
   hydra:
     image: oryd/hydra:latest
     ports:
-      - "4444:4444" # Public port
-      - "4445:4445" # Admin port
+      - '4444:4444' # Public port
+      - '4445:4445' # Admin port
     command: serve all --dev
     environment:
       DSN: postgres://hydra:secret@postgresd:5432/hydra?sslmode=disable
@@ -199,22 +206,25 @@ services:
 ### Opción A: NextAuth.js con Proveedores Personalizados
 
 **Ventajas**:
+
 - ✅ Integración nativa con Next.js
 - ✅ Soporte para múltiples proveedores
 - ✅ Session handling automático
 - ✅ Callbacks personalizables
 
 **Instalación**:
+
 ```bash
 npm install next-auth @auth/core
 ```
 
 **Configuración**:
+
 ```typescript
 // src/app/api/auth/[...nextauth]/route.ts
-import NextAuth from "next-auth"
-import type { AuthOptions } from "next-auth"
-import KeycloakProvider from "next-auth/providers/keycloak"
+import NextAuth from 'next-auth';
+import type { AuthOptions } from 'next-auth';
+import KeycloakProvider from 'next-auth/providers/keycloak';
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -225,22 +235,22 @@ export const authOptions: AuthOptions = {
     }),
     // Proveedor personalizado
     {
-      id: "custom-oidc",
-      name: "Mi Sistema SSO",
-      type: "oauth",
+      id: 'custom-oidc',
+      name: 'Mi Sistema SSO',
+      type: 'oauth',
       wellKnown: `${process.env.OIDC_ISSUER}/.well-known/openid-configuration`,
-      authorization: { params: { scope: "openid email profile" } },
+      authorization: { params: { scope: 'openid email profile' } },
       idToken: true,
-      checks: ["pkce", "state"],
+      checks: ['pkce', 'state'],
       profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-        }
+        };
       },
-    }
+    },
   ],
   callbacks: {
     async jwt({ token, user, account }) {
@@ -251,14 +261,14 @@ export const authOptions: AuthOptions = {
           refreshToken: account.refresh_token,
           accessTokenExpires: account.expires_at,
           user,
-        }
+        };
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      session.user = token.user as any
-      session.accessToken = token.accessToken as string
-      return session
+      session.user = token.user as any;
+      session.accessToken = token.accessToken as string;
+      return session;
     },
   },
   pages: {
@@ -266,10 +276,10 @@ export const authOptions: AuthOptions = {
     signOut: '/auth/signout',
     error: '/auth/error',
   },
-}
+};
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
 ```
 
 ---
@@ -277,16 +287,19 @@ export { handler as GET, handler as POST }
 ### Opción B: Implementación Custom con `openid-client`
 
 **Ventajas**:
+
 - ✅ Control total
 - ✅ Sin dependencias pesadas
 - ✅ Más flexible
 
 **Instalación**:
+
 ```bash
 npm install openid-client
 ```
 
 **Implementación**:
+
 ```typescript
 // src/lib/auth/oidc.ts
 import { Issuer, generators } from 'openid-client';
@@ -298,7 +311,7 @@ export class OIDCProvider {
   async initialize() {
     // Descubrir configuración OIDC
     this.issuer = await Issuer.discover(process.env.OIDC_ISSUER!);
-    
+
     this.client = new this.issuer.Client({
       client_id: process.env.OIDC_CLIENT_ID!,
       client_secret: process.env.OIDC_CLIENT_SECRET,
@@ -310,7 +323,7 @@ export class OIDCProvider {
   generateAuthUrl() {
     const code_verifier = generators.codeVerifier();
     const code_challenge = generators.codeChallenge(code_verifier);
-    
+
     const authUrl = this.client.authorizationUrl({
       scope: 'openid email profile',
       code_challenge,
@@ -328,7 +341,7 @@ export class OIDCProvider {
     );
 
     const userinfo = await this.client.userinfo(tokenSet.access_token);
-    
+
     return {
       user: userinfo,
       tokens: tokenSet,
@@ -347,6 +360,7 @@ export class OIDCProvider {
 ```
 
 **API Routes**:
+
 ```typescript
 // src/app/api/auth/login/route.ts
 import { NextResponse } from 'next/server';
@@ -356,9 +370,9 @@ import { cookies } from 'next/headers';
 export async function GET() {
   const provider = new OIDCProvider();
   await provider.initialize();
-  
+
   const { authUrl, code_verifier } = provider.generateAuthUrl();
-  
+
   // Guardar code_verifier en cookie segura
   cookies().set('code_verifier', code_verifier, {
     httpOnly: true,
@@ -366,7 +380,7 @@ export async function GET() {
     sameSite: 'lax',
     maxAge: 60 * 10, // 10 minutos
   });
-  
+
   return NextResponse.redirect(authUrl);
 }
 ```
@@ -382,20 +396,17 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
   const code_verifier = cookies().get('code_verifier')?.value;
-  
+
   if (!code || !code_verifier) {
     return NextResponse.redirect(new URL('/auth/error', request.url));
   }
-  
+
   try {
     const provider = new OIDCProvider();
     await provider.initialize();
-    
-    const { user, tokens } = await provider.handleCallback(
-      { code },
-      code_verifier
-    );
-    
+
+    const { user, tokens } = await provider.handleCallback({ code }, code_verifier);
+
     // Crear o actualizar usuario en tu BD
     const dbUser = await createOrUpdateUser({
       id: user.sub,
@@ -403,14 +414,14 @@ export async function GET(request: NextRequest) {
       name: user.name,
       avatar: user.picture,
     });
-    
+
     // Crear sesión JWT
     const sessionToken = await signSessionToken({
       userId: dbUser.id,
       email: dbUser.email,
       role: dbUser.role,
     });
-    
+
     // Guardar tokens
     cookies().set('auth-token', sessionToken, {
       httpOnly: true,
@@ -418,17 +429,17 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 días
     });
-    
+
     cookies().set('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 30, // 30 días
     });
-    
+
     // Limpiar code_verifier
     cookies().delete('code_verifier');
-    
+
     return NextResponse.redirect(new URL('/dashboard', request.url));
   } catch (error) {
     console.error('Auth callback error:', error);
@@ -483,7 +494,7 @@ export default function LoginPage() {
               <Key className="mr-2 h-4 w-4" />
               Iniciar con SSO Corporativo
             </Button>
-            
+
             <Button
               variant="outline"
               className="w-full"
@@ -567,7 +578,7 @@ interface OIDCUser {
 export async function createOrUpdateUser(oidcUser: OIDCUser): Promise<User> {
   // Buscar usuario existente por email o ID externo
   let user = await db.getUserByEmail(oidcUser.email);
-  
+
   if (!user) {
     // Crear nuevo usuario
     const newUser: Partial<User> = {
@@ -581,7 +592,7 @@ export async function createOrUpdateUser(oidcUser: OIDCUser): Promise<User> {
       authProvider: 'oidc',
       createdAt: new Date().toISOString(),
     };
-    
+
     const userId = await db.createUser(newUser as User);
     user = await db.getUser(userId);
   } else {
@@ -595,36 +606,36 @@ export async function createOrUpdateUser(oidcUser: OIDCUser): Promise<User> {
     });
     user = await db.getUser(user.id!);
   }
-  
+
   return user!;
 }
 
 function mapRoleFromOIDC(groups: string[]): User['role'] {
   // Mapear grupos/roles de OIDC a roles internos
   const roleMap: Record<string, User['role']> = {
-    'admin': 'Administrador General',
+    admin: 'Administrador General',
     'hr-manager': 'Gestor de RRHH',
     'training-manager': 'Jefe de Formación',
-    'instructor': 'Formador',
-    'external': 'Personal Externo',
-    'employee': 'Trabajador',
+    instructor: 'Formador',
+    external: 'Personal Externo',
+    employee: 'Trabajador',
   };
-  
+
   // Buscar el rol más alto
   for (const [oidcRole, appRole] of Object.entries(roleMap)) {
     if (groups.some(g => g.toLowerCase().includes(oidcRole))) {
       return appRole;
     }
   }
-  
+
   return 'Trabajador'; // Default
 }
 
 function extractDepartment(oidcUser: OIDCUser): string | undefined {
   // Extraer departamento de los claims
-  return (oidcUser as any).department || 
-         (oidcUser as any).ou || 
-         (oidcUser as any).organizationalUnit;
+  return (
+    (oidcUser as any).department || (oidcUser as any).ou || (oidcUser as any).organizationalUnit
+  );
 }
 ```
 
@@ -641,21 +652,21 @@ import { verifySessionToken } from '@/lib/auth/jwt';
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
-  
+
   // Rutas públicas
   const publicPaths = ['/login', '/auth', '/api/auth', '/certificates/verify'];
   if (publicPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
   }
-  
+
   // Verificar token
   if (!token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-  
+
   try {
     const session = await verifySessionToken(token);
-    
+
     // Verificar expiración del token OIDC y renovar si es necesario
     const refreshToken = request.cookies.get('refresh_token')?.value;
     if (refreshToken && shouldRefreshToken(session)) {
@@ -666,7 +677,7 @@ export async function middleware(request: NextRequest) {
         body: JSON.stringify({ refreshToken }),
       });
     }
-    
+
     return NextResponse.next();
   } catch (error) {
     // Token inválido, redirigir a login
@@ -681,9 +692,7 @@ function shouldRefreshToken(session: any): boolean {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)'],
 };
 ```
 
@@ -691,15 +700,15 @@ export const config = {
 
 ## 📊 Comparativa de Proveedores
 
-| Característica | Keycloak | Authentik | Ory Hydra |
-|---------------|----------|-----------|-----------|
-| **Facilidad de uso** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **Documentación** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Performance** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Comunidad** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Funcionalidades** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **UI Admin** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ |
-| **Recursos** | Alto | Medio | Bajo |
+| Característica       | Keycloak   | Authentik  | Ory Hydra  |
+| -------------------- | ---------- | ---------- | ---------- |
+| **Facilidad de uso** | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     |
+| **Documentación**    | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐   | ⭐⭐⭐⭐   |
+| **Performance**      | ⭐⭐⭐     | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ |
+| **Comunidad**        | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     | ⭐⭐⭐⭐   |
+| **Funcionalidades**  | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐   | ⭐⭐⭐     |
+| **UI Admin**         | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ | ⭐⭐       |
+| **Recursos**         | Alto       | Medio      | Bajo       |
 
 ---
 

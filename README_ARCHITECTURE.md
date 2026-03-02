@@ -154,28 +154,28 @@ Regulation
 
 ### Entidades con ciclo de vida (estados y transiciones)
 
-| Entidad | Estados | Relación con usuarios |
-|---------|---------|------------------------|
-| **Enrollment** | pending, approved, rejected, active, completed, expelled, expired, needs_review | User ↔ Course |
-| **IndividualDevelopmentPlan** | draft, active, completed, archived | User (empleado) + User (manager) |
-| **ComplianceAudit** | draft, completed, archived | Regulation + auditor |
-| **Course** | draft, published | — |
-| **User** | pending_approval, approved, suspended | — |
+| Entidad                       | Estados                                                                         | Relación con usuarios            |
+| ----------------------------- | ------------------------------------------------------------------------------- | -------------------------------- |
+| **Enrollment**                | pending, approved, rejected, active, completed, expelled, expired, needs_review | User ↔ Course                    |
+| **IndividualDevelopmentPlan** | draft, active, completed, archived                                              | User (empleado) + User (manager) |
+| **ComplianceAudit**           | draft, completed, archived                                                      | Regulation + auditor             |
+| **Course**                    | draft, published                                                                | —                                |
+| **User**                      | pending_approval, approved, suspended                                           | —                                |
 
 ---
 
 ## Módulos principales
 
-| Módulo | Ubicación | Función |
-|--------|-----------|---------|
-| DBProvider | `src/lib/db-providers/` | Abstracción de datos (Dexie/PostgreSQL) |
-| Tenant context | `src/lib/tenant-context.ts` | Contexto de inquilino por request |
-| Middleware | `src/middleware.ts` | Verificación JWT + tenantId |
-| Audit | `src/lib/audit/` | Logs de auditoría |
-| GDPR | `src/lib/gdpr.ts` | Exportación ARCO, borrado lógico |
-| LTI | `src/lib/lti/` | Integración LTI 1.3 |
-| SCORM | `src/lib/scorm-api.ts`, `scorm-cmi.ts` | API SCORM 2004, persistencia CMI |
-| Migraciones | `migrations/` | Esquema PostgreSQL, RLS |
+| Módulo         | Ubicación                              | Función                                 |
+| -------------- | -------------------------------------- | --------------------------------------- |
+| DBProvider     | `src/lib/db-providers/`                | Abstracción de datos (Dexie/PostgreSQL) |
+| Tenant context | `src/lib/tenant-context.ts`            | Contexto de inquilino por request       |
+| Middleware     | `src/middleware.ts`                    | Verificación JWT + tenantId             |
+| Audit          | `src/lib/audit/`                       | Logs de auditoría                       |
+| GDPR           | `src/lib/gdpr.ts`                      | Exportación ARCO, borrado lógico        |
+| LTI            | `src/lib/lti/`                         | Integración LTI 1.3                     |
+| SCORM          | `src/lib/scorm-api.ts`, `scorm-cmi.ts` | API SCORM 2004, persistencia CMI        |
+| Migraciones    | `migrations/`                          | Esquema PostgreSQL, RLS                 |
 
 ---
 

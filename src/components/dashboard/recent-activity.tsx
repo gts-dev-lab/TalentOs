@@ -19,10 +19,15 @@ export function RecentActivity() {
     async () => {
       if (!user) return [];
       const logs = await db.getSystemLogs();
-      const sorted = [...logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      const sorted = [...logs].sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
       const recent = sorted.slice(0, 10);
       // Filtrar por userId si el log tiene ese campo (esquema v47+)
-      const withUserId = recent.filter((log) => !(log as { userId?: string }).userId || (log as { userId?: string }).userId === user.id);
+      const withUserId = recent.filter(
+        log =>
+          !(log as { userId?: string }).userId || (log as { userId?: string }).userId === user.id
+      );
       return withUserId.length > 0 ? withUserId : recent;
     },
     [user?.id],
@@ -73,7 +78,7 @@ export function RecentActivity() {
         ) : (
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-4">
-              {recentLogs.map((log) => {
+              {recentLogs.map(log => {
                 const Icon = getActivityIcon(log.event);
                 const colorClasses = getActivityColor(log.level);
 
@@ -86,20 +91,18 @@ export function RecentActivity() {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {log.event}
-                      </p>
+                      <p className="text-sm font-medium leading-none">{log.event}</p>
                       {log.metadata && (
                         <p className="text-xs text-muted-foreground line-clamp-2">
-                          {typeof log.metadata === 'string' 
-                            ? log.metadata 
+                          {typeof log.metadata === 'string'
+                            ? log.metadata
                             : JSON.stringify(log.metadata).slice(0, 100)}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(log.timestamp), { 
-                          addSuffix: true, 
-                          locale: es 
+                        {formatDistanceToNow(new Date(log.timestamp), {
+                          addSuffix: true,
+                          locale: es,
                         })}
                       </p>
                     </div>

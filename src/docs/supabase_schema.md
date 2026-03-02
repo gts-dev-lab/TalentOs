@@ -19,6 +19,7 @@ Para que la sincronización entre la base de datos local (Dexie) y la remota (Su
 Por seguridad, es **crucial** que actives "Row Level Security" (RLS) para cada tabla que crees. Una vez activado, deberás crear políticas (policies) para permitir el acceso. Para la sincronización del lado del servidor, las operaciones usarán la `service_role_key`, que ignora las políticas RLS. Sin embargo, es una buena práctica tenerlas configuradas si planeas acceder a los datos desde el cliente en el futuro.
 
 **Ejemplo de Política "Permitir Acceso a Usuarios Autenticados":**
+
 - **Policy Name:** `Allow authenticated read access`
 - **Target Roles:** `authenticated`
 - **USING expression:** `auth.uid() = userId` (asumiendo que tienes una columna `userId`)
@@ -30,19 +31,19 @@ Por seguridad, es **crucial** que actives "Row Level Security" (RLS) para cada t
 
 Almacena la información de cada persona en la plataforma.
 
-| Nombre de la Columna | Tipo de Dato | Notas |
-| :--- | :--- | :--- |
-| `id` | `text` | **Clave Primaria (Primary Key)**. No autoincremental. |
-| `name` | `text` | |
-| `email` | `text` | Debe ser único. |
-| `avatar` | `text` | URL de la imagen. |
-| `role` | `text` | |
-| `department` | `text` | |
-| `points` | `int4` | Valor por defecto: `0` |
-| `status` | `text` | `approved`, `pending_approval`, `suspended` |
-| `notificationSettings` | `jsonb` | |
-| `fcmToken` | `text` | Puede ser nulo. |
-| `updatedAt` | `timestamptz` | Valor por defecto: `now()` |
+| Nombre de la Columna   | Tipo de Dato  | Notas                                                 |
+| :--------------------- | :------------ | :---------------------------------------------------- |
+| `id`                   | `text`        | **Clave Primaria (Primary Key)**. No autoincremental. |
+| `name`                 | `text`        |                                                       |
+| `email`                | `text`        | Debe ser único.                                       |
+| `avatar`               | `text`        | URL de la imagen.                                     |
+| `role`                 | `text`        |                                                       |
+| `department`           | `text`        |                                                       |
+| `points`               | `int4`        | Valor por defecto: `0`                                |
+| `status`               | `text`        | `approved`, `pending_approval`, `suspended`           |
+| `notificationSettings` | `jsonb`       |                                                       |
+| `fcmToken`             | `text`        | Puede ser nulo.                                       |
+| `updatedAt`            | `timestamptz` | Valor por defecto: `now()`                            |
 
 ---
 
@@ -50,23 +51,23 @@ Almacena la información de cada persona en la plataforma.
 
 Contiene todos los detalles de las formaciones.
 
-| Nombre de la Columna | Tipo de Dato | Notas |
-| :--- | :--- | :--- |
-| `id` | `text` | **Clave Primaria (Primary Key)**. No autoincremental. |
-| `title` | `text` | |
-| `description` | `text` | |
-| `longDescription` | `text` | |
-| `instructor` | `text` | |
-| `duration` | `text` | |
-| `modality` | `text` | `Online`, `Presencial`, `Mixta` |
-| `image` | `text` | URL de la imagen. |
-| `status` | `text` | `draft`, `published` |
-| `capacity` | `int4` | Puede ser nulo. |
-| `modules` | `jsonb` | |
-| `mandatoryForRoles` | `jsonb` | |
-| `updatedAt` | `timestamptz` | Valor por defecto: `now()` |
-| `aiHint` | `text` | |
-| `isScorm` | `boolean` | Valor por defecto: `false` |
+| Nombre de la Columna | Tipo de Dato  | Notas                                                 |
+| :------------------- | :------------ | :---------------------------------------------------- |
+| `id`                 | `text`        | **Clave Primaria (Primary Key)**. No autoincremental. |
+| `title`              | `text`        |                                                       |
+| `description`        | `text`        |                                                       |
+| `longDescription`    | `text`        |                                                       |
+| `instructor`         | `text`        |                                                       |
+| `duration`           | `text`        |                                                       |
+| `modality`           | `text`        | `Online`, `Presencial`, `Mixta`                       |
+| `image`              | `text`        | URL de la imagen.                                     |
+| `status`             | `text`        | `draft`, `published`                                  |
+| `capacity`           | `int4`        | Puede ser nulo.                                       |
+| `modules`            | `jsonb`       |                                                       |
+| `mandatoryForRoles`  | `jsonb`       |                                                       |
+| `updatedAt`          | `timestamptz` | Valor por defecto: `now()`                            |
+| `aiHint`             | `text`        |                                                       |
+| `isScorm`            | `boolean`     | Valor por defecto: `false`                            |
 
 ---
 
@@ -74,14 +75,14 @@ Contiene todos los detalles de las formaciones.
 
 Registra qué usuario está inscrito en qué curso.
 
-| Nombre de la Columna | Tipo de Dato | Notas |
-| :--- | :--- | :--- |
-| `id` | `bigint` | **Clave Primaria (Primary Key)**, autoincremental. |
-| `studentId` | `text` | El `id` del usuario en la tabla Users. |
-| `courseId` | `text` | El `id` del curso en la tabla Courses. |
-| `status` | `text` | `pending`, `approved`, `rejected`, etc. |
-| `requestDate` | `timestamptz` | Valor por defecto: `now()` |
-| `updatedAt` | `timestamptz` | Valor por defecto: `now()` |
+| Nombre de la Columna | Tipo de Dato  | Notas                                              |
+| :------------------- | :------------ | :------------------------------------------------- |
+| `id`                 | `bigint`      | **Clave Primaria (Primary Key)**, autoincremental. |
+| `studentId`          | `text`        | El `id` del usuario en la tabla Users.             |
+| `courseId`           | `text`        | El `id` del curso en la tabla Courses.             |
+| `status`             | `text`        | `pending`, `approved`, `rejected`, etc.            |
+| `requestDate`        | `timestamptz` | Valor por defecto: `now()`                         |
+| `updatedAt`          | `timestamptz` | Valor por defecto: `now()`                         |
 
 ---
 
@@ -89,13 +90,13 @@ Registra qué usuario está inscrito en qué curso.
 
 Guarda el progreso de cada usuario en cada curso.
 
-| Nombre de la Columna | Tipo de Dato | Notas |
-| :--- | :--- | :--- |
-| `id` | `bigint` | **Clave Primaria (Primary Key)**, autoincremental. |
-| `userId` | `text` | El `id` del usuario en la tabla Users. |
-| `courseId` | `text` | El `id` del curso en la tabla Courses. |
-| `completedModules` | `jsonb` | |
-| `updatedAt` | `timestamptz` | Valor por defecto: `now()` |
+| Nombre de la Columna | Tipo de Dato  | Notas                                              |
+| :------------------- | :------------ | :------------------------------------------------- |
+| `id`                 | `bigint`      | **Clave Primaria (Primary Key)**, autoincremental. |
+| `userId`             | `text`        | El `id` del usuario en la tabla Users.             |
+| `courseId`           | `text`        | El `id` del curso en la tabla Courses.             |
+| `completedModules`   | `jsonb`       |                                                    |
+| `updatedAt`          | `timestamptz` | Valor por defecto: `now()`                         |
 
 ---
 

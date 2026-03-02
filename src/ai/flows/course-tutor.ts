@@ -22,10 +22,10 @@ export async function courseTutor(input: CourseTutorInput): Promise<CourseTutorO
 }
 
 const prompt = ai.definePrompt({
-    name: 'courseTutorPrompt',
-    inputSchema: CourseTutorInputSchema,
-    outputSchema: CourseTutorOutputSchema,
-    prompt: `You are an expert AI tutor for a corporate training platform called TalentOS. Your role is to answer student questions based *only* on the provided course content. Be helpful, clear, and concise. If the answer is not in the content, state that you cannot answer the question with the provided information.
+  name: 'courseTutorPrompt',
+  inputSchema: CourseTutorInputSchema,
+  outputSchema: CourseTutorOutputSchema,
+  prompt: `You are an expert AI tutor for a corporate training platform called TalentOS. Your role is to answer student questions based *only* on the provided course content. Be helpful, clear, and concise. If the answer is not in the content, state that you cannot answer the question with the provided information.
 
       Course Content:
       ---
@@ -45,7 +45,6 @@ const prompt = ai.definePrompt({
       `,
 });
 
-
 const courseTutorFlow = ai.defineFlow(
   {
     name: 'courseTutorFlow',
@@ -53,7 +52,7 @@ const courseTutorFlow = ai.defineFlow(
     outputSchema: CourseTutorOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

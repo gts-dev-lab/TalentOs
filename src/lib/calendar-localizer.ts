@@ -5,7 +5,7 @@ import { dateFnsLocalizer } from 'react-big-calendar';
 import { es } from 'date-fns/locale/es';
 
 const locales = {
-  'es': es,
+  es: es,
 };
 
 export const localizer = dateFnsLocalizer({

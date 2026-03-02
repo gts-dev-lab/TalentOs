@@ -17,7 +17,10 @@ export default function CertificatesPage() {
 
   const certificates = useLiveQuery(() => {
     if (!user) return [];
-    const canSeeAll = user.role === 'Administrador General' || user.role === 'Jefe de Formación' || isSuperadmin(user.email);
+    const canSeeAll =
+      user.role === 'Administrador General' ||
+      user.role === 'Jefe de Formación' ||
+      isSuperadmin(user.email);
     return canSeeAll ? db.getAllCertificates() : db.getCertificatesForUser(user.id);
   }, [user?.id, user?.role]);
 
@@ -46,15 +49,25 @@ export default function CertificatesPage() {
     );
   }
 
-  const showUser = user.role === 'Administrador General' || user.role === 'Jefe de Formación' || isSuperadmin(user.email);
+  const showUser =
+    user.role === 'Administrador General' ||
+    user.role === 'Jefe de Formación' ||
+    isSuperadmin(user.email);
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Certificados</h1>
-        <p className="text-muted-foreground">Consulta los certificados emitidos en la plataforma.</p>
+        <p className="text-muted-foreground">
+          Consulta los certificados emitidos en la plataforma.
+        </p>
       </div>
-      <CertificateList certificates={paginatedCertificates} usersById={usersById} coursesById={coursesById} showUser={showUser} />
+      <CertificateList
+        certificates={paginatedCertificates}
+        usersById={usersById}
+        coursesById={coursesById}
+        showUser={showUser}
+      />
       {certificates && certificates.length > 0 && (
         <div className="mt-6">
           <Pagination

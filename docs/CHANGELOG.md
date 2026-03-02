@@ -5,6 +5,7 @@
 ### 🔥 Cambios importantes
 
 #### Firebase eliminado
+
 - **Motivo**: Eliminar dependencias innecesarias y simplificar la arquitectura
 - **Reemplazo**: Web Notifications API nativa del navegador
 - **Archivos eliminados**:
@@ -23,6 +24,7 @@
 ### ✅ Completado
 
 #### FASE 4: Optimización BD, backups, monitoreo (Enero 2026)
+
 - Sistema de backups completo (export/import JSON)
 - Limpieza automática de datos antiguos
 - Monitoreo de base de datos con métricas en tiempo real
@@ -31,6 +33,7 @@
 - Panel de gestión integrado en Settings
 
 #### FASE 3: Compliance y normativas (Enero 2026)
+
 - CRUD completo de normativas
 - Seguimiento de cumplimiento por usuario
 - Sistema de vencimientos y alertas
@@ -38,6 +41,7 @@
 - Auditorías de cumplimiento
 
 #### FASE 2: PDI - Planes de Desarrollo Individual (Enero 2026)
+
 - CRUD completo de PDIs
 - Objetivos, cursos, hitos y revisiones
 - Gestión por roles (managers)
@@ -45,6 +49,7 @@
 - Vista detallada con tabs
 
 #### FASE 1: Seguridad (Enero 2026)
+
 - Certificaciones (generación, verificación, plantillas)
 - JWT + sesiones seguras
 - Hashing de contraseñas con argon2
@@ -53,6 +58,7 @@
 - Validaciones de build habilitadas
 
 ### 📊 Paginación
+
 - Componente reutilizable aplicado en:
   - Usuarios (20/página)
   - Cursos (12/página)
@@ -63,16 +69,19 @@
 ### 🔧 Correcciones técnicas
 
 #### Service Workers
+
 - Eliminados service workers problemáticos de Firebase
 - PWA simplificada sin interferencia en desarrollo
 - Sin errores de "Failed to convert value to 'Response'"
 
 #### WebAssembly
+
 - Configuración mejorada para argon2-browser
 - Soporte de .wasm en webpack
 - `serverExternalPackages` para evitar bundling en servidor
 
 ### 📝 Documentación
+
 - `CHANGELOG.md` creado
 - `FEATURES_SUMMARY.md` actualizado
 - `PLAN_PROGRESS.md` actualizado
@@ -83,6 +92,7 @@
 ## Versiones anteriores
 
 ### [Diciembre 2025 - Enero 2026] - Desarrollo inicial
+
 - Implementación de funcionalidades core
 - Sistema LMS offline-first
 - Integración con IA (Genkit)
@@ -93,6 +103,7 @@
 ---
 
 ### 🚀 Setup inicial simplificado
+
 - `.env.local` creado automáticamente con JWT_SECRET generado
 - Variables de entorno completamente documentadas
 - Todas las configuraciones son opcionales excepto JWT_SECRET

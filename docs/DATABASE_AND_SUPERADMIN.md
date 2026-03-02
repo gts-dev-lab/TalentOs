@@ -4,12 +4,12 @@
 
 Para una app seria multi-usuario y autoalojada se recomienda **SQLite** como primera opción:
 
-| Criterio | SQLite | PostgreSQL |
-|----------|--------|------------|
-| **Despliegue** | Un solo archivo, sin proceso extra | Requiere servidor/contenedor Postgres |
-| **Backup** | Copiar el archivo `.sqlite` | `pg_dump` o replicas |
-| **Docker** | Muy simple (volumen con un archivo) | Imagen oficial, más recursos |
-| **Escala** | Ideal 1 nodo, hasta miles de usuarios | Multi-nodo, réplicas |
+| Criterio       | SQLite                                | PostgreSQL                            |
+| -------------- | ------------------------------------- | ------------------------------------- |
+| **Despliegue** | Un solo archivo, sin proceso extra    | Requiere servidor/contenedor Postgres |
+| **Backup**     | Copiar el archivo `.sqlite`           | `pg_dump` o replicas                  |
+| **Docker**     | Muy simple (volumen con un archivo)   | Imagen oficial, más recursos          |
+| **Escala**     | Ideal 1 nodo, hasta miles de usuarios | Multi-nodo, réplicas                  |
 
 **Recomendación:** Empezar con **SQLite** (por ejemplo con `better-sqlite3` o **libsql/Turso** en Node). Si más adelante necesitas réplicas o equipo que ya usa Postgres, se puede migrar a PostgreSQL.
 
@@ -45,7 +45,7 @@ NEXT_PUBLIC_SUPERADMIN_EMAILS=admin@empresa.com
 NEXT_PUBLIC_SUPERADMIN_EMAILS=admin@empresa.com,superadmin@empresa.com,otro@empresa.com
 ```
 
-- La variable es **NEXT_PUBLIC_** para que la comprobación funcione en cliente y servidor.
+- La variable es **NEXT*PUBLIC*** para que la comprobación funcione en cliente y servidor.
 - Los emails se comparan en **minúsculas** y sin espacios; los espacios alrededor de las comas se ignoran.
 - Quien inicie sesión con uno de esos emails tendrá permisos de superadmin aunque su rol en la app sea otro (por ejemplo Trabajador).
 

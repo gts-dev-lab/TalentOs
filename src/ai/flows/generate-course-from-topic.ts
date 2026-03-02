@@ -17,15 +17,17 @@ import {
   GenerateCourseFromTopicOutputSchema,
 } from '@/lib/types';
 
-export async function generateCourseFromTopic(input: GenerateCourseFromTopicInput): Promise<GenerateCourseFromTopicOutput> {
+export async function generateCourseFromTopic(
+  input: GenerateCourseFromTopicInput
+): Promise<GenerateCourseFromTopicOutput> {
   return generateCourseFromTopicFlow(input);
 }
 
 const prompt = ai.definePrompt({
-    name: 'generateCourseFromTopicPrompt',
-    inputSchema: GenerateCourseFromTopicInputSchema,
-    outputSchema: GenerateCourseFromTopicOutputSchema,
-    prompt: `You are an expert instructional designer for a corporate training platform specializing in emergency services (paramedics, dispatchers, etc.). Your task is to generate a complete, well-structured course outline based on a given topic. The target audience is Spanish-speaking emergency personnel.
+  name: 'generateCourseFromTopicPrompt',
+  inputSchema: GenerateCourseFromTopicInputSchema,
+  outputSchema: GenerateCourseFromTopicOutputSchema,
+  prompt: `You are an expert instructional designer for a corporate training platform specializing in emergency services (paramedics, dispatchers, etc.). Your task is to generate a complete, well-structured course outline based on a given topic. The target audience is Spanish-speaking emergency personnel.
 
       Topic: "{{{input}}}"
 
@@ -44,7 +46,6 @@ const prompt = ai.definePrompt({
       `,
 });
 
-
 const generateCourseFromTopicFlow = ai.defineFlow(
   {
     name: 'generateCourseFromTopicFlow',
@@ -52,7 +53,7 @@ const generateCourseFromTopicFlow = ai.defineFlow(
     outputSchema: GenerateCourseFromTopicOutputSchema,
     plugins: [googleAI()],
   },
-  async (input) => {
+  async input => {
     const { output } = await prompt(input);
     return output!;
   }

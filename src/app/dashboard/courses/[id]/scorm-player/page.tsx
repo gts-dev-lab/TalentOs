@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -43,7 +42,11 @@ export default function ScormPlayerPage() {
       router.push(`/dashboard/courses/${courseId}`);
     } catch (error) {
       console.error('Failed to complete SCORM course', error);
-      toast({ title: 'Error', description: 'No se pudo registrar la finalización del curso.', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: 'No se pudo registrar la finalización del curso.',
+        variant: 'destructive',
+      });
     } finally {
       setIsCompleting(false);
     }
@@ -51,19 +54,21 @@ export default function ScormPlayerPage() {
 
   useEffect(() => {
     if (courseId) {
-      db.getCourseById(courseId).then(data => {
-        setCourse(data || null);
-      }).catch(err => {
-        setError("No se pudo cargar el curso.");
-        console.error(err);
-      });
+      db.getCourseById(courseId)
+        .then(data => {
+          setCourse(data || null);
+        })
+        .catch(err => {
+          setError('No se pudo cargar el curso.');
+          console.error(err);
+        });
     }
   }, [courseId]);
 
   useEffect(() => {
     if (!course || !user) return;
     if (!course.isScorm || !course.scormPackage) {
-      setError("Este curso no es un paquete SCORM válido.");
+      setError('Este curso no es un paquete SCORM válido.');
       setIsLoading(false);
       return;
     }
@@ -72,23 +77,26 @@ export default function ScormPlayerPage() {
     const setupScormPlayer = async () => {
       try {
         const zip = await JSZip.loadAsync(course.scormPackage!);
-        const manifestFile = zip.file("imsmanifest.xml");
-        if (!manifestFile) throw new Error("Manifest (imsmanifest.xml) no encontrado en el paquete.");
-        const manifestText = await manifestFile.async("text");
+        const manifestFile = zip.file('imsmanifest.xml');
+        if (!manifestFile)
+          throw new Error('Manifest (imsmanifest.xml) no encontrado en el paquete.');
+        const manifestText = await manifestFile.async('text');
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(manifestText, "application/xml");
+        const xmlDoc = parser.parseFromString(manifestText, 'application/xml');
         const resourceNode = xmlDoc.querySelector("resource[scormtype='sco']");
-        const launchFileHref = resourceNode?.getAttribute("href");
-        if (!launchFileHref) throw new Error("No se encontró el archivo de lanzamiento en el manifiesto.");
+        const launchFileHref = resourceNode?.getAttribute('href');
+        if (!launchFileHref)
+          throw new Error('No se encontró el archivo de lanzamiento en el manifiesto.');
         const launchFile = zip.file(launchFileHref);
-        if (!launchFile) throw new Error(`El archivo de lanzamiento '${launchFileHref}' no existe en el paquete.`);
-        const launchBlob = await launchFile.async("blob");
+        if (!launchFile)
+          throw new Error(`El archivo de lanzamiento '${launchFileHref}' no existe en el paquete.`);
+        const launchBlob = await launchFile.async('blob');
         const url = URL.createObjectURL(launchBlob);
         urlRef.current = url;
         setLaunchUrl(url);
       } catch (err) {
         setError((err as Error).message);
-        console.error("Error setting up SCORM player:", err);
+        console.error('Error setting up SCORM player:', err);
       } finally {
         setIsLoading(false);
       }
@@ -102,13 +110,13 @@ export default function ScormPlayerPage() {
       const scormApi = createScormApi({
         initialCmi,
         studentName: user.name || 'Student',
-        onTerminate: (cmi) => {
+        onTerminate: cmi => {
           const status = (cmi['cmi.completion_status'] ?? cmi['cmi.core.lesson_status']) as string;
           if (status === 'completed' || status === 'passed') {
             handleCompleteCourse();
           }
         },
-        onCommit: (cmi) => {
+        onCommit: cmi => {
           const data = cmiToScormCmiState(user.id, course.id, cmi);
           db.saveScormCmiState(user.id, course.id, data).catch(() => {});
         },
@@ -124,29 +132,32 @@ export default function ScormPlayerPage() {
     };
   }, [course, handleCompleteCourse, user]);
 
-
   if (isLoading) {
-    return <div className="flex h-screen items-center justify-center"><Loader2 className="h-16 w-16 animate-spin" /></div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-16 w-16 animate-spin" />
+      </div>
+    );
   }
-  
+
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-6 flex flex-col h-[calc(100vh-4rem)]">
-       <div className="flex-shrink-0">
-         <Button variant="outline" size="sm" asChild>
-            <Link href={`/dashboard/courses/${courseId}`}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Volver a la Descripción
-            </Link>
+      <div className="flex-shrink-0">
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/dashboard/courses/${courseId}`}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a la Descripción
+          </Link>
         </Button>
-       </div>
+      </div>
 
       <div className="flex-grow flex flex-col border-2 border-dashed rounded-lg p-4">
         {error ? (
-           <div className="m-auto text-center text-destructive">
-             <AlertTriangle className="mx-auto h-12 w-12 mb-4" />
-             <h2 className="text-xl font-bold">Error al Cargar el Curso</h2>
-             <p>{error}</p>
-           </div>
+          <div className="m-auto text-center text-destructive">
+            <AlertTriangle className="mx-auto h-12 w-12 mb-4" />
+            <h2 className="text-xl font-bold">Error al Cargar el Curso</h2>
+            <p>{error}</p>
+          </div>
         ) : launchUrl ? (
           <iframe
             ref={iframeRef}
@@ -156,10 +167,10 @@ export default function ScormPlayerPage() {
             sandbox="allow-scripts allow-same-origin"
           ></iframe>
         ) : (
-           <div className="m-auto text-center">
-             <Tv className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-             <h2 className="text-xl font-bold">Preparando Visor SCORM...</h2>
-           </div>
+          <div className="m-auto text-center">
+            <Tv className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h2 className="text-xl font-bold">Preparando Visor SCORM...</h2>
+          </div>
         )}
       </div>
     </div>

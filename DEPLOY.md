@@ -20,6 +20,7 @@ npm run dev
 ## 🌐 Opción B: Deploy en Vercel (5 minutos)
 
 ### 1. Push a Git
+
 ```bash
 git add .
 git commit -m "Ready for deployment"
@@ -27,6 +28,7 @@ git push origin main
 ```
 
 ### 2. Vercel
+
 - Ir a: https://vercel.com
 - **New Project** → Importar tu repo
 - Variables de entorno:

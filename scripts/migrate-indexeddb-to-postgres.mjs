@@ -15,7 +15,9 @@ const tenantId = args[1];
 const databaseUrl = args[2] || process.env.DATABASE_URL;
 
 if (!jsonPath || !tenantId) {
-  console.error('Uso: node scripts/migrate-indexeddb-to-postgres.mjs <export.json> <tenant_uuid> [DATABASE_URL]');
+  console.error(
+    'Uso: node scripts/migrate-indexeddb-to-postgres.mjs <export.json> <tenant_uuid> [DATABASE_URL]'
+  );
   process.exit(1);
 }
 if (!databaseUrl) {
@@ -94,7 +96,7 @@ try {
         c.aiHint ?? '',
         JSON.stringify(c.modules ?? []),
         c.status ?? 'draft',
-        (c.mandatoryForRoles || []) || [],
+        c.mandatoryForRoles || [] || [],
         c.startDate ?? null,
         c.endDate ?? null,
         c.category ?? null,
@@ -136,14 +138,7 @@ try {
       `INSERT INTO public.user_progress (tenant_id, user_id, course_id, completed_modules, created_at, updated_at)
        VALUES ($1, $2, $3, $4, COALESCE($5::timestamptz, NOW()), COALESCE($6::timestamptz, NOW()))
        ON CONFLICT (tenant_id, user_id, course_id) DO UPDATE SET completed_modules = EXCLUDED.completed_modules, updated_at = EXCLUDED.updated_at`,
-      [
-        tenantId,
-        uid,
-        cid,
-        (p.completedModules || []) || [],
-        p.updatedAt ?? null,
-        p.updatedAt ?? null,
-      ]
+      [tenantId, uid, cid, p.completedModules || [] || [], p.updatedAt ?? null, p.updatedAt ?? null]
     );
   }
 
@@ -184,12 +179,22 @@ try {
         `INSERT INTO public.certificate_templates (id, tenant_id, name, type, description, is_active, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, COALESCE($7::timestamptz, NOW()), COALESCE($8::timestamptz, NOW()))
          ON CONFLICT (id) DO NOTHING`,
-        [newId, tenantId, t.name ?? '', t.type ?? 'completion', t.description ?? null, t.isActive !== false, t.createdAt ?? null, t.updatedAt ?? null]
+        [
+          newId,
+          tenantId,
+          t.name ?? '',
+          t.type ?? 'completion',
+          t.description ?? null,
+          t.isActive !== false,
+          t.createdAt ?? null,
+          t.updatedAt ?? null,
+        ]
       );
     }
   }
 
-  const defaultTplId = certTemplateIdMap.get('__default__') || Array.from(certTemplateIdMap.values())[0];
+  const defaultTplId =
+    certTemplateIdMap.get('__default__') || Array.from(certTemplateIdMap.values())[0];
   console.log('Insertando certificados...');
   for (const c of data.certificates || []) {
     const uid = userIdMap.get(String(c.userId));

@@ -1,6 +1,6 @@
 # Docker Compose para Authentik SSO
 # TalentOS - Autenticación Empresarial
-# 
+#
 # USO:
 #   1. Copiar .env.example a .env y configurar secretos
 #   2. docker-compose -f docker-compose.authentik.yml up -d
@@ -18,7 +18,7 @@ services:
     container_name: authentik_postgres
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d authentik -U authentik"]
+      test: ['CMD-SHELL', 'pg_isready -d authentik -U authentik']
       start_period: 20s
       interval: 30s
       retries: 5
@@ -32,7 +32,7 @@ services:
     networks:
       - authentik_network
     labels:
-      com.talentos.service: "authentik-database"
+      com.talentos.service: 'authentik-database'
 
   redis:
     image: redis:alpine
@@ -40,7 +40,7 @@ services:
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
       start_period: 20s
       interval: 30s
       retries: 5
@@ -50,7 +50,7 @@ services:
     networks:
       - authentik_network
     labels:
-      com.talentos.service: "authentik-cache"
+      com.talentos.service: 'authentik-cache'
 
   server:
     image: ghcr.io/goauthentik/server:2024.2.3
@@ -64,13 +64,13 @@ services:
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?error}
-      
+
       # Secret Key (Django)
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?error}
-      
+
       # URLs
       AUTHENTIK_URL: ${AUTHENTIK_URL:-http://localhost:9000}
-      
+
       # Email (configurar después de instalación inicial)
       AUTHENTIK_EMAIL__HOST: ${AUTHENTIK_EMAIL_HOST:-smtp.gmail.com}
       AUTHENTIK_EMAIL__PORT: ${AUTHENTIK_EMAIL_PORT:-587}
@@ -78,18 +78,18 @@ services:
       AUTHENTIK_EMAIL__PASSWORD: ${AUTHENTIK_EMAIL_PASSWORD:-}
       AUTHENTIK_EMAIL__USE_TLS: ${AUTHENTIK_EMAIL_USE_TLS:-true}
       AUTHENTIK_EMAIL__FROM: ${AUTHENTIK_EMAIL_FROM:-authentik@localhost}
-      
+
       # Logging
       AUTHENTIK_LOG_LEVEL: ${AUTHENTIK_LOG_LEVEL:-info}
-      
+
       # Error reporting (opcional)
       AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ERROR_REPORTING:-false}
     volumes:
       - authentik_media:/media
       - authentik_custom_templates:/templates
     ports:
-      - "${AUTHENTIK_PORT_HTTP:-9000}:9000"
-      - "${AUTHENTIK_PORT_HTTPS:-9443}:9443"
+      - '${AUTHENTIK_PORT_HTTP:-9000}:9000'
+      - '${AUTHENTIK_PORT_HTTPS:-9443}:9443'
     depends_on:
       postgresql:
         condition: service_healthy
@@ -98,8 +98,8 @@ services:
     networks:
       - authentik_network
     labels:
-      com.talentos.service: "authentik-server"
-      com.talentos.description: "Authentik SSO Server - Web UI & API"
+      com.talentos.service: 'authentik-server'
+      com.talentos.description: 'Authentik SSO Server - Web UI & API'
 
   worker:
     image: ghcr.io/goauthentik/server:2024.2.3
@@ -113,10 +113,10 @@ services:
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?error}
-      
+
       # Secret Key (mismo que server)
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?error}
-      
+
       # Logging
       AUTHENTIK_LOG_LEVEL: ${AUTHENTIK_LOG_LEVEL:-info}
     volumes:
@@ -131,37 +131,37 @@ services:
     networks:
       - authentik_network
     labels:
-      com.talentos.service: "authentik-worker"
-      com.talentos.description: "Authentik Background Worker"
+      com.talentos.service: 'authentik-worker'
+      com.talentos.description: 'Authentik Background Worker'
 
 volumes:
   authentik_postgres_data:
     driver: local
     labels:
-      com.talentos.volume: "authentik-database"
-  
+      com.talentos.volume: 'authentik-database'
+
   authentik_redis_data:
     driver: local
     labels:
-      com.talentos.volume: "authentik-cache"
-  
+      com.talentos.volume: 'authentik-cache'
+
   authentik_media:
     driver: local
     labels:
-      com.talentos.volume: "authentik-media"
-  
+      com.talentos.volume: 'authentik-media'
+
   authentik_certs:
     driver: local
     labels:
-      com.talentos.volume: "authentik-certificates"
-  
+      com.talentos.volume: 'authentik-certificates'
+
   authentik_custom_templates:
     driver: local
     labels:
-      com.talentos.volume: "authentik-templates"
+      com.talentos.volume: 'authentik-templates'
 
 networks:
   authentik_network:
     driver: bridge
     labels:
-      com.talentos.network: "authentik-internal"
+      com.talentos.network: 'authentik-internal'

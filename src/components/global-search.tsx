@@ -2,7 +2,17 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Search, BookOpen, Users, Target, ShieldCheck, Award, Calendar, FileText, Loader2 } from 'lucide-react';
+import {
+  Search,
+  BookOpen,
+  Users,
+  Target,
+  ShieldCheck,
+  Award,
+  Calendar,
+  FileText,
+  Loader2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as db from '@/lib/db';
@@ -49,14 +59,15 @@ export function GlobalSearch() {
   const certificates = useLiveQuery(() => db.getAllCertificates(), []);
   const events = useLiveQuery(() => db.getAllCalendarEvents(), []);
 
-  const isManager = user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
+  const isManager =
+    user && ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(user.role);
 
   // Shortcut Ctrl+K o Cmd+K
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setOpen(open => !open);
       }
     };
 
@@ -72,7 +83,7 @@ export function GlobalSearch() {
     const results: SearchResult[] = [];
 
     // Buscar en cursos
-    courses?.forEach((course) => {
+    courses?.forEach(course => {
       if (
         course.title.toLowerCase().includes(query) ||
         course.description.toLowerCase().includes(query) ||
@@ -92,7 +103,7 @@ export function GlobalSearch() {
 
     // Buscar en usuarios (solo managers)
     if (isManager) {
-      users?.forEach((u) => {
+      users?.forEach(u => {
         if (
           u.name.toLowerCase().includes(query) ||
           u.email.toLowerCase().includes(query) ||
@@ -113,11 +124,8 @@ export function GlobalSearch() {
     }
 
     // Buscar en PDIs
-    pdis?.forEach((pdi) => {
-      if (
-        pdi.title.toLowerCase().includes(query) ||
-        pdi.objective.toLowerCase().includes(query)
-      ) {
+    pdis?.forEach(pdi => {
+      if (pdi.title.toLowerCase().includes(query) || pdi.objective.toLowerCase().includes(query)) {
         results.push({
           id: pdi.id!.toString(),
           type: 'pdi',
@@ -132,7 +140,7 @@ export function GlobalSearch() {
 
     // Buscar en normativas (solo managers)
     if (isManager) {
-      regulations?.forEach((reg) => {
+      regulations?.forEach(reg => {
         if (
           reg.name.toLowerCase().includes(query) ||
           reg.description.toLowerCase().includes(query) ||
@@ -152,7 +160,7 @@ export function GlobalSearch() {
     }
 
     // Buscar en certificados
-    certificates?.forEach((cert) => {
+    certificates?.forEach(cert => {
       if (
         cert.courseName.toLowerCase().includes(query) ||
         cert.userName.toLowerCase().includes(query)
@@ -170,7 +178,7 @@ export function GlobalSearch() {
     });
 
     // Buscar en eventos
-    events?.forEach((event) => {
+    events?.forEach(event => {
       if (
         event.title.toLowerCase().includes(query) ||
         event.description?.toLowerCase().includes(query)
@@ -203,7 +211,7 @@ export function GlobalSearch() {
       resource: [],
     };
 
-    searchResults.forEach((result) => {
+    searchResults.forEach(result => {
       groups[result.type].push(result);
     });
 
@@ -267,7 +275,7 @@ export function GlobalSearch() {
               {groupedResults.course.length > 0 && (
                 <>
                   <CommandGroup heading={`${typeLabels.course} (${groupedResults.course.length})`}>
-                    {groupedResults.course.map((result) => (
+                    {groupedResults.course.map(result => (
                       <CommandItem
                         key={result.id}
                         value={result.id}
@@ -298,7 +306,7 @@ export function GlobalSearch() {
               {groupedResults.user.length > 0 && (
                 <>
                   <CommandGroup heading={`${typeLabels.user} (${groupedResults.user.length})`}>
-                    {groupedResults.user.map((result) => (
+                    {groupedResults.user.map(result => (
                       <CommandItem
                         key={result.id}
                         value={result.id}
@@ -329,7 +337,7 @@ export function GlobalSearch() {
               {groupedResults.pdi.length > 0 && (
                 <>
                   <CommandGroup heading={`${typeLabels.pdi} (${groupedResults.pdi.length})`}>
-                    {groupedResults.pdi.map((result) => (
+                    {groupedResults.pdi.map(result => (
                       <CommandItem
                         key={result.id}
                         value={result.id}
@@ -359,8 +367,10 @@ export function GlobalSearch() {
               {/* Normativas */}
               {groupedResults.compliance.length > 0 && (
                 <>
-                  <CommandGroup heading={`${typeLabels.compliance} (${groupedResults.compliance.length})`}>
-                    {groupedResults.compliance.map((result) => (
+                  <CommandGroup
+                    heading={`${typeLabels.compliance} (${groupedResults.compliance.length})`}
+                  >
+                    {groupedResults.compliance.map(result => (
                       <CommandItem
                         key={result.id}
                         value={result.id}
@@ -390,8 +400,10 @@ export function GlobalSearch() {
               {/* Certificados */}
               {groupedResults.certificate.length > 0 && (
                 <>
-                  <CommandGroup heading={`${typeLabels.certificate} (${groupedResults.certificate.length})`}>
-                    {groupedResults.certificate.map((result) => (
+                  <CommandGroup
+                    heading={`${typeLabels.certificate} (${groupedResults.certificate.length})`}
+                  >
+                    {groupedResults.certificate.map(result => (
                       <CommandItem
                         key={result.id}
                         value={result.id}
@@ -421,7 +433,7 @@ export function GlobalSearch() {
               {/* Eventos */}
               {groupedResults.event.length > 0 && (
                 <CommandGroup heading={`${typeLabels.event} (${groupedResults.event.length})`}>
-                  {groupedResults.event.map((result) => (
+                  {groupedResults.event.map(result => (
                     <CommandItem
                       key={result.id}
                       value={result.id}

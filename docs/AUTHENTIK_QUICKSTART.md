@@ -32,6 +32,7 @@ docker-compose -f docker-compose.authentik.yml logs -f
 ```
 
 Esperar ~30-60 segundos hasta ver:
+
 ```
 authentik_server | Successfully booted authentik
 ```
@@ -150,6 +151,7 @@ AUTHENTIK_ISSUER=http://localhost:9000/application/o/talentos/
 Ver: `docs/AUTHENTIK_SETUP.md` secciones "Paso 6 a 10" para código completo.
 
 Archivos a crear:
+
 - `src/app/api/auth/[...nextauth]/route.ts`
 - `src/types/next-auth.d.ts`
 - `src/app/auth/signin/page.tsx`
@@ -197,18 +199,21 @@ docker-compose -f docker-compose.authentik.yml down -v
 ## 🆘 Ayuda Rápida
 
 **Problema**: Puerto 9000 ocupado
+
 ```bash
 sudo lsof -i :9000
 # Detener el proceso o cambiar puerto en .env.authentik
 ```
 
 **Problema**: No inicia PostgreSQL
+
 ```bash
 docker-compose -f docker-compose.authentik.yml logs postgresql
 # Verificar que PG_PASS esté configurado en .env.authentik
 ```
 
 **Problema**: Redirect URI mismatch
+
 - Verificar URIs exactas (incluir `/` final)
 - Deben coincidir en Google/Microsoft/Authentik
 

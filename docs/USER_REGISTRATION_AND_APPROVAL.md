@@ -3,6 +3,7 @@
 ## 📋 Resumen
 
 TalentOS incluye un sistema completo de registro y aprobación de usuarios que permite:
+
 - **Registro público** de nuevos usuarios
 - **Aprobación manual** para roles de gestión
 - **Activación automática** para roles básicos
@@ -17,6 +18,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Ruta:** `/register`
 
 **Proceso:**
+
 1. El usuario completa el formulario con:
    - Nombre completo
    - Email
@@ -49,6 +51,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Ruta:** `/pending-approval`
 
 **Contenido:**
+
 - Mensaje informativo explicando que la cuenta está pendiente
 - Botón para volver al login
 - El usuario **NO puede iniciar sesión** hasta ser aprobado
@@ -60,6 +63,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Ruta:** `/dashboard/users`
 
 **Acceso:** Solo para roles:
+
 - `Gestor de RRHH`
 - `Jefe de Formación`
 - `Administrador General`
@@ -67,6 +71,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Funcionalidades:**
 
 #### A. Sección de Solicitudes Pendientes
+
 - **Ubicación:** Parte superior de la página
 - **Diseño:** Card destacado con fondo ámbar
 - **Información mostrada:**
@@ -80,6 +85,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 #### B. Acciones Disponibles
 
 **Aprobar Usuario:**
+
 - Click en botón "Aprobar" (verde)
 - Confirmación mediante diálogo
 - **Efectos:**
@@ -89,6 +95,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
   - El usuario puede iniciar sesión inmediatamente
 
 **Rechazar Usuario:**
+
 - Click en botón "Rechazar" (rojo)
 - Confirmación mediante diálogo
 - **Efectos:**
@@ -103,6 +110,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Sección:** Tabla principal de usuarios
 
 **Funcionalidades:**
+
 - **Filtros:**
   - Por rol (múltiple selección)
   - Por departamento (múltiple selección)
@@ -152,6 +160,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Tipo:** `enrollment_approved`
 
 **Mensaje:**
+
 ```
 ¡Tu cuenta ha sido aprobada! Ya puedes acceder a todas las funcionalidades de la plataforma.
 ```
@@ -167,6 +176,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 ### Página de Registro (`/register`)
 
 **Características:**
+
 - Formulario limpio y claro
 - Validación en tiempo real
 - Mensajes de ayuda contextuales
@@ -176,6 +186,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 ### Página de Gestión (`/dashboard/users`)
 
 **Características:**
+
 - **Card destacado** para usuarios pendientes (fondo ámbar)
 - **Tabla principal** para usuarios activos
 - **Filtros avanzados** por rol y departamento
@@ -192,6 +203,7 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 **Tabla:** `users`
 
 **Campos relevantes:**
+
 - `status`: `'pending_approval' | 'approved' | 'suspended'`
 - `role`: Rol del usuario
 - `email`: Email único
@@ -200,22 +212,25 @@ TalentOS incluye un sistema completo de registro y aprobación de usuarios que p
 ### Funciones Clave
 
 **Registro:**
+
 ```typescript
 db.addUser({
   name: string,
   email: string,
   password: string,
   role: Role,
-  department: Department
-})
+  department: Department,
+});
 ```
 
 **Aprobación:**
+
 ```typescript
 db.updateUserStatus(userId: string, 'approved')
 ```
 
 **Rechazo:**
+
 ```typescript
 db.deleteUser(userId: string)
 ```
@@ -226,19 +241,19 @@ db.deleteUser(userId: string)
 
 ### Roles que Requieren Aprobación
 
-| Rol | Requiere Aprobación | Razón |
-|-----|---------------------|-------|
-| Formador | ✅ Sí | Acceso a crear/editar cursos |
-| Jefe de Formación | ✅ Sí | Gestión completa de formación |
-| Gestor de RRHH | ✅ Sí | Acceso a datos de empleados |
-| Administrador General | ✅ Sí | Acceso completo al sistema |
+| Rol                   | Requiere Aprobación | Razón                         |
+| --------------------- | ------------------- | ----------------------------- |
+| Formador              | ✅ Sí               | Acceso a crear/editar cursos  |
+| Jefe de Formación     | ✅ Sí               | Gestión completa de formación |
+| Gestor de RRHH        | ✅ Sí               | Acceso a datos de empleados   |
+| Administrador General | ✅ Sí               | Acceso completo al sistema    |
 
 ### Roles con Activación Automática
 
-| Rol | Activación | Razón |
-|-----|------------|-------|
-| Trabajador | ✅ Automática | Usuario básico, sin permisos especiales |
-| Personal Externo | ✅ Automática | Usuario temporal, acceso limitado |
+| Rol              | Activación    | Razón                                   |
+| ---------------- | ------------- | --------------------------------------- |
+| Trabajador       | ✅ Automática | Usuario básico, sin permisos especiales |
+| Personal Externo | ✅ Automática | Usuario temporal, acceso limitado       |
 
 ---
 

@@ -3,7 +3,12 @@
  */
 
 import * as jose from 'jose';
-import type { LtiPlatformConfig, LtiOidcLoginParams, LtiOidcStatePayload, LtiIdTokenPayload } from './types';
+import type {
+  LtiPlatformConfig,
+  LtiOidcLoginParams,
+  LtiOidcStatePayload,
+  LtiIdTokenPayload,
+} from './types';
 import { getLtiOidcCallbackUrl, getSecret } from './config';
 
 const STATE_JWT_ALG = 'HS256';
@@ -90,7 +95,9 @@ export async function verifyLtiIdToken(
 
     if (expectedClientId) {
       const aud = payload.aud;
-      const audMatch = Array.isArray(aud) ? aud.includes(expectedClientId) : aud === expectedClientId;
+      const audMatch = Array.isArray(aud)
+        ? aud.includes(expectedClientId)
+        : aud === expectedClientId;
       if (!audMatch) return null;
     }
 

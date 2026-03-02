@@ -3,10 +3,7 @@
  * Eventos inmutables con timestamp UTC (ISO 8601), sin contraseñas ni tokens.
  */
 
-export type AuditEventKind =
-  | 'auth.login.success'
-  | 'auth.login.failure'
-  | 'auth.logout';
+export type AuditEventKind = 'auth.login.success' | 'auth.login.failure' | 'auth.logout';
 
 export interface AuditLogEntry {
   id?: string;
@@ -18,6 +15,12 @@ export interface AuditLogEntry {
 }
 
 export interface AuditStore {
-  append(tenantId: string, entry: Omit<AuditLogEntry, 'id' | 'tenantId' | 'createdAt'>): Promise<void>;
-  getByTenant(tenantId: string, options?: { limit?: number; from?: string; to?: string }): Promise<AuditLogEntry[]>;
+  append(
+    tenantId: string,
+    entry: Omit<AuditLogEntry, 'id' | 'tenantId' | 'createdAt'>
+  ): Promise<void>;
+  getByTenant(
+    tenantId: string,
+    options?: { limit?: number; from?: string; to?: string }
+  ): Promise<AuditLogEntry[]>;
 }

@@ -67,7 +67,7 @@ export async function exportAllDataForMigration(): Promise<MigrationExportPayloa
   };
 
   const users = await db.getAllUsers();
-  const usersFiltered = users.filter((u) => !(u as { deletedAt?: string }).deletedAt);
+  const usersFiltered = users.filter(u => !(u as { deletedAt?: string }).deletedAt);
 
   const [
     courses,
@@ -113,7 +113,9 @@ export async function exportAllDataForMigration(): Promise<MigrationExportPayloa
     dexie.scormCmiState?.toArray() ?? [],
   ]);
 
-  const courseList = Array.isArray(courses) ? courses.map((c) => omitBlobs(c as Record<string, unknown>)) : [];
+  const courseList = Array.isArray(courses)
+    ? courses.map(c => omitBlobs(c as Record<string, unknown>))
+    : [];
 
   return {
     exportedAt: new Date().toISOString(),

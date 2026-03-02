@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 export type Role =
@@ -9,7 +8,12 @@ export type Role =
   | 'Jefe de Formación'
   | 'Administrador General';
 
-export type Department = 'Técnicos de Emergencias' | 'Teleoperadores' | 'Administración' | 'Formación' | 'Logística';
+export type Department =
+  | 'Técnicos de Emergencias'
+  | 'Teleoperadores'
+  | 'Administración'
+  | 'Formación'
+  | 'Logística';
 
 export type NotificationChannel = 'email' | 'whatsapp' | 'app';
 export const notificationChannels: NotificationChannel[] = ['email', 'whatsapp', 'app'];
@@ -65,35 +69,46 @@ export type Course = {
   updatedAt?: string; // ISO date string
 };
 
-export const enrollmentStatuses = ['pending', 'approved', 'rejected', 'cancelled', 'waitlisted', 'active', 'completed', 'expelled', 'expired', 'needs_review'] as const;
-export type EnrollmentStatus = typeof enrollmentStatuses[number];
+export const enrollmentStatuses = [
+  'pending',
+  'approved',
+  'rejected',
+  'cancelled',
+  'waitlisted',
+  'active',
+  'completed',
+  'expelled',
+  'expired',
+  'needs_review',
+] as const;
+export type EnrollmentStatus = (typeof enrollmentStatuses)[number];
 
 export type Enrollment = {
-    id?: number; // auto-incremented primary key
-    studentId: string;
-    courseId: string;
-    requestDate: string; // ISO date string
-    status: EnrollmentStatus;
-    justification?: string; // For admin feedback on approval/rejection
-    isSynced?: boolean;
-    updatedAt?: string; // ISO date string
-}
+  id?: number; // auto-incremented primary key
+  studentId: string;
+  courseId: string;
+  requestDate: string; // ISO date string
+  status: EnrollmentStatus;
+  justification?: string; // For admin feedback on approval/rejection
+  isSynced?: boolean;
+  updatedAt?: string; // ISO date string
+};
 
 export type UserProgress = {
-    id?: number; // auto-incremented primary key
-    userId: string;
-    courseId: string;
-    completedModules: string[]; // Array of completed module IDs
-    isSynced?: boolean;
-    updatedAt?: string; // ISO date string
-}
+  id?: number; // auto-incremented primary key
+  userId: string;
+  courseId: string;
+  completedModules: string[]; // Array of completed module IDs
+  isSynced?: boolean;
+  updatedAt?: string; // ISO date string
+};
 
 export type Module = {
   id: string;
   title: string;
   duration: string;
   content: string;
-}
+};
 
 export type CustomCostCategory = {
   id?: number;
@@ -172,7 +187,15 @@ export type IndividualDevelopmentPlan = {
   isSynced?: boolean;
 };
 
-export type RegulationType = 'ISO' | 'PRL' | 'GDPR' | 'LOPD' | 'Ley' | 'Normativa' | 'Certificación' | 'Otro';
+export type RegulationType =
+  | 'ISO'
+  | 'PRL'
+  | 'GDPR'
+  | 'LOPD'
+  | 'Ley'
+  | 'Normativa'
+  | 'Certificación'
+  | 'Otro';
 
 export type Regulation = {
   id: string;
@@ -224,7 +247,6 @@ export type ComplianceAudit = {
   isSynced?: boolean;
 };
 
-
 // For displaying pending enrollments with user and course names
 export type PendingEnrollmentDetails = Enrollment & {
   userName: string;
@@ -237,7 +259,7 @@ export type EnrollmentWithDetails = Enrollment & {
   userEmail: string;
   courseTitle: string;
   courseImage: string;
-}
+};
 
 export type ForumMessage = {
   id?: number;
@@ -260,7 +282,14 @@ export type Notification = {
   id?: number;
   userId: string;
   message: string;
-  type: 'enrollment_approved' | 'new_course' | 'forum_reply' | 'course_announcement' | 'badge_unlocked' | 'course_deadline_reminder' | 'push_test';
+  type:
+    | 'enrollment_approved'
+    | 'new_course'
+    | 'forum_reply'
+    | 'course_announcement'
+    | 'badge_unlocked'
+    | 'course_deadline_reminder'
+    | 'push_test';
   relatedUrl?: string;
   isRead: boolean;
   timestamp: string; // ISO date string
@@ -281,9 +310,9 @@ export type Resource = {
 };
 
 export type CourseResource = {
-    id?: number;
-    courseId: string;
-    resourceId: number;
+  id?: number;
+  courseId: string;
+  resourceId: number;
 };
 
 export type AnnouncementType = 'Urgente' | 'Informativo' | 'Mantenimiento';
@@ -324,24 +353,30 @@ export type ChatMessage = {
 };
 
 export type ComplianceReportData = {
-    userId: string;
-    userName: string;
-    userRole: Role;
-    mandatoryCoursesCount: number;
-    completedCoursesCount: number;
-    complianceRate: number;
+  userId: string;
+  userName: string;
+  userRole: Role;
+  mandatoryCoursesCount: number;
+  completedCoursesCount: number;
+  complianceRate: number;
 };
 
 export type DirectMessageThread = ChatChannel & {
-    otherParticipant: {
-        id: string;
-        name: string;
-        avatar: string;
-    }
+  otherParticipant: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
 };
 
 export type CalendarEventType = 'clase' | 'examen' | 'entrega' | 'taller' | 'otro';
-export const calendarEventTypes: CalendarEventType[] = ['clase', 'examen', 'entrega', 'taller', 'otro'];
+export const calendarEventTypes: CalendarEventType[] = [
+  'clase',
+  'examen',
+  'entrega',
+  'taller',
+  'otro',
+];
 
 export type CalendarEvent = {
   id?: number;
@@ -360,8 +395,15 @@ export type CalendarEvent = {
   updatedAt?: string;
 };
 
-export const externalTrainingTypes = ['Curso', 'Certificación', 'Máster', 'Taller', 'Conferencia', 'Otro'] as const;
-export type ExternalTrainingType = typeof externalTrainingTypes[number];
+export const externalTrainingTypes = [
+  'Curso',
+  'Certificación',
+  'Máster',
+  'Taller',
+  'Conferencia',
+  'Otro',
+] as const;
+export type ExternalTrainingType = (typeof externalTrainingTypes)[number];
 
 export type ExternalTraining = {
   id?: number;
@@ -390,87 +432,117 @@ export type StudentForManagement = {
 // --- Gamification Types ---
 
 export type Badge = {
-    id: string;
-    name: string;
-    description: string;
-    icon: string; // Lucide icon name
+  id: string;
+  name: string;
+  description: string;
+  icon: string; // Lucide icon name
 };
 
 export type UserBadge = {
-    id?: number;
-    userId: string;
-    badgeId: string;
-    earnedAt: string; // ISO date string
-    isSynced?: boolean;
-    updatedAt?: string;
+  id?: number;
+  userId: string;
+  badgeId: string;
+  earnedAt: string; // ISO date string
+  isSynced?: boolean;
+  updatedAt?: string;
 };
-
 
 // --- AI & General App Management Types ---
 
 export const aiModels = ['Gemini', 'OpenAI', 'Claude', 'HuggingFace', 'Whisper'] as const;
-export type AIModel = typeof aiModels[number];
+export type AIModel = (typeof aiModels)[number];
 
 export const aiFeatures = [
-    { id: 'courseGeneration', label: 'Generador de Cursos', description: 'Permite crear una estructura de curso desde un tema.' },
-    { id: 'questionGeneration', label: 'Generador de Cuestionarios', description: 'Crea tests a partir del contenido del curso.' },
-    { id: 'summarization', label: 'Resumen Automático de Módulos', description: 'Genera resúmenes del contenido de los módulos.' },
-    { id: 'tutor', label: 'Tutor Virtual IA', description: 'Permite a los usuarios chatear con una IA sobre el curso.' },
-    { id: 'recommendations', label: 'Recomendaciones de Cursos', description: 'Sugiere cursos basados en el perfil del usuario.' },
-    { id: 'feedback', label: 'Feedback de Ejercicios', description: 'Da feedback personalizado sobre los resultados de los tests.' },
-    { id: 'abandonmentPrediction', label: 'Predicción de Abandono', description: 'Analiza el riesgo de que un alumno abandone.' },
-    { id: 'emailGeneration', label: 'Redacción de Emails', description: 'Genera borradores de emails para comunicaciones.' },
+  {
+    id: 'courseGeneration',
+    label: 'Generador de Cursos',
+    description: 'Permite crear una estructura de curso desde un tema.',
+  },
+  {
+    id: 'questionGeneration',
+    label: 'Generador de Cuestionarios',
+    description: 'Crea tests a partir del contenido del curso.',
+  },
+  {
+    id: 'summarization',
+    label: 'Resumen Automático de Módulos',
+    description: 'Genera resúmenes del contenido de los módulos.',
+  },
+  {
+    id: 'tutor',
+    label: 'Tutor Virtual IA',
+    description: 'Permite a los usuarios chatear con una IA sobre el curso.',
+  },
+  {
+    id: 'recommendations',
+    label: 'Recomendaciones de Cursos',
+    description: 'Sugiere cursos basados en el perfil del usuario.',
+  },
+  {
+    id: 'feedback',
+    label: 'Feedback de Ejercicios',
+    description: 'Da feedback personalizado sobre los resultados de los tests.',
+  },
+  {
+    id: 'abandonmentPrediction',
+    label: 'Predicción de Abandono',
+    description: 'Analiza el riesgo de que un alumno abandone.',
+  },
+  {
+    id: 'emailGeneration',
+    label: 'Redacción de Emails',
+    description: 'Genera borradores de emails para comunicaciones.',
+  },
 ] as const;
 
-export type AIFeature = typeof aiFeatures[number]['id'];
+export type AIFeature = (typeof aiFeatures)[number]['id'];
 
 export const certificateTemplates = ['Clásico', 'Moderno', 'Profesional'] as const;
-export type CertificateTemplateType = typeof certificateTemplates[number];
+export type CertificateTemplateType = (typeof certificateTemplates)[number];
 
 // --- Certificate Types ---
 export type CertificateStatus = 'active' | 'expired' | 'revoked';
 
 export type CertificateTemplate = {
-    id: string;
-    name: string;
-    type: CertificateTemplateType;
-    description?: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt?: string;
-    isSynced?: boolean;
+  id: string;
+  name: string;
+  type: CertificateTemplateType;
+  description?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  isSynced?: boolean;
 };
 
 export type Certificate = {
-    id: string;
-    userId: string;
-    courseId: string;
-    templateId: string;
-    verificationCode: string;
-    issuedAt: string;
-    expiresAt?: string;
-    renewedFromId?: string;
-    status: CertificateStatus;
-    pdfDataUrl?: string;
-    isSynced?: boolean;
-    updatedAt?: string;
+  id: string;
+  userId: string;
+  courseId: string;
+  templateId: string;
+  verificationCode: string;
+  issuedAt: string;
+  expiresAt?: string;
+  renewedFromId?: string;
+  status: CertificateStatus;
+  pdfDataUrl?: string;
+  isSynced?: boolean;
+  updatedAt?: string;
 };
 
-
 export type AIConfig = {
-    id: 'singleton'; // Primary key for the single config object
-    activeModel: AIModel;
-    enabledFeatures: Record<AIFeature, boolean>;
-    defaultCertificateTemplate: CertificateTemplateType;
+  id: 'singleton'; // Primary key for the single config object
+  activeModel: AIModel;
+  enabledFeatures: Record<AIFeature, boolean>;
+  defaultCertificateTemplate: CertificateTemplateType;
 };
 
 export type AIUsageLog = {
-    id?: number;
-    timestamp: string; // ISO string
-    userId: string;
-    feature: AIFeature;
-    modelUsed: AIModel;
-    isSynced?: boolean;
+  id?: number;
+  timestamp: string; // ISO string
+  userId: string;
+  feature: AIFeature;
+  modelUsed: AIModel;
+  isSynced?: boolean;
 };
 
 // --- Survey and Rating Types ---
@@ -491,7 +563,6 @@ export type CourseRating = {
   updatedAt?: string;
 };
 
-
 // --- Permission Types ---
 export type RolePermission = {
   role: Role;
@@ -500,7 +571,7 @@ export type RolePermission = {
 
 // --- System Log Types ---
 export const logLevels = ['DEBUG', 'INFO', 'WARN', 'ERROR'] as const;
-export type LogLevel = typeof logLevels[number];
+export type LogLevel = (typeof logLevels)[number];
 
 export type SystemLog = {
   id?: number;
@@ -527,7 +598,6 @@ export type ScormCmiState = {
   updatedAt: string; // ISO 8601 UTC
 };
 
-
 // --- AI Flow Schemas ---
 
 // From: src/ai/flows/announcement-email-generation.ts
@@ -544,26 +614,53 @@ export const GenerateAnnouncementEmailOutputSchema = z.object({
 });
 export type GenerateAnnouncementEmailOutput = z.infer<typeof GenerateAnnouncementEmailOutputSchema>;
 
-
 // From: src/ai/flows/course-suggestion.ts
 export const PersonalizedCourseRecommendationsInputSchema = z.object({
-  userRole: z.string().describe("The user's current role in the organization (e.g., 'Técnico de Emergencias', 'Jefe de Formación')."),
-  enrolledCourseTitles: z.array(z.string()).describe('A list of titles of internal courses the user is already enrolled in or has completed.'),
-  externalTrainingTitles: z.array(z.string()).describe('A list of titles of external courses or certifications the user has registered.'),
-  allAvailableCourseTitles: z.array(z.string()).describe('The complete list of internal course titles available in the catalog for suggestion.'),
+  userRole: z
+    .string()
+    .describe(
+      "The user's current role in the organization (e.g., 'Técnico de Emergencias', 'Jefe de Formación')."
+    ),
+  enrolledCourseTitles: z
+    .array(z.string())
+    .describe(
+      'A list of titles of internal courses the user is already enrolled in or has completed.'
+    ),
+  externalTrainingTitles: z
+    .array(z.string())
+    .describe('A list of titles of external courses or certifications the user has registered.'),
+  allAvailableCourseTitles: z
+    .array(z.string())
+    .describe(
+      'The complete list of internal course titles available in the catalog for suggestion.'
+    ),
 });
-export type PersonalizedCourseRecommendationsInput = z.infer<typeof PersonalizedCourseRecommendationsInputSchema>;
+export type PersonalizedCourseRecommendationsInput = z.infer<
+  typeof PersonalizedCourseRecommendationsInputSchema
+>;
 
 const SuggestionSchema = z.object({
-  courseTitle: z.string().describe('The title of the suggested course. Must be one of the titles from the `allAvailableCourseTitles` list.'),
-  reason: z.string().describe('A brief, one-sentence explanation for why this course is being recommended to the user, in Spanish.'),
+  courseTitle: z
+    .string()
+    .describe(
+      'The title of the suggested course. Must be one of the titles from the `allAvailableCourseTitles` list.'
+    ),
+  reason: z
+    .string()
+    .describe(
+      'A brief, one-sentence explanation for why this course is being recommended to the user, in Spanish.'
+    ),
 });
 
 export const PersonalizedCourseRecommendationsOutputSchema = z.object({
-  suggestions: z.array(SuggestionSchema).max(3).describe('An array of up to 3 course recommendations.'),
+  suggestions: z
+    .array(SuggestionSchema)
+    .max(3)
+    .describe('An array of up to 3 course recommendations.'),
 });
-export type PersonalizedCourseRecommendationsOutput = z.infer<typeof PersonalizedCourseRecommendationsOutputSchema>;
-
+export type PersonalizedCourseRecommendationsOutput = z.infer<
+  typeof PersonalizedCourseRecommendationsOutputSchema
+>;
 
 // From: src/ai/flows/course-tutor.ts
 const ChatHistoryPartSchema = z.object({
@@ -573,7 +670,10 @@ const ChatHistoryPartSchema = z.object({
 export const CourseTutorInputSchema = z.object({
   courseContent: z.string().describe('The full content of the course.'),
   question: z.string().describe("The user's current question about the course."),
-  history: z.array(ChatHistoryPartSchema).optional().describe('The history of the conversation so far.'),
+  history: z
+    .array(ChatHistoryPartSchema)
+    .optional()
+    .describe('The history of the conversation so far.'),
 });
 export type CourseTutorInput = z.infer<typeof CourseTutorInputSchema>;
 
@@ -581,7 +681,6 @@ export const CourseTutorOutputSchema = z.object({
   answer: z.string().describe("The AI tutor's answer to the question."),
 });
 export type CourseTutorOutput = z.infer<typeof CourseTutorOutputSchema>;
-
 
 // From: src/ai/flows/feedback-personalization.ts
 export const PersonalizedFeedbackInputSchema = z.object({
@@ -605,9 +704,10 @@ export const PersonalizedFeedbackOutputSchema = z.object({
 });
 export type PersonalizedFeedbackOutput = z.infer<typeof PersonalizedFeedbackOutputSchema>;
 
-
 // From: src/ai/flows/generate-course-from-topic.ts
-export const GenerateCourseFromTopicInputSchema = z.string().describe('The topic for which to generate the course.');
+export const GenerateCourseFromTopicInputSchema = z
+  .string()
+  .describe('The topic for which to generate the course.');
 export type GenerateCourseFromTopicInput = z.infer<typeof GenerateCourseFromTopicInputSchema>;
 
 const AIGeneratedModuleSchema = z.object({
@@ -617,26 +717,38 @@ const AIGeneratedModuleSchema = z.object({
 });
 
 export const GenerateCourseFromTopicOutputSchema = z.object({
-  title: z.string().describe("A compelling and professional title for the course."),
-  description: z.string().describe("A short, engaging description for the course card (1-2 sentences)."),
-  longDescription: z.string().describe("A detailed description for the course page, outlining its objectives and what students will learn."),
-  instructor: z.string().describe("A plausible Spanish name for a suitable instructor for this course."),
-  duration: z.string().describe("The total estimated duration for the entire course, e.g., '16 horas'."),
-  modality: z.enum(['Online', 'Presencial', 'Mixta']).describe("The most suitable modality for this course."),
-  modules: z.array(AIGeneratedModuleSchema).min(3).max(7).describe("An array of 3 to 7 well-structured modules for the course."),
+  title: z.string().describe('A compelling and professional title for the course.'),
+  description: z
+    .string()
+    .describe('A short, engaging description for the course card (1-2 sentences).'),
+  longDescription: z
+    .string()
+    .describe(
+      'A detailed description for the course page, outlining its objectives and what students will learn.'
+    ),
+  instructor: z
+    .string()
+    .describe('A plausible Spanish name for a suitable instructor for this course.'),
+  duration: z
+    .string()
+    .describe("The total estimated duration for the entire course, e.g., '16 horas'."),
+  modality: z
+    .enum(['Online', 'Presencial', 'Mixta'])
+    .describe('The most suitable modality for this course.'),
+  modules: z
+    .array(AIGeneratedModuleSchema)
+    .min(3)
+    .max(7)
+    .describe('An array of 3 to 7 well-structured modules for the course.'),
 });
 export type GenerateCourseFromTopicOutput = z.infer<typeof GenerateCourseFromTopicOutputSchema>;
-
 
 // From: src/ai/flows/generate-test-questions.ts
 export const GenerateTestQuestionsInputSchema = z.object({
   courseContent: z
     .string()
     .describe('The content of the course for which to generate test questions.'),
-  numberOfQuestions: z
-    .number()
-    .default(5)
-    .describe('The number of test questions to generate.'),
+  numberOfQuestions: z.number().default(5).describe('The number of test questions to generate.'),
   difficulty: z
     .enum(['easy', 'medium', 'hard'])
     .default('medium')
@@ -645,23 +757,25 @@ export const GenerateTestQuestionsInputSchema = z.object({
 export type GenerateTestQuestionsInput = z.infer<typeof GenerateTestQuestionsInputSchema>;
 
 export const GenerateTestQuestionsOutputSchema = z.object({
-  questions: z.array(
-    z.object({
-      question: z.string().describe('The test question.'),
-      options: z.array(z.string()).describe('The possible answers for the question.'),
-      correctAnswer: z.string().describe('The correct answer to the question.'),
-    })
-  ).
-describe('The generated test questions.'),
+  questions: z
+    .array(
+      z.object({
+        question: z.string().describe('The test question.'),
+        options: z.array(z.string()).describe('The possible answers for the question.'),
+        correctAnswer: z.string().describe('The correct answer to the question.'),
+      })
+    )
+    .describe('The generated test questions.'),
 });
 export type GenerateTestQuestionsOutput = z.infer<typeof GenerateTestQuestionsOutputSchema>;
-
 
 // From: src/ai/flows/notification-email-generation.ts
 export const GenerateNotificationEmailInputSchema = z.object({
   recipientName: z.string().describe('The name of the person receiving the email.'),
   courseName: z.string().describe('The name of the course the notification is about.'),
-  notificationType: z.enum(['course_reminder', 'new_course_available', 'feedback_ready']).describe('The type of notification being sent.'),
+  notificationType: z
+    .enum(['course_reminder', 'new_course_available', 'feedback_ready'])
+    .describe('The type of notification being sent.'),
 });
 export type GenerateNotificationEmailInput = z.infer<typeof GenerateNotificationEmailInputSchema>;
 
@@ -672,29 +786,40 @@ export const GenerateNotificationEmailOutputSchema = z.object({
 export type GenerateNotificationEmailOutput = z.infer<typeof GenerateNotificationEmailOutputSchema>;
 
 // From: src/ai/flows/summarize-module-content.ts
-export const SummarizeModuleContentInputSchema = z.string().describe('The content of the module to be summarized.');
+export const SummarizeModuleContentInputSchema = z
+  .string()
+  .describe('The content of the module to be summarized.');
 export type SummarizeModuleContentInput = z.infer<typeof SummarizeModuleContentInputSchema>;
 
 export const SummarizeModuleContentOutputSchema = z.object({
-  summary: z.string().describe("A concise summary of the module's content, highlighting key learning points."),
+  summary: z
+    .string()
+    .describe("A concise summary of the module's content, highlighting key learning points."),
 });
 export type SummarizeModuleContentOutput = z.infer<typeof SummarizeModuleContentOutputSchema>;
-
 
 // From: src/ai/flows/predict-abandonment.ts
 export const PredictAbandonmentInputSchema = z.object({
   userName: z.string().describe('The name of the student.'),
-  lastLogin: z.string().describe('Time since the student last logged in (e.g., "hace 3 días", "hace 2 semanas").'),
-  activeCoursesCount: z.number().describe('The number of courses the student is currently enrolled in.'),
+  lastLogin: z
+    .string()
+    .describe('Time since the student last logged in (e.g., "hace 3 días", "hace 2 semanas").'),
+  activeCoursesCount: z
+    .number()
+    .describe('The number of courses the student is currently enrolled in.'),
   completedCoursesCount: z.number().describe('The number of courses the student has completed.'),
-  averageProgress: z.number().describe('The average completion percentage across all active courses.'),
+  averageProgress: z
+    .number()
+    .describe('The average completion percentage across all active courses.'),
 });
 export type PredictAbandonmentInput = z.infer<typeof PredictAbandonmentInputSchema>;
 
 export const PredictAbandonmentOutputSchema = z.object({
   riskLevel: z.enum(['Bajo', 'Medio', 'Alto']).describe('The predicted risk level of abandonment.'),
-  justification: z.string().describe('A brief, 2-3 sentence justification for the predicted risk level, explaining the key factors.'),
+  justification: z
+    .string()
+    .describe(
+      'A brief, 2-3 sentence justification for the predicted risk level, explaining the key factors.'
+    ),
 });
 export type PredictAbandonmentOutput = z.infer<typeof PredictAbandonmentOutputSchema>;
-
-    

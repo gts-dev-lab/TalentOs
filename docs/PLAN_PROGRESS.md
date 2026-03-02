@@ -7,6 +7,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 ## ✅ Completado
 
 ### FASE 1: Fundamentos de seguridad
+
 - **DÍA 1: Eliminar passwords en texto plano**
   - Argon2 (servidor) + argon2-browser (cliente)
   - `User.passwordHash` en lugar de `password`
@@ -14,11 +15,13 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
   - `src/lib/auth/password.ts`, `src/lib/auth/encryption.ts`
 
 ### FASE 1: Certificaciones
+
 - Módulo de certificados: tipos, Dexie, plantillas, emisión al completar curso
   - UI: listado, detalle, descarga PDF, verificación pública
   - Rutas: `/dashboard/certificates`, `/certificates/verify`
 
 ### DÍA 4: Arreglar sistema de sincronización
+
 - `isSynced`: `.equals('false')` → `.equals(false)` (boolean)
   - En `supabase-sync.ts` y `getUnsyncedItemsCount`
 - `getUnsyncedItemsCount`: lista fija de tablas con `isSynced` (users, courses, enrollments, userProgress, costs, certificateTemplates, certificates)
@@ -26,11 +29,13 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - Reintentos en sync: hasta 3 intentos con backoff (1s, 2s) al fallar upsert a Supabase
 
 ### DÍA 5: Habilitar validaciones de build
+
 - `next.config`: `ignoreBuildErrors: false`, `ignoreDuringBuilds: false`
 - Fix TS: `api-settings.tsx` — "Project Settings > API" → `&gt;` (evitar JSX)
 - ESLint: `eslint-config-next`, `.eslintrc.json` (next/core-web-vitals)
 
 ### DÍA 2: JWT + sesiones seguras ✓
+
 - `src/lib/auth/jwt.ts`: `signSessionToken`, `verifySessionToken`, `isJwtConfigured` (jose, HS256, JWT_SECRET ≥ 32 chars)
 - API: `POST /api/auth/login`, `GET /api/auth/session`, `POST /api/auth/logout`
 - Cookie `auth-token` httpOnly, secure en prod, sameSite lax, 7 días
@@ -40,6 +45,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - `jose` en `package.json`; `JWT_SECRET` documentado en `SETUP_GUIDE.md`
 
 ### DÍA 3: Gestión segura de secretos ✓
+
 - Eliminado guardado de API keys en cookies (deprecated)
 - Prioridad: env vars → cookies (solo lectura, con warnings de deprecación)
 - UI actualizada: `api-settings.tsx` y `ai-settings.tsx` muestran variables de entorno necesarias
@@ -48,6 +54,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - Warnings en consola cuando se usan cookies (compatibilidad temporal)
 
 ### NextAuth + Authentik SSO (empresarial) ✓
+
 - **NextAuth** con basePath `/api/nextauth` (no conflictúa con `/api/auth/*`)
 - **Authentik** como proveedor OIDC cuando `AUTHENTIK_ISSUER`, `AUTHENTIK_ID`, `AUTHENTIK_SECRET` y `NEXT_PUBLIC_AUTHENTIK_ENABLED` están configurados
 - Login: email/contraseña (actual) + opción **Cuenta empresarial (Google / Microsoft)** vía Authentik
@@ -60,6 +67,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 ## ⏳ Pendiente (orden sugerido)
 
 ### Verificaciones finales (Pruebas en navegador)
+
 1. ✅ **JWT_SECRET configurado** - `.env.local` con JWT_SECRET, NEXTAUTH_URL, NEXTAUTH_SECRET
 2. ✅ **Menú hamburguesa implementado** - Responsive, animado, funcional
 3. ✅ **Página de cursos corregida** - Paginación, filtros y búsqueda funcionando
@@ -74,11 +82,13 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 **📖 Guía de pruebas**: Ver `docs/TESTING_GUIDE.md` para instrucciones detalladas paso a paso
 
 ### Plan original (auditoría)
+
 - **DÍA 1-5:** Completados ✓
 - **FASE 1-4:** Completadas ✓
 - **Firebase:** Eliminado (enero 2026) - Reemplazado por Web Notifications API nativa
 
 ### Paginación en listados ✓ (Día 15, FASE 4)
+
 - Componente `Pagination` reutilizable (`src/components/ui/pagination.tsx`)
 - Paginación aplicada a:
   - **Usuarios** (20 por página) - con filtros de rol/departamento
@@ -91,6 +101,7 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 - Contador "Mostrando X - Y de Z"
 
 ### Plan 4 fases (Certificaciones, PDI, etc.)
+
 - **PDI** – Planes de Desarrollo Individual ✓ (FASE 2)
 - **Compliance y normativas** ✓ (FASE 3) - Completo
   - Tipos: `Regulation`, `RegulationCompliance`, `ComplianceAudit`
@@ -121,19 +132,19 @@ Documento para retomar el trabajo. Última actualización: **21 ene 2026**.
 
 ## Archivos relevantes tocados recientemente
 
-| Área            | Archivos                                                                 |
-|-----------------|---------------------------------------------------------------------------|
-| JWT + API auth  | `src/lib/auth/jwt.ts`, `src/app/api/auth/login/route.ts`, `session/route.ts`, `logout/route.ts` |
-| Auth contexto   | `src/contexts/auth.tsx`                                                  |
-| Sync            | `src/lib/supabase-sync.ts`, `src/lib/db-providers/dexie.ts`              |
-| Build/lint      | `next.config.ts`, `src/components/settings/api-settings.tsx`, `.eslintrc.json`, `package.json` |
-| Secretos (DÍA 3) | `src/app/dashboard/settings/actions.ts`, `src/lib/notification-service.tsx`, `src/ai/provider.ts`, `src/components/settings/api-settings.tsx`, `src/components/settings/ai-settings.tsx` |
-| Paginación      | `src/components/ui/pagination.tsx`, `src/app/dashboard/users/page.tsx`, `src/app/dashboard/courses/page.tsx`, `src/app/dashboard/certificates/page.tsx`, `src/app/dashboard/learning-paths/page.tsx`, `src/components/enrollments/admin-view.tsx` |
-| PDI             | `src/lib/types.ts` (tipos), `src/lib/db-providers/dexie.ts` (v43, CRUD), `src/app/dashboard/pdi/page.tsx`, `new/page.tsx`, `[id]/page.tsx`, `[id]/edit/page.tsx`, `src/lib/nav.ts` |
-| Compliance      | `src/lib/types.ts` (Regulation, RegulationCompliance, ComplianceAudit), `src/lib/db-providers/dexie.ts` (v44, CRUD), `src/app/dashboard/compliance/page.tsx`, `new/page.tsx`, `src/lib/nav.ts` |
-| Backups         | `src/lib/backup-service.ts`, `src/components/settings/backup-manager.tsx`, `src/app/dashboard/settings/page.tsx` |
-| Monitoreo       | `src/lib/db-monitoring.ts`, `src/lib/db-providers/dexie.ts` (v45 índices optimizados) |
-| Docs            | `docs/SETUP_GUIDE.md` (JWT_SECRET), `docs/PLAN_PROGRESS.md` (este archivo)|
+| Área             | Archivos                                                                                                                                                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JWT + API auth   | `src/lib/auth/jwt.ts`, `src/app/api/auth/login/route.ts`, `session/route.ts`, `logout/route.ts`                                                                                                                                                   |
+| Auth contexto    | `src/contexts/auth.tsx`                                                                                                                                                                                                                           |
+| Sync             | `src/lib/supabase-sync.ts`, `src/lib/db-providers/dexie.ts`                                                                                                                                                                                       |
+| Build/lint       | `next.config.ts`, `src/components/settings/api-settings.tsx`, `.eslintrc.json`, `package.json`                                                                                                                                                    |
+| Secretos (DÍA 3) | `src/app/dashboard/settings/actions.ts`, `src/lib/notification-service.tsx`, `src/ai/provider.ts`, `src/components/settings/api-settings.tsx`, `src/components/settings/ai-settings.tsx`                                                          |
+| Paginación       | `src/components/ui/pagination.tsx`, `src/app/dashboard/users/page.tsx`, `src/app/dashboard/courses/page.tsx`, `src/app/dashboard/certificates/page.tsx`, `src/app/dashboard/learning-paths/page.tsx`, `src/components/enrollments/admin-view.tsx` |
+| PDI              | `src/lib/types.ts` (tipos), `src/lib/db-providers/dexie.ts` (v43, CRUD), `src/app/dashboard/pdi/page.tsx`, `new/page.tsx`, `[id]/page.tsx`, `[id]/edit/page.tsx`, `src/lib/nav.ts`                                                                |
+| Compliance       | `src/lib/types.ts` (Regulation, RegulationCompliance, ComplianceAudit), `src/lib/db-providers/dexie.ts` (v44, CRUD), `src/app/dashboard/compliance/page.tsx`, `new/page.tsx`, `src/lib/nav.ts`                                                    |
+| Backups          | `src/lib/backup-service.ts`, `src/components/settings/backup-manager.tsx`, `src/app/dashboard/settings/page.tsx`                                                                                                                                  |
+| Monitoreo        | `src/lib/db-monitoring.ts`, `src/lib/db-providers/dexie.ts` (v45 índices optimizados)                                                                                                                                                             |
+| Docs             | `docs/SETUP_GUIDE.md` (JWT_SECRET), `docs/PLAN_PROGRESS.md` (este archivo)                                                                                                                                                                        |
 
 ---
 
