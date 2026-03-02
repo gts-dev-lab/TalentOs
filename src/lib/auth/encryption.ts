@@ -1,4 +1,3 @@
-// @ts-nocheck
 import CryptoJS from 'crypto-js';
 
 function getEncryptionKey(explicitKey?: string): string {

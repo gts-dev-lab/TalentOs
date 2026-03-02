@@ -13,8 +13,8 @@ async function getBrowserArgon2() {
     throw new Error('getBrowserArgon2 should only be called in the browser');
   }
   try {
-    const module = await import('argon2-browser');
-    return module.default;
+    const argon2 = await import('argon2-browser');
+    return argon2.default;
   } catch (error) {
     console.error('Error loading argon2-browser:', error);
     throw error;
@@ -25,8 +25,8 @@ async function getServerArgon2() {
   if (typeof window !== 'undefined') {
     throw new Error('getServerArgon2 should only be called on the server');
   }
-  const module = await import('argon2');
-  return module;
+  const argon2 = await import('argon2');
+  return argon2;
 }
 
 function assertPassword(password: string) {

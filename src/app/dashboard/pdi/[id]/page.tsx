@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { ArrowLeft, Loader2, Target, Calendar, User, CheckCircle2, Clock, Archive, Edit, Plus, Check, X } from 'lucide-react';
@@ -29,7 +29,9 @@ const statusConfig: Record<IndividualDevelopmentPlan['status'], { label: string;
   archived: { label: 'Archivado', variant: 'outline', icon: Archive },
 };
 
-export default function PDIDetailPage({ params }: { params: { id: string } }) {
+export default function PDIDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -39,7 +41,7 @@ export default function PDIDetailPage({ params }: { params: { id: string } }) {
   const [reviewFeedback, setReviewFeedback] = useState('');
   const [reviewNextSteps, setReviewNextSteps] = useState('');
 
-  const pdi = useLiveQuery(() => db.getPDIById(params.id), [params.id]);
+  const pdi = useLiveQuery(() => db.getPDIById(id), [id]);
   const users = useLiveQuery(() => db.getAllUsers(), []);
   const courses = useLiveQuery(() => db.getAllCourses(), []);
   const userProgress = useLiveQuery(() => user ? db.getUserProgressForUser(user.id) : Promise.resolve([]), [user?.id]);

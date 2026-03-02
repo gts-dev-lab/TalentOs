@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2, ShieldCheck, ShieldX } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,7 +32,7 @@ export default function CertificateVerificationPage() {
       setCode(initialCode);
       void handleVerify(initialCode);
     }
-  }, [searchParams]);
+  }, [searchParams, handleVerify]);
 
   useEffect(() => {
     if (!verificationUrl) return;
@@ -41,7 +41,7 @@ export default function CertificateVerificationPage() {
       .catch(() => setQrCodeDataUrl(''));
   }, [verificationUrl]);
 
-  const handleVerify = async (verificationCode?: string) => {
+  const handleVerify = useCallback(async (verificationCode?: string) => {
     const codeToCheck = (verificationCode || code).trim();
     if (!codeToCheck) return;
     setIsChecking(true);
@@ -65,7 +65,7 @@ export default function CertificateVerificationPage() {
     } finally {
       setIsChecking(false);
     }
-  };
+  }, [code]);
 
   const isValid = Boolean(certificate && user && course && template && certificate.status === 'active');
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { ArrowLeft, Loader2, ShieldCheck, Edit, Plus, AlertTriangle, CheckCircle2, XCircle, Calendar } from 'lucide-react';
@@ -34,7 +34,9 @@ const typeColors: Record<Regulation['type'], string> = {
   Otro: 'bg-gray-500',
 };
 
-export default function RegulationDetailPage({ params }: { params: { id: string } }) {
+export default function RegulationDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -43,7 +45,7 @@ export default function RegulationDetailPage({ params }: { params: { id: string 
   const [complianceDate, setComplianceDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [complianceNotes, setComplianceNotes] = useState<string>('');
 
-  const regulation = useLiveQuery(() => db.getRegulationById(params.id), [params.id]);
+  const regulation = useLiveQuery(() => db.getRegulationById(id), [id]);
   const allUsers = useLiveQuery(() => db.getAllUsers(), []);
   const allCourses = useLiveQuery(() => db.getAllCourses(), []);
   const allCompliance = useLiveQuery(() => regulation ? db.getComplianceForRegulation(regulation.id) : Promise.resolve([]), [regulation?.id]);

@@ -4,8 +4,14 @@
 import * as db from '@/lib/db';
 import type { Announcement } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { getCurrentTenantId } from '@/lib/tenant-context';
 
 export async function createAndNotifyAnnouncement(announcementData: Omit<Announcement, 'id' | 'isSynced' | 'updatedAt' | 'timestamp'>) {
+    const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+        return { success: false, message: 'No hay contexto de inquilino. Acceso denegado.' };
+    }
+    
     try {
         const newAnnouncement: Announcement = {
             ...announcementData,

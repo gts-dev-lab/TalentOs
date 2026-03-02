@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   
-  const publicPages = ['/', '/login', '/register', '/pending-approval', '/forgot-password', '/password-reset', '/features', '/terms', '/privacy-policy', '/request-demo', '/certificates/verify', '/auth/error'];
+
   
   const checkUserStatus = useCallback(async () => {
     if (typeof window === 'undefined') {
@@ -96,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (FRONTEND_ONLY) return; // No redirigir a login en modo solo frontend
+    const publicPages = ['/', '/login', '/register', '/pending-approval', '/forgot-password', '/password-reset', '/features', '/terms', '/privacy-policy', '/request-demo', '/certificates/verify', '/auth/error'];
     const isPublicPage = publicPages.includes(pathname);
     if (!isLoading && !user && !isPublicPage) {
         router.push('/login');

@@ -33,8 +33,8 @@ export default function ScormPlayerPage() {
 
     setIsCompleting(true);
     try {
-      for (const module of course.modules) {
-        await db.markModuleAsCompleted(user.id, course.id, module.id);
+      for (const mod of course.modules) {
+        await db.markModuleAsCompleted(user.id, course.id, mod.id);
       }
       toast({
         title: '¡Curso Completado!',

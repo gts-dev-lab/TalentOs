@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // src/lib/db-providers/dexie.ts
 
 /**

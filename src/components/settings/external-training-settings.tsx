@@ -137,11 +137,7 @@ export function ExternalTrainingSettings() {
     const { user } = useAuth();
     const { toast } = useToast();
 
-    if (!user) {
-        return <div className="flex h-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
-    }
-    
-    const trainings = useLiveQuery(() => db.getExternalTrainingsForUser(user.id), [user.id]);
+    const trainings = useLiveQuery(() => user ? db.getExternalTrainingsForUser(user.id) : [], [user?.id]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedTraining, setSelectedTraining] = useState<ExternalTraining | null>(null);
     const [trainingToDelete, setTrainingToDelete] = useState<ExternalTraining | null>(null);
@@ -164,6 +160,10 @@ export function ExternalTrainingSettings() {
         }
     }, [trainingToDelete, toast]);
 
+    if (!user) {
+        return <div className="flex h-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
+    }
+    
     return (
         <AlertDialog>
             <div className="space-y-4">

@@ -72,9 +72,9 @@ function StudentEnrollmentCard({ enrollment }: { enrollment: EnrollmentWithDetai
                          <AlertDialogContent>
                              <AlertDialogHeader>
                                  <AlertDialogTitle>¿Confirmar cancelación?</AlertDialogTitle>
-                                 <AlertDialogDescription>
-                                     Se anulará tu solicitud de inscripción para el curso "{enrollment.courseTitle}". Podrás volver a solicitarla más tarde si cambias de opinión.
-                                 </AlertDialogDescription>
+                                  <AlertDialogDescription>
+                                      Se anulará tu solicitud de inscripción para el curso {enrollment.courseTitle}. Podrás volver a solicitarla más tarde si cambias de opinión.
+                                  </AlertDialogDescription>
                              </AlertDialogHeader>
                              <AlertDialogFooter>
                                  <AlertDialogCancel>No, mantener</AlertDialogCancel>

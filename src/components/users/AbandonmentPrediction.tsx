@@ -88,7 +88,7 @@ export function AbandonmentPrediction({ user }: { user: User }) {
                         </div>
                     </div>
                 ) : (
-                    <p className="text-center text-sm text-muted-foreground p-4">Haz clic en "Analizar" para obtener una predicción de la IA.</p>
+                    <p className="text-center text-sm text-muted-foreground p-4">Haz clic en &quot;Analizar&quot; para obtener una predicción de la IA.</p>
                 )}
             </PopoverContent>
         </Popover>

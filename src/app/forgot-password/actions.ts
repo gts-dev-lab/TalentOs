@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 'use server';
 
 import { z } from 'zod';
@@ -31,7 +29,7 @@ export async function handlePasswordRequest(prevState: any, formData: FormData) 
       process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     ).toString();
       
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase!.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
     });
 

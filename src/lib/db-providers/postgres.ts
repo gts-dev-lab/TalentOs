@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * TT-114: Provider PostgreSQL para DBProvider.
  * Implementa la interfaz DBProvider usando PostgreSQL con RLS.
@@ -104,7 +103,70 @@ async function queryScalar<T = number>(
 const mockDexie = {
   transaction: () => Promise.resolve({}),
   table: () => ({}),
-} as unknown as Dexie;
+  enrollments: { toArray: () => Promise.resolve([]) } as any,
+  userProgress: { toArray: () => Promise.resolve([]) } as any,
+  courses: { toArray: () => Promise.resolve([]) } as any,
+  users: { toArray: () => Promise.resolve([]) } as any,
+  notifications: { toArray: () => Promise.resolve([]) } as any,
+  systemLogs: { toArray: () => Promise.resolve([]) } as any,
+  aiUsageLog: { toArray: () => Promise.resolve([]) } as any,
+  chatChannels: { toArray: () => Promise.resolve([]) } as any,
+  chatMessages: { toArray: () => Promise.resolve([]) } as any,
+  calendarEvents: { toArray: () => Promise.resolve([]) } as any,
+  costs: { toArray: () => Promise.resolve([]) } as any,
+  certificates: { toArray: () => Promise.resolve([]) } as any,
+  certificateTemplates: { toArray: () => Promise.resolve([]) } as any,
+  learningPaths: { toArray: () => Promise.resolve([]) } as any,
+  badges: { toArray: () => Promise.resolve([]) } as any,
+  userBadges: { toArray: () => Promise.resolve([]) } as any,
+  individualDevelopmentPlans: { toArray: () => Promise.resolve([]) } as any,
+  regulations: { toArray: () => Promise.resolve([]) } as any,
+  regulationCompliance: { toArray: () => Promise.resolve([]) } as any,
+  complianceAudits: { toArray: () => Promise.resolve([]) } as any,
+  courseRatings: { toArray: () => Promise.resolve([]) } as any,
+  externalTrainings: { toArray: () => Promise.resolve([]) } as any,
+  rolePermissions: { toArray: () => Promise.resolve([]) } as any,
+  scormCmiState: { toArray: () => Promise.resolve([]) } as any,
+  forumMessages: { toArray: () => Promise.resolve([]) } as any,
+  resources: { toArray: () => Promise.resolve([]) } as any,
+  courseResources: { toArray: () => Promise.resolve([]) } as any,
+  announcements: { toArray: () => Promise.resolve([]) } as any,
+  costCategories: { toArray: () => Promise.resolve([]) } as any,
+  userLearningPathProgress: { toArray: () => Promise.resolve([]) } as any,
+  aiConfig: { toArray: () => Promise.resolve([]) } as any,
+} as unknown as Dexie & {
+  enrollments: any;
+  userProgress: any;
+  courses: any;
+  users: any;
+  notifications: any;
+  systemLogs: any;
+  aiUsageLog: any;
+  chatChannels: any;
+  chatMessages: any;
+  calendarEvents: any;
+  costs: any;
+  certificates: any;
+  certificateTemplates: any;
+  learningPaths: any;
+  badges: any;
+  userBadges: any;
+  individualDevelopmentPlans: any;
+  regulations: any;
+  regulationCompliance: any;
+  complianceAudits: any;
+  courseRatings: any;
+  externalTrainings: any;
+  rolePermissions: any;
+  scormCmiState: any;
+  forumMessages: any;
+  resources: any;
+  courseResources: any;
+  announcements: any;
+  costCategories: any;
+  userLearningPathProgress: any;
+  aiConfig: any;
+};
 
 /**
  * Provider PostgreSQL que implementa DBProvider.

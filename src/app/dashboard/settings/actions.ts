@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import type { AIConfig, AIModel } from '@/lib/types';
 import * as db from '@/lib/db';
 import { sendPushNotification } from '@/lib/notification-service';
+import { getCurrentTenantId } from '@/lib/tenant-context';
 
 const cookieOptions = {
   httpOnly: true,
@@ -16,6 +17,11 @@ const cookieOptions = {
 };
 
 export async function saveApiKeysAction(prevState: any, formData: FormData) {
+  const tenantId = getCurrentTenantId();
+  if (!tenantId) {
+    return { success: false, message: 'No hay contexto de inquilino. Acceso denegado.' };
+  }
+  
   await db.logSystemEvent('WARN', 'API keys save attempted via UI - deprecated. Use environment variables instead.');
   revalidatePath('/dashboard/settings');
   return { 
@@ -25,6 +31,11 @@ export async function saveApiKeysAction(prevState: any, formData: FormData) {
 }
 
 export async function saveAIConfigAction(prevState: any, formData: FormData) {
+  const tenantId = getCurrentTenantId();
+  if (!tenantId) {
+    return { success: false, message: 'No hay contexto de inquilino. Acceso denegado.' };
+  }
+  
   try {
     // API keys ahora se leen solo de env vars, no se guardan en cookies
     // Solo guardamos el modelo activo y features en Dexie
@@ -51,6 +62,11 @@ export async function saveAIConfigAction(prevState: any, formData: FormData) {
 // Las notificaciones ahora usan la API nativa del navegador
 
 export async function sendTestPushNotificationAction() {
+    const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+        return { success: false, message: 'No hay contexto de inquilino. Acceso denegado.' };
+    }
+    
     const user = await db.getLoggedInUser();
     if (!user) {
         return { success: false, message: 'Usuario no autenticado.' };
@@ -72,6 +88,11 @@ export async function sendTestPushNotificationAction() {
 }
 
 export async function runSyncAction() {
+    const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+        return { success: false, message: 'No hay contexto de inquilino. Acceso denegado.' };
+    }
+    
     try {
         const result = await db.syncWithSupabase();
         return result;

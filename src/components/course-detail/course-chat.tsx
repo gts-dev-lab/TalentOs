@@ -57,7 +57,7 @@ export function CourseChat({ courseTitle, courseContent }: { courseTitle: string
         <Card className="shadow-lg h-[500px] flex flex-col">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <Bot /> Tutor de IA para "{courseTitle}"
+                    <Bot /> Tutor de IA para {courseTitle}
                 </CardTitle>
                 <CardDescription>Haz preguntas sobre el contenido del curso.</CardDescription>
             </CardHeader>

@@ -79,14 +79,6 @@ export default function UsersPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 20;
     
-    if (!authUser) return null;
-
-    const canManageUsers = ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(authUser.role) || isSuperadmin(authUser.email);
-    if (!canManageUsers) {
-        router.push('/dashboard');
-        return null;
-    }
-
     const { pendingUsers, filteredActiveUsers, paginatedUsers, totalPages } = useMemo(() => {
         if (!users) return { pendingUsers: [], filteredActiveUsers: [], paginatedUsers: [], totalPages: 0 };
         
@@ -102,6 +94,14 @@ export default function UsersPage() {
 
         return { pendingUsers, filteredActiveUsers: filteredActive, paginatedUsers, totalPages };
     }, [users, roleFilters, departmentFilters, currentPage]);
+
+    if (!authUser) return null;
+
+    const canManageUsers = ['Gestor de RRHH', 'Jefe de Formación', 'Administrador General'].includes(authUser.role) || isSuperadmin(authUser.email);
+    if (!canManageUsers) {
+        router.push('/dashboard');
+        return null;
+    }
 
     const handleRoleFilterChange = (role: Role, checked: boolean) => {
         setRoleFilters(prev => ({ ...prev, [role]: checked }));
