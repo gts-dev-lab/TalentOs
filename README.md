@@ -36,41 +36,6 @@ Las plataformas LMS tradicionales suelen ser rígidas, lentas de configurar y po
 
 ---
 
-## Estado actual del proyecto
-
-**Fase 1**: 12/13 tickets completados (92%)  
-**Fase 2 (PostgreSQL)**: TT-114 ~40%, TT-115 y TT-116 completados, TT-117 pendiente
-
-> **Nota sobre los tickets**: Los identificadores TT-XXX son referencias internas de desarrollo (equivalentes a issues de GitHub/Jira). No forman parte del modelo de negocio de la aplicación ni representan funcionalidades de tickets de soporte para usuarios finales.
-
----
-
-## Sistema de tickets: qué son y qué NO son
-
-### Qué son los tickets en TalentOS
-
-Los **tickets** son únicamente una forma de **dividir, organizar y seguir las tareas pendientes de desarrollo** de la aplicación. Documentados en `docs/MIGRATION_PLAN_TICKETS.md`.
-
-- **Identificadores:** TT-101, TT-102, TT-103 … TT-117
-- **Significado:** Tareas técnicas concretas (equivalente a issues o tickets de JIRA/GitHub)
-- **Uso:** Planificar, ejecutar y verificar el progreso del desarrollo
-- **Estado:** Ver tabla en `docs/MIGRATION_STATUS.md`
-
-### Qué NO son los tickets
-
-- **NO** es un sistema de negocio
-- **NO** existen tickets de soporte, incidencias, solicitudes de usuarios ni flujos de atención
-- **NO** forman parte del modelo de dominio de la aplicación
-- En el código: **no existen entidades llamadas "tickets"** ni lógica de negocio asociada
-
-### Entidades del dominio (no confundir con tickets)
-
-Algunas entidades (Enrollment, PDI, ComplianceAudit, Course) tienen ciclos de vida con estados. **No deben confundirse con tickets ni documentarse como tales.** Son entidades de negocio independientes.
-
-Si en el futuro se añade un sistema de tickets de negocio (soporte, incidencias, etc.), se tratará como una funcionalidad nueva e independiente.
-
----
-
 ## Despliegue en producción
 
 ### Hosting gestionado
@@ -82,8 +47,8 @@ La forma más sencilla de ejecutar TalentOS en producción es usando un proveedo
 **Paso 1: Clona el repositorio**
 
 ```bash
-git clone https://github.com/tu-org/talentos.git
-cd talentos
+git clone https://github.com/gts-dev-lab/TalentOs.git
+cd TalentOs
 ```
 
 **Paso 2: Configura las variables de entorno**
@@ -119,8 +84,8 @@ La aplicación estará disponible en el puerto 3000.
 **Paso 1: Clona el repositorio e instala dependencias**
 
 ```bash
-git clone https://github.com/tu-org/talentos.git
-cd talentos
+git clone https://github.com/gts-dev-lab/TalentOs.git
+cd TalentOs
 npm install
 ```
 
@@ -163,14 +128,12 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ## Documentación técnica
 
-| Documento                                                                      | Descripción                                   |
-| ------------------------------------------------------------------------------ | --------------------------------------------- |
-| [Arquitectura del sistema](./README_ARCHITECTURE.md)                           | Diagramas y decisiones de diseño              |
-| [Guía de desarrollo](./README_DEV.md)                                          | Convenciones y mejores prácticas              |
-| [Seguridad y multi-inquilino](./docs/ARCHITECTURE_MULTITENANT_AND_SECURITY.md) | Implementación de seguridad                   |
-| [Plan de migración](./docs/MIGRATION_PLAN_TICKETS.md)                          | Tickets y roadmap de desarrollo               |
-| [Estado de migración](./docs/MIGRATION_STATUS.md)                              | Progreso actual del proyecto                  |
-| [Deuda técnica](./docs/TECH_DEBT.md)                                           | Issues de código y arquitectura identificados |
+- [Arquitectura del sistema](./README_ARCHITECTURE.md)
+- [Guía de desarrollo](./README_DEV.md)
+- [Seguridad y multi-inquilino](./docs/ARCHITECTURE_MULTITENANT_AND_SECURITY.md)
+- [Plan de migración y roadmap](./docs/MIGRATION_PLAN_TICKETS.md)
+- [Estado actual del proyecto](./docs/MIGRATION_STATUS.md)
+- [Deuda técnica identificada](./docs/TECH_DEBT.md)
 
 ---
 
@@ -187,5 +150,14 @@ TalentOS está diseñado con seguridad desde el primer nivel:
 
 ## Comunidad y soporte
 
-- [Abre un issue](https://github.com/tu-org/talentos/issues) para reportar bugs o proponer mejoras.
-- [Discusiones](https://github.com/tu-org/talentos/discussions) para preguntas y feedback.
+- [Abre un issue](https://github.com/gts-dev-lab/TalentOs/issues) para reportar bugs o proponer mejoras.
+- [Discusiones](https://github.com/gts-dev-lab/TalentOs/discussions) para preguntas y feedback.
+
+---
+
+## Estado del proyecto
+
+**Fase 1:** Completada ✓ (12/13 tareas de desarrollo)  
+**Fase 2 (PostgreSQL):** En progreso (TT-114 ~40%, TT-115 y TT-116 completados)
+
+> **Nota:** Los identificadores TT-XXX son referencias internas de desarrollo. Para más detalles sobre el roadmap, consulta [MIGRATION_PLAN_TICKETS.md](./docs/MIGRATION_PLAN_TICKETS.md).
