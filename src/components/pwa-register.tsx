@@ -14,13 +14,7 @@ export function PWARegister() {
       navigator.serviceWorker
         .register('/sw.js', { scope: '/' })
         .then(reg => {
-          if (reg.installing) {
-            console.log('[PWA] Service worker installing');
-          } else if (reg.waiting) {
-            console.log('[PWA] Service worker waiting');
-          } else if (reg.active) {
-            console.log('[PWA] Service worker active');
-          }
+          // Service worker registered successfully
         })
         .catch(err => {
           console.warn('[PWA] Service worker registration failed:', err);

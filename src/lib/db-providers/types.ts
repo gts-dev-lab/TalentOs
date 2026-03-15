@@ -104,7 +104,7 @@ export interface DBProvider {
     > & { password?: string }
   ): Promise<User>;
   bulkAddUsers(
-    users: Omit<
+    users: (Omit<
       User,
       | 'id'
       | 'isSynced'
@@ -114,8 +114,7 @@ export interface DBProvider {
       | 'status'
       | 'fcmToken'
       | 'passwordHash'
-    > &
-      { password?: string }[]
+    > & { password?: string })[]
   ): Promise<string[]>;
   getAllUsers(): Promise<User[]>;
   getUserById(id: string): Promise<User | undefined>;
@@ -364,4 +363,8 @@ export interface DBProvider {
   // Sync
   getUnsyncedItemsCount(): Promise<number>;
   syncWithSupabase(): Promise<{ success: boolean; message: string }>;
+
+  // Internal helpers (not part of public API)
+  _checkAndAwardModuleBadges?(userId: string): Promise<void>;
+  _handleCourseCompletion?(userId: string, courseId: string): Promise<void>;
 }

@@ -113,4 +113,10 @@
   .frappe-interactive:hover {
     @apply transition-all duration-frappe-fast;
   }
+
+  /* Certificate scaling container for preview */
+  .certificate-scale-container {
+    width: 166.66%;
+    height: calc(794px * 0.6);
+  }
 }

@@ -20,9 +20,7 @@ export const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateT
         <div className="text-center">
           <div className="flex justify-center items-center gap-4">
             <AppLogo className="h-16 w-16 text-primary" />
-            <h1 className="text-5xl font-bold text-gray-700" style={{ fontFamily: 'serif' }}>
-              Talentos
-            </h1>
+            <h1 className="text-5xl font-bold text-gray-700">Talentos</h1>
           </div>
           <p className="mt-4 text-2xl">Certificado de Finalización</p>
         </div>

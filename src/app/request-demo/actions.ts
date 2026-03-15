@@ -31,13 +31,6 @@ export async function sendDemoRequestEmail(prevState: any, formData: FormData) {
   const apiKey = process.env.RESEND_API_KEY;
 
   if (!apiKey) {
-    console.warn(`--- [EMAIL SIMULATION] ---`);
-    console.warn('Resend API Key not set. Simulating email send for demo request.');
-    console.log(`To: admin@example.com`);
-    console.log(`From: TalentOS Platform <onboarding@resend.dev>`);
-    console.log(`Reply-To: ${email}`);
-    console.log(`Subject: Nueva Solicitud de Demo de: ${company}`);
-    console.log('---------------------------');
     await db.logSystemEvent(
       'WARN',
       'Email Simulation: Resend API Key not set for demo request form.'
@@ -53,7 +46,7 @@ export async function sendDemoRequestEmail(prevState: any, formData: FormData) {
   try {
     await resend.emails.send({
       from: 'TalentOS Platform <onboarding@resend.dev>', // Must be a verified domain on Resend
-      to: ['admin@example.com'], // CHANGE THIS to your admin email
+      to: [process.env.ADMIN_EMAIL || 'admin@example.com'], // Admin email from environment variable
       subject: `Nueva Solicitud de Demo de: ${company}`,
       reply_to: email,
       react: DemoRequestEmail({ name, company, email, message }),

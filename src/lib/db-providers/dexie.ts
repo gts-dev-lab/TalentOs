@@ -67,7 +67,6 @@ import {
   initialUserProgress,
 } from '@/lib/data';
 // Nota: Las notificaciones ahora se envían a través de server actions
-// import { sendEmailNotification, sendPushNotification, sendWhatsAppNotification } from '@/lib/notification-service.tsx';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { getNavItems } from '@/lib/nav';
 import { uuid } from '@/lib/uuid';
@@ -214,7 +213,7 @@ dbInstance.on('populate', async () => {
 
 // --- Population Logic (extracted to be called by 'populate' event) ---
 async function populateDatabase() {
-  await dbInstance.transaction('rw', ...dbInstance.tables, async () => {
+  await dbInstance.transaction('rw', dbInstance.tables, async () => {
     const initialPermissions: RolePermission[] = roles.map(role => {
       const visibleNavs = getNavItems()
         .filter(item => item.roles.includes(role))
@@ -374,7 +373,7 @@ export const dexieProvider: DBProvider = {
   },
 
   async bulkAddUsers(
-    users: Omit<
+    users: (Omit<
       User,
       | 'id'
       | 'isSynced'
@@ -384,8 +383,7 @@ export const dexieProvider: DBProvider = {
       | 'status'
       | 'fcmToken'
       | 'passwordHash'
-    > &
-      { password?: string }[]
+    > & { password?: string })[]
   ): Promise<string[]> {
     const newUsers: User[] = [];
     for (const user of users) {
@@ -872,15 +870,17 @@ export const dexieProvider: DBProvider = {
   async markModuleAsCompleted(userId: string, courseId: string, moduleId: string): Promise<void> {
     return dbInstance.transaction(
       'rw',
-      dbInstance.users,
-      dbInstance.userProgress,
-      dbInstance.badges,
-      dbInstance.userBadges,
-      dbInstance.notifications,
-      dbInstance.courses,
-      dbInstance.enrollments,
-      dbInstance.learningPaths,
-      dbInstance.userLearningPathProgress,
+      [
+        dbInstance.users,
+        dbInstance.userProgress,
+        dbInstance.badges,
+        dbInstance.userBadges,
+        dbInstance.notifications,
+        dbInstance.courses,
+        dbInstance.enrollments,
+        dbInstance.learningPaths,
+        dbInstance.userLearningPathProgress,
+      ],
       async () => {
         const existingProgress = await this.getUserProgress(userId, courseId);
         const user = await this.getUserById(userId);
@@ -906,7 +906,7 @@ export const dexieProvider: DBProvider = {
         await dbInstance.users.update(userId, { points: (user.points || 0) + 10 });
         const dayOfWeek = new Date().getDay();
         if (dayOfWeek === 0 || dayOfWeek === 6) await this.awardBadge(userId, 'weekend_warrior');
-        await this._checkAndAwardModuleBadges(userId);
+        await (this as any)._checkAndAwardModuleBadges(userId);
         const course = await this.getCourseById(courseId);
         const updatedProgress = await this.getUserProgress(userId, courseId);
         if (
@@ -915,7 +915,7 @@ export const dexieProvider: DBProvider = {
           course.modules &&
           updatedProgress.completedModules.length === course.modules.length
         ) {
-          await this._handleCourseCompletion(userId, courseId);
+          await (this as any)._handleCourseCompletion(userId, courseId);
         }
       }
     );
@@ -1031,11 +1031,7 @@ export const dexieProvider: DBProvider = {
       // Nota: El envío automático de notificaciones está deshabilitado aquí
       // Las notificaciones se envían a través de server actions cuando sea necesario
       // para evitar importar paquetes de servidor (twilio, resend, etc.) en el cliente
-
-      // TODO: Implementar un sistema de cola de notificaciones que se procese en el servidor
-      console.log(
-        `[NOTIFICATION] Created notification for user ${user.id}: ${notification.message}`
-      );
+      // TODO: Implementar un sistema de cola de notificaciones que se procese en el servidor (ver TECH_DEBT.md)
     }
     return newId;
   },
@@ -1058,12 +1054,15 @@ export const dexieProvider: DBProvider = {
       .toArray();
     if (unreadNotifications.length > 0) {
       const idsToUpdate = unreadNotifications.map(n => n.id!);
-      await dbInstance.notifications.bulkUpdate(
-        idsToUpdate.map(id => ({
-          key: id,
-          changes: { isRead: true, updatedAt: new Date().toISOString(), isSynced: false },
-        }))
-      );
+      await dbInstance.transaction('rw', dbInstance.notifications, async () => {
+        for (const id of idsToUpdate) {
+          await dbInstance.notifications.update(id, {
+            isRead: true,
+            updatedAt: new Date().toISOString(),
+            isSynced: false,
+          });
+        }
+      });
     }
   },
 
@@ -1190,7 +1189,7 @@ export const dexieProvider: DBProvider = {
       isSynced: false,
       updatedAt: new Date().toISOString(),
     };
-    await dbInstance.chatChannels.update(message.channelId, {
+    await dbInstance.chatChannels.update(String(message.channelId), {
       updatedAt: new Date().toISOString(),
     });
     const newId = await dbInstance.chatMessages.add(newChatMessage);
@@ -1712,7 +1711,8 @@ export const dexieProvider: DBProvider = {
   },
 
   async updatePermissionsForRole(role: Role, visibleNavs: string[]): Promise<number> {
-    return await dbInstance.rolePermissions.put({ role, visibleNavs });
+    await dbInstance.rolePermissions.put({ role, visibleNavs });
+    return 1;
   },
 
   async logSystemEvent(
@@ -1738,25 +1738,23 @@ export const dexieProvider: DBProvider = {
   },
 
   async getUnsyncedItemsCount(): Promise<number> {
-    const tablesWithIsSynced: (keyof typeof dbInstance.tables)[] = [
-      'users',
-      'courses',
-      'enrollments',
-      'userProgress',
-      'costs',
-      'certificateTemplates',
-      'certificates',
+    const tables = [
+      dbInstance.users,
+      dbInstance.courses,
+      dbInstance.enrollments,
+      dbInstance.userProgress,
+      dbInstance.costs,
+      dbInstance.certificateTemplates,
+      dbInstance.certificates,
     ];
     const unsyncedCounts = await Promise.all(
-      tablesWithIsSynced.map(name =>
-        dbInstance.tables[name].where('isSynced').equals(false).count()
-      )
+      tables.map(table => table.filter(record => record.isSynced === false).count())
     );
-    return unsyncedCounts.reduce((acc, count) => acc + count, 0);
+    return unsyncedCounts.reduce((acc: number, count: number) => acc + count, 0);
   },
 
   async syncWithSupabase(): Promise<{ success: boolean; message: string }> {
-    return await syncToSupabase(dbInstance);
+    return await syncToSupabase(dbInstance as any);
   },
 
   // Internal helper methods, prefixed with _ to avoid exposing them on the provider interface.
@@ -1774,16 +1772,18 @@ export const dexieProvider: DBProvider = {
   async _handleCourseCompletion(userId: string, courseId: string) {
     return dbInstance.transaction(
       'rw',
-      dbInstance.users,
-      dbInstance.enrollments,
-      dbInstance.userLearningPathProgress,
-      dbInstance.courses,
-      dbInstance.badges,
-      dbInstance.userBadges,
-      dbInstance.notifications,
-      dbInstance.certificates,
-      dbInstance.certificateTemplates,
-      dbInstance.aiConfig,
+      [
+        dbInstance.users,
+        dbInstance.enrollments,
+        dbInstance.userLearningPathProgress,
+        dbInstance.courses,
+        dbInstance.badges,
+        dbInstance.userBadges,
+        dbInstance.notifications,
+        dbInstance.certificates,
+        dbInstance.certificateTemplates,
+        dbInstance.aiConfig,
+      ],
       async () => {
         const course = await dbInstance.courses.get(courseId);
         if (!course) return;
@@ -1888,7 +1888,7 @@ export const dexieProvider: DBProvider = {
   async getActiveRegulations(): Promise<Regulation[]> {
     return await dbInstance.regulations
       .where('isActive')
-      .equals(true)
+      .equals(true as any)
       .reverse()
       .sortBy('createdAt');
   },
@@ -1921,7 +1921,7 @@ export const dexieProvider: DBProvider = {
   async getRegulationsForRole(role: Role): Promise<Regulation[]> {
     return await dbInstance.regulations
       .where('isActive')
-      .equals(true)
+      .equals(true as any)
       .filter(r => r.applicableRoles.includes(role))
       .toArray();
   },
